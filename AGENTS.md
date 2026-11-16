@@ -60,3 +60,16 @@ Before creating commits:
 6. Verify that each commit contains only related changes.
 
 **Goal:** Maintain a clean, consistent, readable Git history with small, atomic, and meaningful commits.
+
+## Documentation Guidelines
+
+- Keep the README.md clear, concise, and useful.
+- Update the README whenever changes affect setup, configuration, features, usage, or project structure.
+- Avoid unnecessary emojis. Use them sparingly, only when they improve readability.
+- Do not add filler, redundant explanations, or marketing language.
+- Prioritize practical information, clear instructions, and relevant examples.
+- Keep documentation accurate and aligned with the current implementation.
+- Remove outdated or irrelevant information.
+- Use clear headings and a logical structure.
+- Every section must provide useful information to the reader.
+
