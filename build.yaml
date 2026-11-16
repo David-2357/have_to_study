@@ -1,0 +1,12 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        generate_for:
+          - lib/data/database/**
+      riverpod_generator:
+        enabled: false
+      freezed:
+        enabled: false
+      json_serializable:
+        enabled: false
