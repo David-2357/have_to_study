@@ -73,57 +73,14 @@ Before creating commits:
 - Use clear headings and a logical structure.
 - Every section must provide useful information to the reader.
 
-## Technical Requirements Documentation
+## Project Documentation
 
-- Maintain `docs/TECHNICAL_REQUIREMENTS.md` as the single source of truth for the project's technical dependencies, versions, and environment requirements.
-- Document only technical information, including:
-  - Programming languages and SDK versions.
-  - Frameworks and libraries, including their versions.
-  - Direct and relevant transitive dependencies.
-  - Development tools and code generation tools.
-  - Platform requirements and compatibility constraints.
-  - Build tools, configurations, and environment requirements.
-  - External technical integrations and their required versions.
-- Keep the document synchronized with the actual project configuration files, such as `pubspec.yaml`, platform-specific configuration files, and other relevant manifests.
-- Update the document whenever dependencies, versions, SDK requirements, tools, or technical configurations change.
-- Consult this document when performing tasks involving dependencies, versions, compatibility, or technical configuration.
-- Never include feature descriptions, application architecture explanations, coding conventions, business logic, or general development guidelines.
-- Remove outdated entries and avoid duplicating information.
+Documentation files can be reviewed and updated whenever necessary to keep them aligned with the actual implementation. Consult these documents whenever they are relevant to the task and avoid unnecessary changes or duplicated information.
 
-**Goal:** Maintain an accurate and up-to-date technical inventory of the project's dependencies, versions, and environment requirements.
-
-## Shared Components
-
-- Maintain a `lib/shared/` directory at the same level as `features/` and `data/`.
-- Use this directory for reusable components, widgets, utilities, and other resources shared across multiple features.
-- Before creating a new shared component, check whether an existing implementation can be reused.
-- Avoid duplicating components or functionality across features.
-- Keep feature-specific components inside their respective feature directories.
-- Shared components must remain independent of specific features whenever possible.
-- When moving or creating shared components, update all affected imports and references.
-
-## Project Structure Documentation
-
-- Maintain `docs/PROJECT_STRUCTURE.md` as the reference for the project's current directory and file organization.
-- Document the purpose and responsibilities of the main directories and relevant subdirectories.
-- Keep the document synchronized with the actual project structure.
-- Update it whenever directories, modules, or significant files are created, removed, moved, or reorganized.
-- Consult this document when deciding where new files or components should be placed.
-- Keep the documentation concise and remove outdated references.
-
-## Documentation Consistency
-
-- Keep `README.md`, `docs/TECHNICAL_REQUIREMENTS.md`, and `docs/PROJECT_STRUCTURE.md` synchronized with the actual implementation.
-- Before finishing a task, review whether any of these documents need updates.
-- Update only the documents affected by the changes.
-- Never leave documentation describing outdated dependencies, project structures, setup instructions, or functionality.
-- Avoid duplicating the same information across multiple documents. Each document must have a clearly defined responsibility.
-
-## Theme Guidelines Reference
-
-- Refer to `docs/THEME_GUIDELINES.md` as the single source of truth for semantic color usage throughout the application.
-- Consult this document whenever creating, modifying, or reviewing UI components involving colors.
-- Follow its semantic color usage guidelines consistently across all features.
+- `README.md`: Main project documentation, covering its purpose, features, setup, installation, and usage.
+- `docs/TECHNICAL_REQUIREMENTS.md`: Technical inventory of dependencies, versions, SDKs, development tools, and environment requirements.
+- `docs/PROJECT_STRUCTURE.md`: Reference for the project's directory organization, modules, and their responsibilities.
+- `docs/THEME_GUIDELINES.md`: Guidelines defining how existing semantic theme variables should be applied to different UI elements and interaction states.
 
 
 
