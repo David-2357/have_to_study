@@ -592,6 +592,45 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
               const SizedBox(height: 24),
 
+              // Sección: Gestión Académica y Fin de Curso
+              _buildSectionHeader(Icons.school_rounded, 'Gestión Académica y Fin de Curso', const Color(0xFF4F46E5)),
+              const SizedBox(height: 12),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEEF2FF),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.fact_check_rounded, color: Color(0xFF4F46E5), size: 22),
+                      ),
+                      title: const Text(
+                        'Cierre de Fin de Curso',
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+                      ),
+                      subtitle: const Text(
+                        'Revisa y clasifica tus asignaturas para determinar cuáles continúan el próximo ciclo y cuáles has aprobado o finalizado.',
+                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.textSecondary),
+                      onTap: () => context.push('/course-closure'),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
               // Sección: Copias de Seguridad y Almacenamiento
               _buildSectionHeader(Icons.backup_rounded, 'Copias de Seguridad y Almacenamiento', const Color(0xFF0F766E)),
               const SizedBox(height: 12),

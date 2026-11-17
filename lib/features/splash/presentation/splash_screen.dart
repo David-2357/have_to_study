@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/services/backup_service.dart';
+import '../../../core/providers.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   final String? nextRoute;
@@ -64,6 +65,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (hasCompleted) {
       // Comprobar y realizar copia automática si corresponde
       BackupService.checkAndPerformAutoBackup(ref);
+
+      // Comprobar si hay asignaturas activas cuya fecha de finalización ya expiró
+      final subjects = ref.read(subjectsProvider);
+      final now = DateTime.now();
+      final hasExpiredSubjects = subjects.any((s) =>
+          !s.isArchived &&
+          !s.isPassed &&
+          s.endDate != null &&
+          now.isAfter(s.endDate!));
+
+      if (hasExpiredSubjects) {
+        if (!mounted) return;
+        context.go('/course-closure?onlyExpired=true');
+        return;
+      }
     }
 
     if (!mounted) return;

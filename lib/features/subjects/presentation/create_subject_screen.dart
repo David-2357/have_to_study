@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/providers.dart';
+import '../../../shared/utils/time_utils.dart';
 
 class CreateSubjectScreen extends ConsumerStatefulWidget {
   final String? subjectId;
@@ -24,21 +25,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
   bool _isEditing = false;
 
   static DateTime _calculateDefaultEndDate({required bool isAnnual}) {
-    final now = DateTime.now();
-    if (isAnnual) {
-      final targetYear = now.month > 6 ? now.year + 1 : now.year;
-      return DateTime(targetYear, 6, 30);
-    } else {
-      if (now.month >= 9) {
-        return DateTime(now.year + 1, 1, 31);
-      } else if (now.month == 1) {
-        return DateTime(now.year, 1, 31);
-      } else if (now.month >= 2 && now.month <= 6) {
-        return DateTime(now.year, 6, 30);
-      } else {
-        return DateTime(now.year + 1, 1, 31);
-      }
-    }
+    return TimeUtils.calculateDefaultSubjectEndDate(isAnnual: isAnnual);
   }
 
   static String _getMonthName(int month) {

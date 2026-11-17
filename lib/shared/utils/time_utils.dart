@@ -50,4 +50,43 @@ class TimeUtils {
     final formatter = DateFormat("EEEE, d 'de' MMMM", 'es');
     return formatter.format(date);
   }
+
+  static DateTime calculateDefaultSubjectEndDate({
+    required bool isAnnual,
+    DateTime? fromDate,
+  }) {
+    final base = fromDate ?? DateTime.now();
+    if (isAnnual) {
+      final targetYear = (base.month >= 7) ? base.year + 1 : base.year;
+      return DateTime(targetYear, 6, 30);
+    } else {
+      if (base.month >= 9) {
+        return DateTime(base.year + 1, 1, 31);
+      } else if (base.month == 1) {
+        return DateTime(base.year, 1, 31);
+      } else if (base.month >= 2 && base.month <= 6) {
+        return DateTime(base.year, 6, 30);
+      } else {
+        return DateTime(base.year + 1, 1, 31);
+      }
+    }
+  }
+
+  static DateTime calculateNextSubjectCycleDate({
+    required bool isAnnual,
+    DateTime? previousEndDate,
+  }) {
+    final base = (previousEndDate != null && previousEndDate.isAfter(DateTime.now()))
+        ? previousEndDate
+        : DateTime.now();
+    if (isAnnual) {
+      return DateTime(base.year + 1, 6, 30);
+    } else {
+      if (base.month <= 3) {
+        return DateTime(base.year, 6, 30);
+      } else {
+        return DateTime(base.year + 1, 1, 31);
+      }
+    }
+  }
 }

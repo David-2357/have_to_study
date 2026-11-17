@@ -6,6 +6,7 @@ import '../features/pomodoro/presentation/active_session_screen.dart';
 import '../features/subjects/presentation/studies_screen.dart';
 import '../features/subjects/presentation/create_subject_screen.dart';
 import '../features/subjects/presentation/subject_detail_screen.dart';
+import '../features/subjects/presentation/course_closure_screen.dart';
 import '../features/calendar/presentation/calendar_screen.dart';
 import '../features/statistics/presentation/statistics_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
@@ -116,6 +117,14 @@ GoRouter createAppRouter({String initialLocation = '/splash'}) {
         path: '/settings',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/course-closure',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final onlyExpired = state.uri.queryParameters['onlyExpired'] == 'true';
+          return CourseClosureScreen(onlyExpired: onlyExpired);
+        },
       ),
     ],
   );

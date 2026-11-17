@@ -86,6 +86,14 @@ class SubjectsNotifier extends StateNotifier<List<SubjectModel>> {
     await _dao.updateSubject(updated);
   }
 
+  Future<void> updateSubjects(List<SubjectModel> updatedList) async {
+    final map = {for (final s in updatedList) s.id: s};
+    state = state.map((s) => map[s.id] ?? s).toList();
+    for (final s in updatedList) {
+      await _dao.updateSubject(s);
+    }
+  }
+
   Future<void> toggleArchive(String id) async {
     state = state.map((s) {
       if (s.id == id) {
