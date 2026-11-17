@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../core/providers.dart';
 import '../../../core/services/backup_service.dart';
 import '../../../core/services/audio_feedback_service.dart';
@@ -19,6 +20,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  AppColorTheme get colors => context.colors;
   bool _autoBackupEnabled = true;
   int _autoBackupDays = 20;
   DateTime? _lastAutoBackupDate;
@@ -221,11 +223,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         leading: TextButton.icon(
           onPressed: () => context.pop(),
@@ -236,7 +239,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         title: Text('Ajustes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
         centerTitle: true,
         actions: [
-          Icon(Icons.settings_outlined, color: AppColors.textPrimary),
+          Icon(Icons.settings_outlined, color: colors.textPrimary),
           SizedBox(width: 16),
         ],
       ),
@@ -318,9 +321,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -330,12 +333,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       children: [
                         Text(
                           'Meta diaria de estudio',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: colors.textPrimary),
                         ),
                         SizedBox(height: 2),
                         Text(
                           'Objetivo de horas de estudio para\nestadísticas y ritmo semanal',
-                          style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                          style: TextStyle(fontSize: 11, color: colors.textSecondary),
                         ),
                       ],
                     ),
@@ -364,9 +367,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   children: [
@@ -466,9 +469,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -478,7 +481,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       children: [
                         Text(
                           'Alarma de finalización',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: colors.textPrimary),
                         ),
                         InkWell(
                           onTap: () {
@@ -519,8 +522,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 AudioFeedbackService().playTone(sound);
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: isSelected ? AppColors.primary : AppColors.surfaceVariant,
-                                foregroundColor: isSelected ? Colors.white : AppColors.textPrimary,
+                                backgroundColor: isSelected ? AppColors.primary : colors.surfaceVariant,
+                                foregroundColor: isSelected ? Colors.white : colors.textPrimary,
                                 padding: const EdgeInsets.symmetric(vertical: 10),
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -541,12 +544,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           children: [
                             Text(
                               'Aviso de asignatura desatendida',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: colors.textPrimary),
                             ),
                             SizedBox(height: 2),
                             Text(
                               'Alerta si pasan días sin sesiones en una materia activa',
-                              style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                              style: TextStyle(fontSize: 11, color: colors.textSecondary),
                             ),
                           ],
                         ),
@@ -597,9 +600,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: 12),
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   children: [
@@ -618,11 +621,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         'Cierre de Fin de Curso',
                         style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
                       ),
-                      subtitle: const Text(
+                      subtitle: Text(
                         'Revisa y clasifica tus asignaturas para determinar cuáles continúan el próximo ciclo y cuáles has aprobado o finalizado.',
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                        style: TextStyle(fontSize: 11, color: colors.textSecondary),
                       ),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.textSecondary),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: colors.textSecondary),
                       onTap: () => context.push('/course-closure'),
                     ),
                   ],
@@ -636,9 +639,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: 12),
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   children: [
@@ -673,7 +676,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                         _autoBackupEnabled
                                             ? 'Cada $_autoBackupDays días se creará una copia interna'
                                             : 'Copia automática desactivada',
-                                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                                        style: TextStyle(fontSize: 11, color: colors.textSecondary),
                                       ),
                                     ],
                                   ),
@@ -695,7 +698,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               decoration: BoxDecoration(
-                                color: AppColors.surfaceVariant,
+                                color: colors.surfaceVariant,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -712,7 +715,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                         _lastAutoBackupDate != null
                                             ? 'Última: ${DateFormat('dd/MM/yyyy HH:mm').format(_lastAutoBackupDate!)}'
                                             : 'Pendiente de realizar la primera copia',
-                                        style: TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                                        style: TextStyle(fontSize: 10, color: colors.textSecondary),
                                       ),
                                     ],
                                   ),
@@ -758,9 +761,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _localBackupFile != null
                             ? 'Instantánea guardada en el dispositivo'
                             : 'Crea un punto de respaldo interno en tu teléfono',
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                        style: TextStyle(fontSize: 11, color: colors.textSecondary),
                       ),
-                      trailing: Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+                      trailing: Icon(Icons.chevron_right_rounded, color: colors.textSecondary),
                       onTap: _handleCreateLocalBackup,
                     ),
 
@@ -777,8 +780,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         child: const Icon(Icons.settings_backup_restore_rounded, color: Color(0xFF4F46E5), size: 20),
                       ),
                       title: const Text('Restaurar copia de seguridad local', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                      subtitle: Text('Restaura la última instantánea guardada en la app', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-                      trailing: Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+                      subtitle: Text('Restaura la última instantánea guardada en la app', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
+                      trailing: Icon(Icons.chevron_right_rounded, color: colors.textSecondary),
                       onTap: _handleRestoreLocalBackup,
                     ),
 
@@ -795,8 +798,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         child: const Icon(Icons.file_download_outlined, color: Color(0xFF9333EA), size: 20),
                       ),
                       title: const Text('Exportar como archivo JSON (.json)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                      subtitle: Text('Exporta asignaturas, tareas y sesiones en formato JSON transferible', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-                      trailing: Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+                      subtitle: Text('Exporta asignaturas, tareas y sesiones en formato JSON transferible', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
+                      trailing: Icon(Icons.chevron_right_rounded, color: colors.textSecondary),
                       onTap: _handleExportJson,
                     ),
 
@@ -813,8 +816,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         child: const Icon(Icons.file_upload_outlined, color: Color(0xFFD97706), size: 20),
                       ),
                       title: const Text('Importar desde archivo JSON (.json)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                      subtitle: Text('Selecciona un archivo .json desde tu explorador para cargar datos', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-                      trailing: Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+                      subtitle: Text('Selecciona un archivo .json desde tu explorador para cargar datos', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
+                      trailing: Icon(Icons.chevron_right_rounded, color: colors.textSecondary),
                       onTap: _handleImportJson,
                     ),
 
@@ -834,7 +837,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         'Borrar todos los datos locales',
                         style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFFDC2626)),
                       ),
-                      subtitle: Text('Acción irreversible en el almacenamiento interno', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                      subtitle: Text('Acción irreversible en el almacenamiento interno', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
                       trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFDC2626)),
                       onTap: () => _confirmResetAll(context, ref),
                     ),
@@ -845,14 +848,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: 24),
 
               // Sección: Preferencias de Sistema
-              _buildSectionHeader(Icons.tune_rounded, 'Preferencias de Sistema', AppColors.textPrimary),
+              _buildSectionHeader(Icons.tune_rounded, 'Preferencias de Sistema', colors.textPrimary),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   children: [
@@ -864,13 +867,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           children: [
                             Text('Aspecto visual', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800)),
                             SizedBox(height: 2),
-                            Text('Diseñado con calma y alto contraste', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                            Text('Diseñado con calma y alto contraste', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
                           ],
                         ),
                         Container(
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
-                            color: AppColors.surfaceVariant,
+                            color: colors.surfaceVariant,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -889,7 +892,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                      color: isSelected ? Colors.white : AppColors.textSecondary,
+                                      color: isSelected ? Colors.white : colors.textSecondary,
                                     ),
                                   ),
                                 ),
@@ -908,7 +911,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           children: [
                             Text('Formato de hora', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800)),
                             SizedBox(height: 2),
-                            Text('Estilo de registro horario', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                            Text('Estilo de registro horario', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
                           ],
                         ),
                         Container(
@@ -992,7 +995,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Text(
                         'Diseñado para estudiantes autónomos que priorizan concentración profunda, sosiego cognitivo y soberanía total sobre sus datos.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary, height: 1.3),
+                        style: TextStyle(fontSize: 11, color: colors.textSecondary, height: 1.3),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -1028,7 +1031,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w900,
-            color: AppColors.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
       ],
@@ -1085,9 +1088,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.textPrimary)),
+              Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: colors.textPrimary)),
               const SizedBox(height: 2),
-              Text(subtitle, style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+              Text(subtitle, style: TextStyle(fontSize: 11, color: colors.textSecondary)),
             ],
           ),
         ),
@@ -1109,9 +1112,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.textPrimary)),
+              Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: colors.textPrimary)),
               const SizedBox(height: 2),
-              Text(subtitle, style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+              Text(subtitle, style: TextStyle(fontSize: 11, color: colors.textSecondary)),
             ],
           ),
         ),
@@ -1139,7 +1142,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           style: TextStyle(
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? const Color(0xFF4F46E5) : AppColors.textSecondary,
+            color: isSelected ? const Color(0xFF4F46E5) : colors.textSecondary,
           ),
         ),
       ),

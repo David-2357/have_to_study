@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_color_theme.dart';
 import '../../core/providers.dart';
 import 'student_avatar.dart';
 
@@ -18,6 +19,7 @@ class AppHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
+    final colors = context.colors;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -58,7 +60,7 @@ class AppHeader extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                       letterSpacing: -0.3,
                     ),
                   ),
@@ -67,7 +69,7 @@ class AppHeader extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                       letterSpacing: 0.8,
                     ),
                   ),
@@ -81,7 +83,7 @@ class AppHeader extends ConsumerWidget {
             Row(
               children: [
                 IconButton(
-                  icon: Icon(Icons.settings_outlined, color: AppColors.textPrimary),
+                  icon: Icon(Icons.settings_outlined, color: colors.textPrimary),
                   onPressed: () => context.push('/settings'),
                 ),
                 const SizedBox(width: 4),
@@ -90,7 +92,7 @@ class AppHeader extends ConsumerWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.surface, width: 2),
+                      border: Border.all(color: colors.surface, width: 2),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.08),

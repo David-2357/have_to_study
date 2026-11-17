@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/widgets/app_header.dart';
 import '../../../core/providers.dart';
@@ -18,6 +19,7 @@ class StudiesScreen extends ConsumerStatefulWidget {
 }
 
 class _StudiesScreenState extends ConsumerState<StudiesScreen> {
+  AppColorTheme get colors => context.colors;
   int _selectedTab = 0; // 0: Asignaturas, 1: Pendientes
   String _searchQuery = '';
   int _subjectFilter = 0; // 0: Todas, 1: Con entregas, 2: Archivadas
@@ -30,13 +32,14 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final subjects = ref.watch(subjectsProvider);
     final events = ref.watch(academicEventsProvider);
 
     final pendingEvents = events.where((e) => !e.isCompleted).toList();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 32),
@@ -61,7 +64,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w900,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                             letterSpacing: -0.5,
                           ),
                         ),
@@ -72,7 +75,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                               : '${pendingEvents.length} compromisos próximos esta semana',
                           style: TextStyle(
                             fontSize: 13,
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -131,7 +134,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                             duration: const Duration(milliseconds: 200),
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: _selectedTab == 0 ? AppColors.surface : Colors.transparent,
+                              color: _selectedTab == 0 ? colors.surface : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: _selectedTab == 0
                                   ? [
@@ -149,7 +152,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                 Icon(
                                   Icons.menu_book_rounded,
                                   size: 16,
-                                  color: _selectedTab == 0 ? AppColors.textPrimary : AppColors.textSecondary,
+                                  color: _selectedTab == 0 ? colors.textPrimary : colors.textSecondary,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
@@ -157,7 +160,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: _selectedTab == 0 ? FontWeight.bold : FontWeight.w600,
-                                    color: _selectedTab == 0 ? AppColors.textPrimary : AppColors.textSecondary,
+                                    color: _selectedTab == 0 ? colors.textPrimary : colors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -172,7 +175,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                             duration: const Duration(milliseconds: 200),
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             decoration: BoxDecoration(
-                              color: _selectedTab == 1 ? AppColors.surface : Colors.transparent,
+                              color: _selectedTab == 1 ? colors.surface : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: _selectedTab == 1
                                   ? [
@@ -190,7 +193,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                 Icon(
                                   Icons.assignment_outlined,
                                   size: 16,
-                                  color: _selectedTab == 1 ? AppColors.textPrimary : AppColors.textSecondary,
+                                  color: _selectedTab == 1 ? colors.textPrimary : colors.textSecondary,
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
@@ -198,7 +201,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: _selectedTab == 1 ? FontWeight.bold : FontWeight.w600,
-                                    color: _selectedTab == 1 ? AppColors.textPrimary : AppColors.textSecondary,
+                                    color: _selectedTab == 1 ? colors.textPrimary : colors.textSecondary,
                                   ),
                                 ),
                                 const SizedBox(width: 6),
@@ -213,7 +216,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
-                                      color: _selectedTab == 1 ? AppColors.primary : AppColors.textSecondary,
+                                      color: _selectedTab == 1 ? AppColors.primary : colors.textSecondary,
                                     ),
                                   ),
                                 ),
@@ -238,17 +241,17 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                     hintText: _selectedTab == 0
                         ? 'Buscar por nombre o código...'
                         : 'Buscar examen, proyecto o taller...',
-                    prefixIcon: Icon(Icons.search_rounded, color: AppColors.textMuted, size: 20),
-                    fillColor: AppColors.surface,
+                    prefixIcon: Icon(Icons.search_rounded, color: colors.textMuted, size: 20),
+                    fillColor: colors.surface,
                     filled: true,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: AppColors.border),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: AppColors.border),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                   ),
                 ),
@@ -300,14 +303,14 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
               selected: isSelected,
               showCheckmark: false,
               selectedColor: AppColors.primary,
-              backgroundColor: AppColors.surface,
+              backgroundColor: colors.surface,
               labelStyle: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? Colors.white : AppColors.textPrimary,
+                color: isSelected ? Colors.white : colors.textPrimary,
               ),
               side: BorderSide(
-                color: isSelected ? AppColors.primary : AppColors.border,
+                color: isSelected ? AppColors.primary : colors.border,
               ),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               onSelected: (_) => setState(() => _subjectFilter = chip['index'] as int),
@@ -344,14 +347,14 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
               selected: isSelected,
               showCheckmark: false,
               selectedColor: AppColors.primary,
-              backgroundColor: AppColors.surface,
+              backgroundColor: colors.surface,
               labelStyle: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? Colors.white : AppColors.textPrimary,
+                color: isSelected ? Colors.white : colors.textPrimary,
               ),
               side: BorderSide(
-                color: isSelected ? AppColors.primary : AppColors.border,
+                color: isSelected ? AppColors.primary : colors.border,
               ),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               onSelected: (_) => setState(() => _eventFilter = chip['index'] as int),
@@ -393,9 +396,9 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
           child: Container(
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: colors.border),
             ),
             child: Column(
               children: [
@@ -413,7 +416,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -422,7 +425,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                     height: 1.4,
                   ),
                 ),
@@ -449,7 +452,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
         child: Center(
           child: Text(
             'No hay asignaturas en este filtro',
-            style: TextStyle(color: AppColors.textSecondary),
+            style: TextStyle(color: colors.textSecondary),
           ),
         ),
       );
@@ -474,9 +477,9 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
               borderRadius: BorderRadius.circular(20),
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.02),
@@ -519,7 +522,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w800,
-                                      color: AppColors.textPrimary,
+                                      color: colors.textPrimary,
                                     ),
                                   ),
                                   if (subject.code.isNotEmpty) ...[
@@ -529,7 +532,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w600,
-                                        color: AppColors.textSecondary,
+                                        color: colors.textSecondary,
                                       ),
                                     ),
                                   ],
@@ -562,7 +565,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            Icon(Icons.history_rounded, size: 14, color: AppColors.textMuted),
+                            Icon(Icons.history_rounded, size: 14, color: colors.textMuted),
                             const SizedBox(width: 4),
                             Text(
                               subject.lastStudiedAt != null
@@ -570,7 +573,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                   : 'Sin sesiones aún',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           ],
@@ -680,7 +683,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         'No hay asignaturas inactivas',
-                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        style: TextStyle(fontSize: 12, color: colors.textSecondary),
                       ),
                     )
                   else
@@ -689,9 +692,9 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                         margin: const EdgeInsets.only(top: 8),
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                         decoration: BoxDecoration(
-                          color: AppColors.surface,
+                          color: colors.surface,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.border),
+                          border: Border.all(color: colors.border),
                         ),
                         child: Row(
                           children: [
@@ -714,12 +717,12 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w700,
-                                      color: AppColors.textPrimary,
+                                      color: colors.textPrimary,
                                     ),
                                   ),
                                   Text(
                                     subject.code.isNotEmpty ? subject.code : 'Archivada',
-                                    style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                                    style: TextStyle(fontSize: 11, color: colors.textSecondary),
                                   ),
                                 ],
                               ),
@@ -757,7 +760,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         'No hay asignaturas marcadas como aprobadas al terminar el curso',
-                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        style: TextStyle(fontSize: 12, color: colors.textSecondary),
                       ),
                     )
                   else
@@ -768,9 +771,9 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                           margin: const EdgeInsets.only(top: 8),
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           decoration: BoxDecoration(
-                            color: AppColors.surface,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppColors.border),
+                            border: Border.all(color: colors.border),
                           ),
                           child: Row(
                             children: [
@@ -793,12 +796,12 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,
-                                        color: AppColors.textPrimary,
+                                        color: colors.textPrimary,
                                       ),
                                     ),
                                     Text(
                                       '${subject.completedPomodoros} pomodoros dedicados',
-                                      style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                                      style: TextStyle(fontSize: 11, color: colors.textSecondary),
                                     ),
                                   ],
                                 ),
@@ -866,7 +869,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -881,14 +884,14 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                     ),
                   ),
                 ),
                 const Spacer(),
                 Icon(
                   isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
-                  color: AppColors.textSecondary,
+                  color: colors.textSecondary,
                 ),
               ],
             ),
@@ -931,7 +934,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
         child: Center(
           child: Text(
             'No hay pendientes en esta categoría',
-            style: TextStyle(color: AppColors.textSecondary),
+            style: TextStyle(color: colors.textSecondary),
           ),
         ),
       );

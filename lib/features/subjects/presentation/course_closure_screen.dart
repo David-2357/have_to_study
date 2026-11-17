@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../core/providers.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../domain/subject_model.dart';
@@ -26,6 +27,7 @@ class CourseClosureScreen extends ConsumerStatefulWidget {
 }
 
 class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
+  AppColorTheme get colors => context.colors;
   // Decisiones por asignatura: { subjectId: SubjectClosureDecision }
   final Map<String, SubjectClosureDecision> _decisions = {};
   // Fechas de prórroga para las que continúan: { subjectId: DateTime }
@@ -184,7 +186,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                   child: ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     itemCount: targetSubjects.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final subject = targetSubjects[index];
                       return _buildSubjectClosureCard(context, subject, now);
@@ -263,10 +265,10 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isExpired ? const Color(0xFFFCD34D) : AppColors.border,
+          color: isExpired ? const Color(0xFFFCD34D) : colors.border,
           width: isExpired ? 1.5 : 1,
         ),
         boxShadow: [
@@ -302,7 +304,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -313,7 +315,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: AppColors.surfaceVariant,
+                            color: colors.surfaceVariant,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -321,7 +323,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ),
@@ -330,7 +332,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                           Icon(
                             isExpired ? Icons.warning_amber_rounded : Icons.event_rounded,
                             size: 13,
-                            color: isExpired ? const Color(0xFFD97706) : AppColors.textSecondary,
+                            color: isExpired ? const Color(0xFFD97706) : colors.textSecondary,
                           ),
                           const SizedBox(width: 3),
                           Text(
@@ -340,7 +342,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: isExpired ? FontWeight.bold : FontWeight.normal,
-                              color: isExpired ? const Color(0xFFD97706) : AppColors.textSecondary,
+                              color: isExpired ? const Color(0xFFD97706) : colors.textSecondary,
                             ),
                           ),
                         ],
@@ -453,7 +455,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: selected ? activeColor : AppColors.surfaceVariant,
+            color: selected ? activeColor : colors.surfaceVariant,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: selected ? activeColor : Colors.transparent,
@@ -466,7 +468,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
               Icon(
                 icon,
                 size: 15,
-                color: selected ? Colors.white : AppColors.textSecondary,
+                color: selected ? Colors.white : colors.textSecondary,
               ),
               const SizedBox(width: 5),
               Text(
@@ -474,7 +476,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: selected ? Colors.white : AppColors.textPrimary,
+                  color: selected ? Colors.white : colors.textPrimary,
                 ),
               ),
             ],
@@ -488,8 +490,8 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border)),
+        color: colors.surface,
+        border: Border(top: BorderSide(color: colors.border)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -551,7 +553,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -562,7 +564,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
             const SizedBox(height: 24),

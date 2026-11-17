@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import '../core/theme/app_colors.dart';
+import '../core/theme/app_color_theme.dart';
 
 class MainNavigationScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -14,10 +14,11 @@ class MainNavigationScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = context.colors;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColors.surface,
+        systemNavigationBarColor: colors.surface,
         systemNavigationBarDividerColor: Colors.transparent,
         systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
       ),
@@ -25,9 +26,9 @@ class MainNavigationScaffold extends StatelessWidget {
         body: navigationShell,
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: colors.surface,
             border: Border(
-              top: BorderSide(color: AppColors.border.withValues(alpha: 0.8), width: 1),
+              top: BorderSide(color: colors.border.withValues(alpha: 0.8), width: 1),
             ),
             boxShadow: [
               BoxShadow(

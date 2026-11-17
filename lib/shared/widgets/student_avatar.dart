@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../features/profile/domain/profile_model.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_color_theme.dart';
 
 class AvatarPreset {
   final String key;
@@ -126,6 +127,7 @@ class StudentAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final avatarKey = profile.avatarPath;
     final radius = borderRadius ?? (size / 2);
+    final colors = context.colors;
 
     Widget avatarContent;
 
@@ -199,7 +201,7 @@ class StudentAvatar extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(

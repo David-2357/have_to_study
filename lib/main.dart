@@ -5,7 +5,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import 'core/theme/app_theme.dart';
-import 'core/theme/app_colors.dart';
+import 'core/theme/app_color_theme.dart';
 import 'core/providers.dart';
 import 'data/database/app_database.dart';
 import 'data/database/daos/subjects_dao.dart';
@@ -100,10 +100,10 @@ class HaveToStudyApp extends ConsumerWidget {
       routerConfig: router,
       builder: (context, child) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        AppColors.updateTheme(isDark: isDark);
+        final colors = context.colors;
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
-            systemNavigationBarColor: AppColors.surface,
+            systemNavigationBarColor: colors.surface,
             systemNavigationBarDividerColor: Colors.transparent,
             systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
             statusBarColor: Colors.transparent,

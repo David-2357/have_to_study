@@ -1,51 +1,53 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'app_color_theme.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: const Color(0xFFF4F7FC),
       primaryColor: AppColors.primary,
-      colorScheme: ColorScheme.light(
+      extensions: const [AppColorTheme.light],
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         onPrimary: Colors.white,
         secondary: AppColors.primary,
-        surface: AppColors.surface,
-        onSurface: AppColors.textPrimary,
-        error: const Color(0xFFE74C3C),
+        surface: Colors.white,
+        onSurface: Color(0xFF1E2638),
+        error: Color(0xFFE74C3C),
       ),
       fontFamily: 'Roboto',
-      appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.background,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFFF4F7FC),
         elevation: 0,
         centerTitle: false,
-        iconTheme: IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: Color(0xFF1E2638)),
         titleTextStyle: TextStyle(
-          color: AppColors.textPrimary,
+          color: Color(0xFF1E2638),
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
       ),
       cardTheme: CardThemeData(
-        color: AppColors.surface,
+        color: Colors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
-          side: BorderSide(color: AppColors.border, width: 1),
+          side: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
         ),
         margin: EdgeInsets.zero,
       ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.white,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textSecondary,
+        unselectedItemColor: Color(0xFF6B7280),
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         elevation: 8,
-        selectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-        unselectedLabelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+        selectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        unselectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -92,7 +94,7 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
+        hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
       ),
     );
   }
@@ -103,6 +105,7 @@ class AppTheme {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: const Color(0xFF0F172A),
       primaryColor: AppColors.primary,
+      extensions: const [AppColorTheme.dark],
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primary,
         onPrimary: Colors.white,

@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_color_theme.dart';
 import '../../../../shared/utils/time_utils.dart';
 import '../../../../core/providers.dart';
 import '../../domain/pomodoro_models.dart';
 
 void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
+  final colors = context.colors;
   final subjects = ref.read(subjectsProvider);
   final events = ref.read(academicEventsProvider);
   final pomodoro = ref.read(pomodoroProvider);
@@ -16,7 +18,7 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.surface,
+    backgroundColor: colors.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -64,14 +66,14 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
                     ),
                     IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.close_rounded, color: AppColors.textSecondary),
+                      icon: Icon(Icons.close_rounded, color: colors.textSecondary),
                     ),
                   ],
                 ),
@@ -84,7 +86,7 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                     fontSize: 12,
                     color: pomodoro.phase == PomodoroPhase.focus && !pomodoro.isIdle
                         ? AppColors.primary
-                        : AppColors.textSecondary,
+                        : colors.textSecondary,
                     fontWeight: pomodoro.phase == PomodoroPhase.focus && !pomodoro.isIdle
                         ? FontWeight.w600
                         : FontWeight.normal,
@@ -97,11 +99,11 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.school_outlined, size: 48, color: AppColors.textMuted),
+                          Icon(Icons.school_outlined, size: 48, color: colors.textMuted),
                           const SizedBox(height: 12),
                           Text(
                             'No tienes asignaturas creadas',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: colors.textPrimary),
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
@@ -135,10 +137,10 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
 
                         return Container(
                           decoration: BoxDecoration(
-                            color: AppColors.surface,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(18),
                             border: Border.all(
-                              color: isSubjectActive ? subject.color : AppColors.border,
+                              color: isSubjectActive ? subject.color : colors.border,
                               width: isSubjectActive ? 1.5 : 1.0,
                             ),
                             boxShadow: [
@@ -164,13 +166,13 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                               ),
                               title: Text(
                                 subject.name,
-                                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.textPrimary),
+                                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: colors.textPrimary),
                               ),
                               subtitle: Text(
                                 relatedEvents.isNotEmpty
                                     ? '${relatedEvents.length} tareas pendientes'
                                     : 'Sin compromisos pendientes',
-                                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                                style: TextStyle(fontSize: 12, color: colors.textSecondary),
                               ),
                               children: [
                                 const Divider(height: 1, indent: 16, endIndent: 16),
@@ -188,7 +190,7 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                                     child: Icon(
                                       Icons.menu_book_rounded,
                                       size: 16,
-                                      color: isSubjectActive && activeEventId == null ? subject.color : AppColors.textSecondary,
+                                      color: isSubjectActive && activeEventId == null ? subject.color : colors.textSecondary,
                                     ),
                                   ),
                                   title: Text(
@@ -196,12 +198,12 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: isSubjectActive && activeEventId == null ? FontWeight.bold : FontWeight.w600,
-                                      color: isSubjectActive && activeEventId == null ? subject.color : AppColors.textPrimary,
+                                      color: isSubjectActive && activeEventId == null ? subject.color : colors.textPrimary,
                                     ),
                                   ),
                                   subtitle: Text(
                                     'Estudio general sin vincular a una tarea',
-                                    style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                                    style: TextStyle(fontSize: 11, color: colors.textSecondary),
                                   ),
                                   trailing: isSubjectActive && activeEventId == null
                                       ? Icon(Icons.check_circle_rounded, color: subject.color, size: 20)
@@ -234,7 +236,7 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w800,
-                                          color: AppColors.textSecondary,
+                                          color: colors.textSecondary,
                                           letterSpacing: 0.5,
                                         ),
                                       ),
@@ -264,12 +266,12 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: isThisEventActive ? FontWeight.bold : FontWeight.w600,
-                                          color: isThisEventActive ? AppColors.primary : AppColors.textPrimary,
+                                          color: isThisEventActive ? AppColors.primary : colors.textPrimary,
                                         ),
                                       ),
                                       subtitle: Text(
                                         'Avance: ${event.completedPomodoros}/${event.targetPomodoros} bloques · ${TimeUtils.formatEventDate(event.dueAt)}',
-                                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                                        style: TextStyle(fontSize: 11, color: colors.textSecondary),
                                       ),
                                       trailing: isThisEventActive
                                           ? const Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 20)

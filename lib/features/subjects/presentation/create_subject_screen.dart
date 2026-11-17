@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../core/providers.dart';
 import '../../../shared/utils/time_utils.dart';
 
@@ -15,6 +16,7 @@ class CreateSubjectScreen extends ConsumerStatefulWidget {
 }
 
 class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
+  AppColorTheme get colors => context.colors;
   late final TextEditingController _nameController;
   late final TextEditingController _codeController;
   String _selectedIcon = 'sigma';
@@ -111,8 +113,9 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         leading: TextButton.icon(
           onPressed: () => context.pop(),
@@ -136,9 +139,9 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Row(
                   children: [
@@ -186,7 +189,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w900,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -194,7 +197,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                             '$_weeklySessions pomodoros/semana · ${_isAnnual ? 'Anual' : 'Semestral'}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -225,9 +228,9 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,7 +241,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                         SizedBox(width: 8),
                         Text(
                           'Identidad académica',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: colors.textPrimary),
                         ),
                       ],
                     ),
@@ -246,7 +249,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
 
                     Text(
                       'NOMBRE DE LA ASIGNATURA',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
                     ),
                     const SizedBox(height: 6),
                     TextField(
@@ -262,7 +265,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                       children: [
                         Text(
                           'CÓDIGO (OPCIONAL)',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
                         ),
                         const SizedBox(height: 6),
                         TextField(
@@ -277,7 +280,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
 
                     Text(
                       'ICONO TEMÁTICO',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
                     ),
                     const SizedBox(height: 8),
                     Container(
@@ -313,7 +316,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                               ),
                               child: Icon(
                                 item['icon'] as IconData,
-                                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                                color: isSelected ? AppColors.primary : colors.textSecondary,
                                 size: 22,
                               ),
                             ),
@@ -326,7 +329,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
 
                     Text(
                       'TONO VISUAL DE ENFOQUE',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
                     ),
                     const SizedBox(height: 10),
                     Row(
@@ -366,9 +369,9 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,7 +385,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                             SizedBox(width: 8),
                             Text(
                               'Ritmo Pomodoro & Metas',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: colors.textPrimary),
                             ),
                           ],
                         ),
@@ -416,21 +419,21 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                             children: [
                               Text(
                                 'Meta semanal',
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: colors.textPrimary),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 '~ ${( _weeklySessions * 25 ) ~/ 60}h ${( _weeklySessions * 25 ) % 60}m de concentración',
-                                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                                style: TextStyle(fontSize: 12, color: colors.textSecondary),
                               ),
                             ],
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppColors.surface,
+                              color: colors.surface,
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppColors.border),
+                              border: Border.all(color: colors.border),
                             ),
                             child: Row(
                               children: [
@@ -456,7 +459,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                                     children: [
                                       TextSpan(
                                         text: ' ses.',
-                                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.bold),
+                                        style: TextStyle(fontSize: 11, color: colors.textSecondary, fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
@@ -482,7 +485,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                     // TIPO DE ASIGNATURA: Semestral / Anual
                     Text(
                       'TIPO DE ASIGNATURA',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
                     ),
                     const SizedBox(height: 8),
                     Container(
@@ -504,7 +507,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: !_isAnnual ? AppColors.surface : Colors.transparent,
+                                  color: !_isAnnual ? colors.surface : Colors.transparent,
                                   borderRadius: BorderRadius.circular(10),
                                   boxShadow: !_isAnnual
                                       ? [
@@ -522,7 +525,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: !_isAnnual ? FontWeight.bold : FontWeight.w500,
-                                    color: !_isAnnual ? AppColors.primary : AppColors.textSecondary,
+                                    color: !_isAnnual ? AppColors.primary : colors.textSecondary,
                                   ),
                                 ),
                               ),
@@ -539,7 +542,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: _isAnnual ? AppColors.surface : Colors.transparent,
+                                  color: _isAnnual ? colors.surface : Colors.transparent,
                                   borderRadius: BorderRadius.circular(10),
                                   boxShadow: _isAnnual
                                       ? [
@@ -557,7 +560,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: _isAnnual ? FontWeight.bold : FontWeight.w500,
-                                    color: _isAnnual ? AppColors.primary : AppColors.textSecondary,
+                                    color: _isAnnual ? AppColors.primary : colors.textSecondary,
                                   ),
                                 ),
                               ),
@@ -572,7 +575,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                     // FECHA DE FINALIZACIÓN
                     Text(
                       'FECHA DE FINALIZACIÓN',
-                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
                     ),
                     const SizedBox(height: 8),
                     InkWell(
@@ -593,7 +596,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                         decoration: BoxDecoration(
                           color: const Color(0xFFF1F5F9),
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: AppColors.border),
+                          border: Border.all(color: colors.border),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -607,7 +610,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
-                                    color: AppColors.textPrimary,
+                                    color: colors.textPrimary,
                                   ),
                                 ),
                               ],

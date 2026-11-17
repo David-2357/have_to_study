@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../core/providers.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -27,6 +28,7 @@ class _OnboardingSubjectPreset {
 }
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
+  AppColorTheme get colors => context.colors;
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -153,8 +155,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -166,7 +169,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 children: [
                   if (_currentPage > 0)
                     IconButton(
-                      icon: Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+                      icon: Icon(Icons.arrow_back_rounded, color: colors.textPrimary),
                       onPressed: () {
                         _pageController.previousPage(
                           duration: const Duration(milliseconds: 300),
@@ -207,7 +210,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           borderRadius: BorderRadius.circular(4),
                           child: LinearProgressIndicator(
                             value: _currentPage == 0 ? 0.5 : 1.0,
-                            backgroundColor: AppColors.border,
+                            backgroundColor: colors.border,
                             color: AppColors.primary,
                             minHeight: 6,
                           ),
@@ -223,7 +226,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                   ),
@@ -299,7 +302,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
               height: 1.2,
             ),
           ),
@@ -309,7 +312,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
               height: 1.4,
             ),
           ),
@@ -319,9 +322,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: colors.border),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.02),
@@ -350,17 +353,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
                     hintText: 'ej. Alejandro, Lucía, David...',
-                    hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                    hintStyle: TextStyle(color: colors.textMuted, fontSize: 14),
                     prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.primary, size: 20),
                     filled: true,
-                    fillColor: AppColors.surfaceVariant.withValues(alpha: 0.5),
+                    fillColor: colors.surfaceVariant.withValues(alpha: 0.5),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: AppColors.border),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: AppColors.border),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -375,7 +378,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                     letterSpacing: 0.6,
                   ),
                 ),
@@ -385,17 +388,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   textCapitalization: TextCapitalization.words,
                   decoration: InputDecoration(
                     hintText: 'ej. Grado en Informática, Bachillerato...',
-                    hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 14),
-                    prefixIcon: Icon(Icons.school_outlined, color: AppColors.textSecondary, size: 20),
+                    hintStyle: TextStyle(color: colors.textMuted, fontSize: 14),
+                    prefixIcon: Icon(Icons.school_outlined, color: colors.textSecondary, size: 20),
                     filled: true,
-                    fillColor: AppColors.surfaceVariant.withValues(alpha: 0.5),
+                    fillColor: colors.surfaceVariant.withValues(alpha: 0.5),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: AppColors.border),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: AppColors.border),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -450,7 +453,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
               height: 1.2,
             ),
           ),
@@ -459,7 +462,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             'Toca las materias que estés cursando para añadirlas con un toque, o escribe una nueva abajo:',
             style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
               height: 1.4,
             ),
           ),
@@ -477,7 +480,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 labelStyle: TextStyle(
                   fontSize: 13,
                   fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                  color: isSelected ? Colors.white : AppColors.textPrimary,
+                  color: isSelected ? Colors.white : colors.textPrimary,
                 ),
                 backgroundColor: Colors.white,
                 selectedColor: Color(preset.colorValue),
@@ -486,7 +489,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                   side: BorderSide(
-                    color: isSelected ? Color(preset.colorValue) : AppColors.border,
+                    color: isSelected ? Color(preset.colorValue) : colors.border,
                   ),
                 ),
                 onSelected: (_) => _togglePreset(preset),
@@ -500,9 +503,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: colors.border),
             ),
             child: Row(
               children: [
@@ -513,7 +516,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     onSubmitted: (_) => _addCustomSubject(),
                     decoration: InputDecoration(
                       hintText: 'Añadir otra asignatura personalizada...',
-                      hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 13),
+                      hintStyle: TextStyle(color: colors.textMuted, fontSize: 13),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 4),
                     ),
@@ -625,7 +628,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textSecondary,
+                  color: colors.textSecondary,
                 ),
               ),
             ),

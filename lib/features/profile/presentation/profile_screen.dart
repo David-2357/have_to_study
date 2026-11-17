@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../core/providers.dart';
 import '../../../shared/widgets/student_avatar.dart';
 import '../domain/profile_model.dart';
@@ -11,6 +12,7 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
     final profile = ref.watch(profileProvider);
     final subjects = ref.watch(subjectsProvider).where((s) => !s.isArchived).toList();
     final sessions = ref.watch(focusSessionsProvider);
@@ -21,7 +23,7 @@ class ProfileScreen extends ConsumerWidget {
     final totalEvents = events.length;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -32,17 +34,17 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             Text(
               'Have to study',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: colors.textPrimary),
             ),
             Text(
               'PERFIL DE ESTUDIANTE',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.textSecondary, letterSpacing: 0.8),
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: colors.textSecondary, letterSpacing: 0.8),
             ),
           ],
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings_outlined, color: AppColors.textPrimary),
+            icon: Icon(Icons.settings_outlined, color: colors.textPrimary),
             onPressed: () => context.push('/settings'),
           ),
           const SizedBox(width: 8),
@@ -58,9 +60,9 @@ class ProfileScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Row(
                   children: [
@@ -86,7 +88,7 @@ class ProfileScreen extends ConsumerWidget {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w900,
-                                    color: AppColors.textPrimary,
+                                    color: colors.textPrimary,
                                   ),
                                 ),
                                 const SizedBox(width: 6),
@@ -96,7 +98,7 @@ class ProfileScreen extends ConsumerWidget {
                             const SizedBox(height: 2),
                             Text(
                               profile.degreeName,
-                              style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                              style: TextStyle(fontSize: 12, color: colors.textSecondary),
                             ),
                             const SizedBox(height: 6),
                             Row(
@@ -123,7 +125,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.edit_outlined, color: AppColors.textSecondary, size: 20),
+                      icon: Icon(Icons.edit_outlined, color: colors.textSecondary, size: 20),
                       onPressed: () => _showEditProfileDialog(context, ref, profile),
                       tooltip: 'Editar información',
                     ),
@@ -142,7 +144,7 @@ class ProfileScreen extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                   Text(
@@ -150,7 +152,7 @@ class ProfileScreen extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textSecondary.withValues(alpha: 0.8),
+                      color: colors.textSecondary.withValues(alpha: 0.8),
                       letterSpacing: 0.8,
                     ),
                   ),
@@ -163,6 +165,7 @@ class ProfileScreen extends ConsumerWidget {
               Row(
                 children: [
                   _buildStatCard(
+                    colors: colors,
                     title: 'TIEMPO TOTAL',
                     val: '${(totalSeconds ~/ 3600)}h ${(totalSeconds % 3600) ~/ 60}m',
                     sub: '✓ Enfoque concentrado',
@@ -173,6 +176,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(width: 12),
                   _buildStatCard(
+                    colors: colors,
                     title: 'CICLOS FOCUS',
                     val: '${sessions.length}',
                     sub: 'Sesiones realizadas',
@@ -186,6 +190,7 @@ class ProfileScreen extends ConsumerWidget {
               Row(
                 children: [
                   _buildStatCard(
+                    colors: colors,
                     title: 'EVALUACIONES',
                     val: '$completedEvents / $totalEvents',
                     sub: '${totalEvents > 0 ? ((completedEvents / totalEvents) * 100).round() : 0}% Completado',
@@ -196,6 +201,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   const SizedBox(width: 12),
                   _buildStatCard(
+                    colors: colors,
                     title: 'CONSTANCIA',
                     val: '12 días',
                     sub: 'Récord: 24 días',
@@ -220,13 +226,13 @@ class ProfileScreen extends ConsumerWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       SizedBox(height: 2),
                       Text(
                         'Distribución del tiempo por materia',
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                        style: TextStyle(fontSize: 11, color: colors.textSecondary),
                       ),
                     ],
                   ),
@@ -246,9 +252,9 @@ class ProfileScreen extends ConsumerWidget {
                   margin: const EdgeInsets.only(bottom: 10),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Row(
                     children: [
@@ -271,7 +277,7 @@ class ProfileScreen extends ConsumerWidget {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -279,7 +285,7 @@ class ProfileScreen extends ConsumerWidget {
                               '${sub.code} · ${(sub.totalStudySeconds ~/ 3600)}h acumuladas',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           ],
@@ -410,10 +416,11 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   void _showAvatarPicker(BuildContext context, WidgetRef ref, StudentProfileModel profile) {
+    final colors = context.colors;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -467,14 +474,14 @@ class ProfileScreen extends ConsumerWidget {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ],
                       ),
                       IconButton(
                         onPressed: () => Navigator.pop(context),
-                        icon: Icon(Icons.close_rounded, color: AppColors.textSecondary),
+                        icon: Icon(Icons.close_rounded, color: colors.textSecondary),
                       ),
                     ],
                   ),
@@ -488,13 +495,13 @@ class ProfileScreen extends ConsumerWidget {
                       side: BorderSide(
                         color: profile.avatarPath == null || profile.avatarPath!.isEmpty
                             ? AppColors.primary
-                            : AppColors.border,
+                            : colors.border,
                         width: profile.avatarPath == null || profile.avatarPath!.isEmpty ? 2 : 1,
                       ),
                     ),
                     tileColor: profile.avatarPath == null || profile.avatarPath!.isEmpty
                         ? AppColors.primaryLight.withValues(alpha: 0.4)
-                        : AppColors.surface,
+                        : colors.surface,
                     leading: Container(
                       width: 44,
                       height: 44,
@@ -509,7 +516,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     title: const Text('Usar mis iniciales', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                    subtitle: Text('Mostrar iniciales "${profile.initials}" con fondo terracota', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                    subtitle: Text('Mostrar iniciales "${profile.initials}" con fondo terracota', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
                     trailing: profile.avatarPath == null || profile.avatarPath!.isEmpty
                         ? const Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 22)
                         : null,
@@ -525,7 +532,7 @@ class ProfileScreen extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -598,7 +605,7 @@ class ProfileScreen extends ConsumerWidget {
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                                color: isSelected ? AppColors.primary : colors.textSecondary,
                               ),
                               textAlign: TextAlign.center,
                               maxLines: 1,
@@ -616,7 +623,7 @@ class ProfileScreen extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -663,6 +670,7 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildStatCard({
+    required AppColorTheme colors,
     required String title,
     required String val,
     required String sub,
@@ -676,9 +684,9 @@ class ProfileScreen extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: colors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -691,7 +699,7 @@ class ProfileScreen extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -708,7 +716,7 @@ class ProfileScreen extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 4),
@@ -727,7 +735,7 @@ class ProfileScreen extends ConsumerWidget {
             else
               Text(
                 sub,
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: subColor ?? AppColors.textSecondary),
+                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: subColor ?? colors.textSecondary),
                 maxLines: 1,
               ),
           ],

@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_color_theme.dart';
 import '../../../../shared/utils/time_utils.dart';
 import '../../../../core/providers.dart';
 import '../../domain/academic_event_model.dart';
@@ -27,6 +28,7 @@ class AcademicEventCard extends ConsumerStatefulWidget {
 }
 
 class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
+  AppColorTheme get colors => context.colors;
   late bool _isExpanded;
 
   @override
@@ -65,14 +67,15 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final event = widget.event;
     final subject = widget.subject;
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
@@ -105,7 +108,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                           margin: const EdgeInsets.only(right: 8),
                           child: Icon(
                             event.isCompleted ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-                            color: event.isCompleted ? AppColors.success : AppColors.textSecondary,
+                            color: event.isCompleted ? AppColors.success : colors.textSecondary,
                             size: 20,
                           ),
                         ),
@@ -154,7 +157,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                     constraints: const BoxConstraints(),
                     icon: Icon(
                       _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                     ),
                     onPressed: () {
                       setState(() {
@@ -174,9 +177,9 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: event.isCompleted ? AppColors.textSecondary : AppColors.textPrimary,
+                  color: event.isCompleted ? colors.textSecondary : colors.textPrimary,
                   decoration: event.isCompleted ? TextDecoration.lineThrough : null,
-                  decorationColor: AppColors.textSecondary,
+                  decorationColor: colors.textSecondary,
                   decorationThickness: 2,
                 ),
               ),
@@ -199,7 +202,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                     subject.code.isNotEmpty ? '${subject.name} · ${subject.code}' : subject.name,
                     style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -218,13 +221,13 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.access_time_rounded, size: 14, color: AppColors.textSecondary),
+                      Icon(Icons.access_time_rounded, size: 14, color: colors.textSecondary),
                       const SizedBox(width: 4),
                       Text(
                         TimeUtils.formatEventDate(event.dueAt, includeTime: event.hasDueTime),
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -232,20 +235,20 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceVariant,
+                      color: colors.surfaceVariant,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.timer_outlined, size: 12, color: AppColors.textSecondary),
+                        Icon(Icons.timer_outlined, size: 12, color: colors.textSecondary),
                         const SizedBox(width: 4),
                         Text(
                           '${event.completedPomodoros} / ${event.targetPomodoros} Pomos',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                       ],
@@ -267,7 +270,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                     Text(
@@ -327,8 +330,8 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                       icon: const Icon(Icons.edit_outlined, size: 16),
                       label: const Text('Editar'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textPrimary,
-                        side: BorderSide(color: AppColors.border),
+                        foregroundColor: colors.textPrimary,
+                        side: BorderSide(color: colors.border),
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
@@ -366,7 +369,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
         decoration: BoxDecoration(
-          color: AppColors.surfaceVariant,
+          color: colors.surfaceVariant,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -376,7 +379,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
               title,
               style: TextStyle(
                 fontSize: 10,
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -386,14 +389,14 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             Text(
               sub,
               style: TextStyle(
                 fontSize: 9,
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ],

@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../core/providers.dart';
 import '../domain/academic_event_model.dart';
 
@@ -22,6 +23,7 @@ class CreateEventSheet extends ConsumerStatefulWidget {
 }
 
 class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
+  AppColorTheme get colors => context.colors;
   late EventType _selectedType;
   late String _selectedSubjectId;
   late final TextEditingController _titleController;
@@ -76,11 +78,12 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final subjects = ref.watch(subjectsProvider).where((s) => !s.isArchived).toList();
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: EdgeInsets.only(
@@ -131,7 +134,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -144,7 +147,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                       color: Color(0xFFF1F5F9),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.close_rounded, size: 18, color: AppColors.textSecondary),
+                    child: Icon(Icons.close_rounded, size: 18, color: colors.textSecondary),
                   ),
                 ),
               ],
@@ -155,7 +158,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             // Tipo de Actividad
             Text(
               'TIPO DE ACTIVIDAD',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
             ),
             const SizedBox(height: 8),
             Row(
@@ -173,7 +176,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             // Asignatura Vinculada
             Text(
               'ASIGNATURA VINCULADA',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
             ),
             const SizedBox(height: 8),
             SingleChildScrollView(
@@ -207,7 +210,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: isSelected ? Colors.white : AppColors.textPrimary,
+                                color: isSelected ? Colors.white : colors.textPrimary,
                               ),
                             ),
                             if (sub.code.isNotEmpty) ...[
@@ -216,7 +219,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                                 sub.code,
                                 style: TextStyle(
                                   fontSize: 10,
-                                  color: isSelected ? Colors.white70 : AppColors.textSecondary,
+                                  color: isSelected ? Colors.white70 : colors.textSecondary,
                                 ),
                               ),
                             ],
@@ -234,7 +237,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             // Título de la Evaluación
             Text(
               'TÍTULO DE LA EVALUACIÓN',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
             ),
             const SizedBox(height: 6),
             TextField(
@@ -247,7 +250,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             // Temario o Notas Clave
             Text(
               'TEMARIO O NOTAS CLAVE',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
             ),
             const SizedBox(height: 6),
             TextField(
@@ -267,7 +270,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                     children: [
                       Text(
                         'FECHA LÍMITE',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
                       ),
                       const SizedBox(height: 6),
                       InkWell(
@@ -313,7 +316,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                         children: [
                           Text(
                             'INCLUIR HORA',
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
                           ),
                           Switch(
                             value: _includeTime,
@@ -363,7 +366,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             // Ponderación en nota final (exacto al diseño Nuevo Pendiente - Modal.png)
             Text(
               'PONDERACIÓN EN NOTA FINAL (OPCIONAL)',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
             ),
             const SizedBox(height: 6),
             Container(
@@ -379,7 +382,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                   Expanded(
                     child: Text(
                       'Peso Académico',
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary),
                     ),
                   ),
                   SizedBox(
@@ -393,10 +396,10 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                         filled: true,
                         fillColor: Colors.white,
                         hintText: '30',
-                        hintStyle: TextStyle(color: AppColors.textMuted),
+                        hintStyle: TextStyle(color: colors.textMuted),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                         suffixText: '%',
-                        suffixStyle: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                        suffixStyle: TextStyle(fontWeight: FontWeight.bold, color: colors.textPrimary),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -414,7 +417,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: AppColors.surfaceVariant,
+                color: colors.surfaceVariant,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
@@ -428,7 +431,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                         Expanded(
                           child: Text(
                             'Meta de Pomodoros',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: colors.textPrimary),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -440,9 +443,9 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
+                      color: colors.surface,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.border),
+                      border: Border.all(color: colors.border),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -487,11 +490,11 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.cloud_off_rounded, size: 14, color: AppColors.textSecondary),
+                Icon(Icons.cloud_off_rounded, size: 14, color: colors.textSecondary),
                 SizedBox(width: 6),
                 Text(
                   'Guardado inmediato en la memoria local del dispositivo',
-                  style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: 11, color: colors.textSecondary),
                 ),
               ],
             ),
@@ -565,7 +568,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             Center(
               child: TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('Descartar y Volver', style: TextStyle(color: AppColors.textSecondary)),
+                child: Text('Descartar y Volver', style: TextStyle(color: colors.textSecondary)),
               ),
             ),
             const SizedBox(height: 16),
@@ -592,7 +595,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
           ),
           child: Column(
             children: [
-              Icon(icon, color: isSelected ? type.color : AppColors.textSecondary, size: 22),
+              Icon(icon, color: isSelected ? type.color : colors.textSecondary, size: 22),
               const SizedBox(height: 6),
               Text(
                 label,
@@ -600,7 +603,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                  color: isSelected ? type.color : AppColors.textPrimary,
+                  color: isSelected ? type.color : colors.textPrimary,
                   height: 1.1,
                 ),
               ),

@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_color_theme.dart';
 import '../../domain/pomodoro_models.dart';
 
 class CircularTimerWidget extends StatelessWidget {
@@ -69,7 +69,7 @@ class CircularTimerWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: timeStr.length > 5 ? 36 : 48,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                     letterSpacing: -1.5,
                   ),
                 ),
@@ -85,7 +85,7 @@ class CircularTimerWidget extends StatelessWidget {
                           Icon(
                             Icons.hourglass_empty_rounded,
                             size: 16,
-                            color: AppColors.textSecondary,
+                            color: context.colors.textSecondary,
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -93,7 +93,7 @@ class CircularTimerWidget extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary,
+                              color: context.colors.textSecondary,
                             ),
                           ),
                         ],

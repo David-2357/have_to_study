@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/widgets/app_header.dart';
 import '../../../core/providers.dart';
@@ -16,10 +17,12 @@ class StatisticsScreen extends ConsumerStatefulWidget {
 }
 
 class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
+  AppColorTheme get colors => context.colors;
   int _selectedPeriod = 0; // 0: Esta Semana, 1: Este Mes, 2: Global
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final sessions = ref.watch(focusSessionsProvider);
     final subjects = ref.watch(subjectsProvider);
     final settings = ref.watch(settingsProvider);
@@ -141,7 +144,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
     subjectDistribution.sort((a, b) => (b['seconds'] as int).compareTo(a['seconds'] as int));
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 32),
@@ -234,9 +237,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +255,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w900,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -260,7 +263,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                 'Meta diaria fijada en ${settings.dailyGoalHours} horas',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                               ),
                             ],
@@ -308,7 +311,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.textPrimary,
+                                            color: colors.textPrimary,
                                           ),
                                         ),
                                       );
@@ -352,7 +355,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -370,9 +373,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,14 +391,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w900,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                   height: 1.2,
                                 ),
                               ),
                               SizedBox(height: 2),
                               Text(
                                 'Inversión total de tiempo académico',
-                                style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                                style: TextStyle(fontSize: 11, color: colors.textSecondary),
                               ),
                             ],
                           ),
@@ -420,10 +423,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: AppColors.surfaceVariant,
+                                  color: colors.surfaceVariant,
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(Icons.pie_chart_outline_rounded, size: 28, color: AppColors.textSecondary),
+                                child: Icon(Icons.pie_chart_outline_rounded, size: 28, color: colors.textSecondary),
                               ),
                               const SizedBox(height: 10),
                               Text(
@@ -431,7 +434,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -440,7 +443,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                               ),
                             ],
@@ -470,7 +473,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,
-                                        color: AppColors.textPrimary,
+                                        color: colors.textPrimary,
                                       ),
                                     ),
                                   ),
@@ -479,7 +482,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w800,
-                                      color: AppColors.textPrimary,
+                                      color: colors.textPrimary,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
@@ -494,7 +497,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.textSecondary,
+                                        color: colors.textSecondary,
                                       ),
                                     ),
                                   ),
@@ -555,7 +558,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w900,
-                                      color: AppColors.textPrimary,
+                                      color: colors.textPrimary,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
@@ -580,16 +583,16 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                               RichText(
                                 text: TextSpan(
                                   text: 'Mayor productividad: ',
-                                  style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                                  style: TextStyle(fontSize: 12, color: colors.textSecondary),
                                   children: [
                                     TextSpan(
                                       text: '$goldenZoneHours\n',
-                                      style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                                      style: TextStyle(fontWeight: FontWeight.bold, color: colors.textPrimary),
                                     ),
                                     TextSpan(
                                       text:
                                           'Durante esta franja registraste el $goldenZonePercent% de tu tiempo de concentración en este periodo.',
-                                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.3),
+                                      style: TextStyle(fontSize: 12, color: colors.textSecondary, height: 1.3),
                                     ),
                                   ],
                                 ),
@@ -636,7 +639,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             style: TextStyle(
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-              color: isSelected ? AppColors.textPrimary : AppColors.textSecondary,
+              color: isSelected ? colors.textPrimary : colors.textSecondary,
             ),
           ),
         ),
@@ -658,9 +661,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: colors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -673,7 +676,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -690,14 +693,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 4),
             Row(
               children: [
                 if (subIcon != null) ...[
-                  Icon(subIcon, size: 12, color: subColor ?? AppColors.textSecondary),
+                  Icon(subIcon, size: 12, color: subColor ?? colors.textSecondary),
                   const SizedBox(width: 4),
                 ],
                 Expanded(
@@ -706,7 +709,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: subColor ?? AppColors.textSecondary,
+                      color: subColor ?? colors.textSecondary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

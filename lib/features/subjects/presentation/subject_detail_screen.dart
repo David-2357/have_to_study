@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../core/providers.dart';
 import '../../academic_events/domain/academic_event_model.dart';
@@ -17,10 +18,12 @@ class SubjectDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
+  AppColorTheme get colors => context.colors;
   int _selectedTab = 0; // 0: Compromisos, 1: Historial
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final subjects = ref.watch(subjectsProvider);
     final events = ref.watch(academicEventsProvider);
     final sessions = ref.watch(focusSessionsProvider);
@@ -38,7 +41,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
     final nextExam = pendingEvents.where((e) => e.type == EventType.exam).firstOrNull;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         leading: TextButton.icon(
           onPressed: () => context.pop(),
@@ -53,7 +56,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.edit_outlined, color: AppColors.textPrimary),
+            icon: Icon(Icons.edit_outlined, color: colors.textPrimary),
             tooltip: 'Editar asignatura',
             onPressed: () {
               context.push('/create-subject?id=${subject.id}');
@@ -74,7 +77,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
           IconButton(
             icon: Icon(
               subject.isPassed ? Icons.verified_rounded : Icons.verified_outlined,
-              color: subject.isPassed ? AppColors.teal : AppColors.textSecondary,
+              color: subject.isPassed ? AppColors.teal : colors.textSecondary,
             ),
             tooltip: subject.isPassed ? 'Desmarcar de aprobada' : 'Marcar como aprobada al terminar curso',
             onPressed: () async {
@@ -94,7 +97,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
           IconButton(
             icon: Icon(
               subject.isArchived ? Icons.unarchive_outlined : Icons.archive_outlined,
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
             ),
             tooltip: subject.isArchived ? 'Desarchivar' : 'Archivar',
             onPressed: () async {
@@ -117,9 +120,9 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
               // Tarjeta de Identidad Superior
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
@@ -173,7 +176,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                           decoration: BoxDecoration(
-                                            color: AppColors.surfaceVariant,
+                                            color: colors.surfaceVariant,
                                             borderRadius: BorderRadius.circular(6),
                                           ),
                                           child: Text(
@@ -181,7 +184,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
-                                              color: AppColors.textSecondary,
+                                              color: colors.textSecondary,
                                             ),
                                           ),
                                         ),
@@ -193,7 +196,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w900,
-                                      color: AppColors.textPrimary,
+                                      color: colors.textPrimary,
                                     ),
                                   ),
                                 ],
@@ -211,14 +214,14 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                                   : (subject.lastStudiedAt != null
                                       ? 'Último: ${TimeUtils.formatRelativeDate(subject.lastStudiedAt!)}'
                                       : 'Sin sesiones aún'),
-                              style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                              style: TextStyle(fontSize: 12, color: colors.textSecondary),
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
                                 color: subject.isPassed
                                     ? const Color(0xFFDCFCE7)
-                                    : (subject.isArchived ? AppColors.surfaceVariant : const Color(0xFFE6F4EA)),
+                                    : (subject.isArchived ? colors.surfaceVariant : const Color(0xFFE6F4EA)),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Row(
@@ -230,7 +233,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                                     size: 12,
                                     color: subject.isPassed
                                         ? const Color(0xFF15803D)
-                                        : (subject.isArchived ? AppColors.textSecondary : const Color(0xFF137333)),
+                                        : (subject.isArchived ? colors.textSecondary : const Color(0xFF137333)),
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
@@ -242,7 +245,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                                       fontWeight: FontWeight.bold,
                                       color: subject.isPassed
                                           ? const Color(0xFF15803D)
-                                          : (subject.isArchived ? AppColors.textSecondary : const Color(0xFF137333)),
+                                          : (subject.isArchived ? colors.textSecondary : const Color(0xFF137333)),
                                     ),
                                   ),
                                 ],
@@ -360,9 +363,9 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,7 +396,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                               if (nextExam.academicWeight > 0)
                                 Text(
                                   'Valor ${nextExam.academicWeight}%',
-                                  style: TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+                                  style: TextStyle(fontSize: 11, color: colors.textSecondary, fontWeight: FontWeight.w600),
                                 ),
                             ],
                           ),
@@ -413,16 +416,16 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                       const SizedBox(height: 10),
                       Text(
                         nextExam.title,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: colors.textPrimary),
                       ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(Icons.calendar_today_rounded, size: 12, color: AppColors.textSecondary),
+                          Icon(Icons.calendar_today_rounded, size: 12, color: colors.textSecondary),
                           const SizedBox(width: 4),
                           Text(
                             TimeUtils.formatEventDate(nextExam.dueAt, includeTime: nextExam.hasDueTime),
-                            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                            style: TextStyle(fontSize: 12, color: colors.textSecondary),
                           ),
                         ],
                       ),
@@ -430,7 +433,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Preparación del examen', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                          Text('Preparación del examen', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
                           Text('${nextExam.progressPercent}% preparado', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.primary)),
                         ],
                       ),
@@ -475,7 +478,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: _selectedTab == 0 ? FontWeight.bold : FontWeight.w600,
-                              color: _selectedTab == 0 ? AppColors.textPrimary : AppColors.textSecondary,
+                              color: _selectedTab == 0 ? colors.textPrimary : colors.textSecondary,
                             ),
                           ),
                         ),
@@ -497,7 +500,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: _selectedTab == 1 ? FontWeight.bold : FontWeight.w600,
-                              color: _selectedTab == 1 ? AppColors.textPrimary : AppColors.textSecondary,
+                              color: _selectedTab == 1 ? colors.textPrimary : colors.textSecondary,
                             ),
                           ),
                         ),
@@ -533,9 +536,9 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: colors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -543,12 +546,12 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: AppColors.textSecondary)),
+                Text(title, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: colors.textSecondary)),
                 Icon(icon, size: 14, color: iconColor),
               ],
             ),
             const SizedBox(height: 6),
-            Text(val, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: AppColors.textPrimary)),
+            Text(val, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: colors.textPrimary)),
             if (showProgress) ...[
               const SizedBox(height: 4),
               ClipRRect(
@@ -562,7 +565,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
               ),
             ],
             const SizedBox(height: 4),
-            Text(sub, style: TextStyle(fontSize: 9, color: AppColors.textSecondary), maxLines: 1),
+            Text(sub, style: TextStyle(fontSize: 9, color: colors.textSecondary), maxLines: 1),
           ],
         ),
       ),
@@ -579,7 +582,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
       return Center(
         child: Padding(
           padding: EdgeInsets.all(24),
-          child: Text('No hay compromisos asociados a esta materia.', style: TextStyle(color: AppColors.textSecondary)),
+          child: Text('No hay compromisos asociados a esta materia.', style: TextStyle(color: colors.textSecondary)),
         ),
       );
     }
@@ -589,7 +592,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
         ...pending.map((e) => _buildCommitmentCard(context, e, false)),
         if (completed.isNotEmpty) ...[
           const SizedBox(height: 12),
-          Text('Completados', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+          Text('Completados', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textSecondary)),
           const SizedBox(height: 8),
           ...completed.map((e) => _buildCommitmentCard(context, e, true)),
         ],
@@ -601,9 +604,9 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(18),
@@ -648,7 +651,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                       IconButton(
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
-                        icon: Icon(Icons.edit_outlined, size: 16, color: AppColors.textSecondary),
+                        icon: Icon(Icons.edit_outlined, size: 16, color: colors.textSecondary),
                         onPressed: () {
                           showModalBottomSheet(
                             context: context,
@@ -665,7 +668,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                         icon: Icon(
                           isDone ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
                           size: 18,
-                          color: isDone ? AppColors.success : AppColors.textSecondary,
+                          color: isDone ? AppColors.success : colors.textSecondary,
                         ),
                         onPressed: () async {
                           final wasCompleted = event.isCompleted;
@@ -699,7 +702,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                   decoration: isDone ? TextDecoration.lineThrough : null,
                 ),
               ),
@@ -707,7 +710,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                 const SizedBox(height: 4),
                 Text(
                   event.description,
-                  style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                  style: TextStyle(fontSize: 12, color: colors.textSecondary),
                 ),
               ],
               const SizedBox(height: 10),
@@ -720,28 +723,28 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.calendar_today_rounded, size: 12, color: AppColors.textSecondary),
+                      Icon(Icons.calendar_today_rounded, size: 12, color: colors.textSecondary),
                       const SizedBox(width: 4),
                       Text(
                         TimeUtils.formatEventDate(event.dueAt, includeTime: event.hasDueTime),
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                        style: TextStyle(fontSize: 11, color: colors.textSecondary),
                       ),
                     ],
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceVariant,
+                      color: colors.surfaceVariant,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.timer_outlined, size: 11, color: AppColors.textSecondary),
+                        Icon(Icons.timer_outlined, size: 11, color: colors.textSecondary),
                         const SizedBox(width: 4),
                         Text(
                           '${event.completedPomodoros} / ${event.targetPomodoros} Pomos',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: colors.textSecondary),
                         ),
                       ],
                     ),
@@ -760,7 +763,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
       return Center(
         child: Padding(
           padding: EdgeInsets.all(24),
-          child: Text('No hay historial de sesiones para esta asignatura.', style: TextStyle(color: AppColors.textSecondary)),
+          child: Text('No hay historial de sesiones para esta asignatura.', style: TextStyle(color: colors.textSecondary)),
         ),
       );
     }
@@ -775,9 +778,9 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: colors.border),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -790,7 +793,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text('Sesión de concentración completada', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                      Text(TimeUtils.formatEventDate(s.completedAt, includeTime: true), style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                      Text(TimeUtils.formatEventDate(s.completedAt, includeTime: true), style: TextStyle(fontSize: 11, color: colors.textSecondary)),
                     ],
                   ),
                 ],

@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../core/providers.dart';
 import '../../../shared/widgets/student_avatar.dart';
@@ -21,6 +22,7 @@ class ActiveSessionScreen extends ConsumerStatefulWidget {
 }
 
 class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
+  AppColorTheme get colors => context.colors;
   ActiveSessionMode _activeMode = ActiveSessionMode.pomodoro;
 
   @override
@@ -44,7 +46,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.surface : Colors.transparent,
+          color: isSelected ? colors.surface : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           boxShadow: isSelected
               ? [
@@ -62,7 +64,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
             Icon(
               icon,
               size: 16,
-              color: isSelected ? AppColors.primary : AppColors.textSecondary,
+              color: isSelected ? AppColors.primary : colors.textSecondary,
             ),
             const SizedBox(width: 6),
             Text(
@@ -70,7 +72,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? AppColors.textPrimary : AppColors.textSecondary,
+                color: isSelected ? colors.textPrimary : colors.textSecondary,
               ),
             ),
           ],
@@ -81,6 +83,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final pomodoro = ref.watch(pomodoroProvider);
     final unbounded = ref.watch(unboundedSessionProvider);
     final subjects = ref.watch(subjectsProvider);
@@ -122,7 +125,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -138,7 +141,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
             IconButton(
               icon: Icon(
                 currentEvent.isCompleted ? Icons.check_circle_rounded : Icons.check_circle_outline_rounded,
-                color: currentEvent.isCompleted ? const Color(0xFF16A34A) : AppColors.textPrimary,
+                color: currentEvent.isCompleted ? const Color(0xFF16A34A) : colors.textPrimary,
               ),
               tooltip: currentEvent.isCompleted ? 'Desmarcar actividad' : 'Completar actividad pendiente',
               onPressed: () async {
@@ -152,7 +155,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                           ? 'Actividad marcada como pendiente.'
                           : '¡Actividad "${currentEvent.title}" completada! 🎉'),
                       behavior: SnackBarBehavior.floating,
-                      backgroundColor: wasCompleted ? AppColors.surfaceVariant : const Color(0xFF16A34A),
+                      backgroundColor: wasCompleted ? colors.surfaceVariant : const Color(0xFF16A34A),
                       duration: const Duration(seconds: 4),
                       action: SnackBarAction(
                         label: 'Deshacer',
@@ -191,9 +194,9 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceVariant.withValues(alpha: 0.6),
+                  color: colors.surfaceVariant.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -295,7 +298,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                             ? AppColors.primary
                             : (isCompleted
                                 ? AppColors.teal
-                                : AppColors.surfaceVariant),
+                                : colors.surfaceVariant),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     );
@@ -317,9 +320,9 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                           style: TextStyle(fontSize: 13),
                         ),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.textPrimary,
-                          side: BorderSide(color: AppColors.border),
-                          backgroundColor: AppColors.surface,
+                          foregroundColor: colors.textPrimary,
+                          side: BorderSide(color: colors.border),
+                          backgroundColor: colors.surface,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -354,8 +357,8 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: AppColors.border),
-                          backgroundColor: AppColors.surface,
+                          side: BorderSide(color: colors.border),
+                          backgroundColor: colors.surface,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -440,11 +443,11 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                       context.pop();
                     }
                   },
-                  icon: Icon(Icons.close_rounded, size: 16, color: AppColors.textSecondary),
+                  icon: Icon(Icons.close_rounded, size: 16, color: colors.textSecondary),
                   label: Text(
                     'Cancelar sesión',
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -553,9 +556,9 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                                   style: TextStyle(fontSize: 13),
                                 ),
                                 style: OutlinedButton.styleFrom(
-                                  foregroundColor: AppColors.textPrimary,
-                                  side: BorderSide(color: AppColors.border),
-                                  backgroundColor: AppColors.surface,
+                                  foregroundColor: colors.textPrimary,
+                                  side: BorderSide(color: colors.border),
+                                  backgroundColor: colors.surface,
                                   padding: const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
@@ -590,8 +593,8 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                                   ),
                                 ),
                                 style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: AppColors.border),
-                                  backgroundColor: AppColors.surface,
+                                  side: BorderSide(color: colors.border),
+                                  backgroundColor: colors.surface,
                                   padding: const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
@@ -651,11 +654,11 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                           onPressed: () {
                             ref.read(unboundedSessionProvider.notifier).reset();
                           },
-                          icon: Icon(Icons.close_rounded, size: 16, color: AppColors.textSecondary),
+                          icon: Icon(Icons.close_rounded, size: 16, color: colors.textSecondary),
                           label: Text(
                             'Descartar tiempo',
                             style: TextStyle(
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -672,9 +675,9 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(22),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: colors.border),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.02),
@@ -731,7 +734,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w800,
-                                      color: AppColors.textSecondary,
+                                      color: colors.textSecondary,
                                       letterSpacing: 0.6,
                                     ),
                                   ),
@@ -743,7 +746,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w800,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                             ],
@@ -756,7 +759,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
-                              color: AppColors.surfaceVariant,
+                              color: colors.surfaceVariant,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Row(
@@ -812,7 +815,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                             ],
@@ -825,22 +828,22 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
-                          color: currentEvent.isCompleted ? AppColors.textSecondary : AppColors.textPrimary,
+                          color: currentEvent.isCompleted ? colors.textSecondary : colors.textPrimary,
                           decoration: currentEvent.isCompleted ? TextDecoration.lineThrough : null,
-                          decorationColor: AppColors.textSecondary,
+                          decorationColor: colors.textSecondary,
                           decorationThickness: 2,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(Icons.calendar_today_outlined, size: 12, color: AppColors.textSecondary),
+                          Icon(Icons.calendar_today_outlined, size: 12, color: colors.textSecondary),
                           const SizedBox(width: 4),
                           Text(
                             'Entrega: ${TimeUtils.formatEventDate(currentEvent.dueAt, includeTime: currentEvent.hasDueTime)}',
                             style: TextStyle(
                               fontSize: 11,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -935,7 +938,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                                   ),
                                   child: Text(
                                     'Desmarcar',
-                                    style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                                    style: TextStyle(fontSize: 11, color: colors.textSecondary),
                                   ),
                                 ),
                               ],
@@ -945,7 +948,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                     ] else ...[
                       Row(
                         children: [
-                          Icon(Icons.menu_book_rounded, size: 16, color: AppColors.textSecondary),
+                          Icon(Icons.menu_book_rounded, size: 16, color: colors.textSecondary),
                           SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -953,7 +956,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           ),

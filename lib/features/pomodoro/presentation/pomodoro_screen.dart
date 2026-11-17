@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/widgets/app_header.dart';
 import '../../../core/providers.dart';
@@ -19,6 +20,7 @@ class PomodoroScreen extends ConsumerStatefulWidget {
 }
 
 class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
+  AppColorTheme get colors => context.colors;
   int _visibleEventsCount = 3;
 
   @override
@@ -132,9 +134,9 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
           borderRadius: BorderRadius.circular(20),
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: colors.border),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.03),
@@ -212,20 +214,20 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppColors.surfaceVariant,
+                              color: colors.surfaceVariant,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.swap_vert_rounded, size: 14, color: AppColors.textSecondary),
+                                Icon(Icons.swap_vert_rounded, size: 14, color: colors.textSecondary),
                                 const SizedBox(width: 4),
                                 Text(
                                   'Cambiar',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.textSecondary,
+                                    color: colors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -302,7 +304,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w800,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -314,7 +316,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
-                                    color: AppColors.textSecondary,
+                                    color: colors.textSecondary,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -332,7 +334,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceVariant.withValues(alpha: 0.5),
+                        color: colors.surfaceVariant.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Row(
@@ -374,7 +376,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                   letterSpacing: -0.5,
                                 ),
                               ),
@@ -385,7 +387,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
-                                  color: pomodoro.isRunning ? pomodoro.phase.color : AppColors.textSecondary,
+                                  color: pomodoro.isRunning ? pomodoro.phase.color : colors.textSecondary,
                                 ),
                               ),
                             ],
@@ -471,7 +473,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                   if (pendingEvents.isNotEmpty) ...[
@@ -526,9 +528,9 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: colors.border),
               ),
               child: Column(
                 children: [
@@ -550,7 +552,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -558,7 +560,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                     'No tienes entregas ni exámenes pendientes.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -633,7 +635,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                   ),
                   style: TextButton.styleFrom(
-                    foregroundColor: AppColors.textSecondary,
+                    foregroundColor: colors.textSecondary,
                   ),
                 ),
               ),
@@ -658,9 +660,9 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.all(12),
       child: Row(
@@ -696,7 +698,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: AppColors.border,
+                  color: colors.border,
                   width: 2,
                 ),
               ),
@@ -762,7 +764,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -782,7 +784,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                           size: 13,
                           color: isOverdue
                               ? AppColors.primary
-                              : (isDueSoon ? AppColors.warning : AppColors.textSecondary),
+                              : (isDueSoon ? AppColors.warning : colors.textSecondary),
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -792,7 +794,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                             fontWeight: isDueSoon || isOverdue ? FontWeight.bold : FontWeight.w500,
                             color: isOverdue
                                 ? AppColors.primary
-                                : (isDueSoon ? AppColors.warning : AppColors.textSecondary),
+                                : (isDueSoon ? AppColors.warning : colors.textSecondary),
                           ),
                         ),
                         if (event.hasDueTime) ...[
@@ -801,7 +803,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                             '• ${TimeUtils.formatEventDate(event.dueAt, includeTime: true).split(', ').last}',
                             style: TextStyle(
                               fontSize: 11,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -811,7 +813,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                       '• ${event.completedPomodoros}/${event.targetPomodoros} bloques',
                       style: TextStyle(
                         fontSize: 11,
-                        color: AppColors.textMuted,
+                        color: colors.textMuted,
                       ),
                     ),
                   ],
@@ -865,7 +867,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -876,9 +878,9 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -891,7 +893,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -916,7 +918,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                           children: [
                             TextSpan(
@@ -924,7 +926,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           ],
@@ -950,9 +952,9 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -965,7 +967,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -989,7 +991,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
