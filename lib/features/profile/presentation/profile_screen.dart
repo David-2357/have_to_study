@@ -237,7 +237,7 @@ class ProfileScreen extends ConsumerWidget {
                     ],
                   ),
                   TextButton.icon(
-                    onPressed: () => context.push('/studies'),
+                    onPressed: () => context.go('/studies'),
                     icon: const Text('Gestionar', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primary)),
                     label: const Icon(Icons.arrow_forward_rounded, size: 14, color: AppColors.primary),
                   ),
@@ -248,71 +248,82 @@ class ProfileScreen extends ConsumerWidget {
 
               // Lista de Asignaturas Activas
               ...subjects.map((sub) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: colors.surface,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: colors.border),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: sub.color.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(12),
+                final subColor = sub.displayColor(colors.isDark);
+                return InkWell(
+                  onTap: () => context.push('/subject-detail?id=${sub.id}'),
+                  borderRadius: BorderRadius.circular(18),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: colors.surface,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: colors.border),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: subColor.withValues(alpha: colors.isDark ? 0.25 : 0.12),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(sub.iconData, color: subColor, size: 20),
                         ),
-                        child: Icon(sub.iconData, color: sub.color, size: 20),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              sub.name,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                color: colors.textPrimary,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                sub.name,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                  color: colors.textPrimary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${sub.code} · ${(sub.totalStudySeconds ~/ 3600)}h acumuladas',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: colors.textSecondary,
+                              const SizedBox(height: 2),
+                              Text(
+                                '${sub.code} · ${(sub.totalStudySeconds ~/ 3600)}h acumuladas',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: colors.textSecondary,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEEF2FF),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.timer_outlined, size: 12, color: Color(0xFF4F46E5)),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${sub.completedPomodoros} ciclos',
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF4F46E5),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: colors.isDark
+                                ? const Color(0xFF4F46E5).withValues(alpha: 0.22)
+                                : const Color(0xFFEEF2FF),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.timer_outlined,
+                                size: 12,
+                                color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 4),
+                              Text(
+                                '${sub.completedPomodoros} ciclos',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               }),
