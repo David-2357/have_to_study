@@ -68,7 +68,7 @@ Autonomous feature modules grouped by business capability. Each feature director
 - `settings/`: Application preferences, timer defaults, and backup management (`settings_screen.dart`).
 - `splash/`: Application launch screen with database initialization check (`splash_screen.dart`).
 - `statistics/`: Visual charts, focus metrics, and subject time distribution (`statistics_screen.dart`).
-- `subjects/`: Course management with smart deadlines and annual/semestral modes (`studies_screen.dart`, `create_subject_screen.dart`, `subject_detail_screen.dart`).
+- `subjects/`: Course management with smart deadlines, course modes, and year-end closure classification (`studies_screen.dart`, `create_subject_screen.dart`, `subject_detail_screen.dart`, `course_closure_screen.dart`).
 
 ### 5. `lib/shared/`
 Reusable components, widgets, and utilities shared across multiple features. Feature-agnostic by design.

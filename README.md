@@ -13,6 +13,7 @@ HaveToStudy helps students organize their academic schedule, track study time, a
   - **Unbounded Session Mode**: Continuous stopwatch mode for open-ended study sessions, converting accumulated focus time into Pomodoro units `(time / 25 min)` towards subject goals.
 - **Subject & Course Management**:
   - Support for annual and semestral subjects with automatic smart end-date defaults (January / June).
+  - Year-end course closure flow to classify continuing vs. passed/archived subjects, triggered manually from settings or automatically upon opening the app when subject deadlines expire.
   - Track study hours, target goals, passed courses, and associated assignments.
 - **Academic Events & Deliverables**:
   - Track assignments, projects, and exams with due dates, priority tags, and completion status.
