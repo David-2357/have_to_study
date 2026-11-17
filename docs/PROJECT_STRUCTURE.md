@@ -47,6 +47,7 @@ Foundational services, state notifiers, and design system definitions.
 - `services/`:
   - `audio_feedback_service.dart`: Sound effect generation and playback for timer events.
   - `backup_service.dart`: Automated and manual SQLite/JSON backup, restore, and file sharing.
+  - `notification_service.dart`: Scheduled and immediate local device notifications for Pomodoro and break completion.
 - `theme/`:
   - `app_colors.dart`: Static brand tokens, status colors, and event milestone palettes.
   - `app_color_theme.dart`: Reactive ThemeExtension with dynamic surface and typography tokens.

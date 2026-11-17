@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
-import '../core/services/audio_feedback_service.dart';
+import 'services/audio_feedback_service.dart';
+import 'services/notification_service.dart';
 import '../data/database/app_database.dart';
 import '../data/database/daos/subjects_dao.dart';
 import '../data/database/daos/academic_events_dao.dart';
@@ -214,15 +216,86 @@ final academicEventsProvider =
 });
 
 // ==========================================
-// POMODORO NOTIFIER CON RECUPERACIÓN DETERMINISTA
+// POMODORO NOTIFIER CON RECUPERACIÓN DETERMINISTA Y NOTIFICACIONES
 // ==========================================
-class PomodoroNotifier extends StateNotifier<PomodoroStateModel> {
+class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
+    with WidgetsBindingObserver {
   final PomodoroDao _dao;
   final Ref _ref;
   Timer? _timer;
+  DateTime? _lastResumedAt;
 
   PomodoroNotifier(this._dao, this._ref, PomodoroStateModel initial)
-      : super(initial);
+      : super(initial) {
+    WidgetsBinding.instance.addObserver(this);
+    if (state.status == PomodoroStatus.running) {
+      _lastResumedAt = DateTime.now();
+      if (state.remainingSeconds > 0) {
+        _startTicker();
+        _scheduleNotificationForCurrentPhase();
+      } else {
+        Future.microtask(() => _handlePhaseTransition(isNatural: true));
+      }
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
+    if (lifecycleState == AppLifecycleState.resumed) {
+      syncWithRealTime();
+    } else if (lifecycleState == AppLifecycleState.paused ||
+        lifecycleState == AppLifecycleState.inactive) {
+      if (state.status == PomodoroStatus.running) {
+        _dao.persistState(state: state, lastResumedAt: _lastResumedAt);
+      }
+    }
+  }
+
+  void syncWithRealTime() {
+    if (state.status != PomodoroStatus.running || _lastResumedAt == null) return;
+
+    final now = DateTime.now();
+    final elapsed = now.difference(_lastResumedAt!).inSeconds;
+
+    if (elapsed > 0) {
+      final newRemaining = state.remainingSeconds - elapsed;
+      if (newRemaining <= 0) {
+        _timer?.cancel();
+        _handlePhaseTransition(isNatural: true);
+      } else {
+        state = state.copyWith(remainingSeconds: newRemaining);
+        _lastResumedAt = now;
+        _dao.persistState(state: state, lastResumedAt: now);
+      }
+    }
+  }
+
+  void _scheduleNotificationForCurrentPhase() {
+    if (state.status != PomodoroStatus.running || state.remainingSeconds <= 0) {
+      NotificationService().cancelPomodoroNotification();
+      return;
+    }
+
+    final now = DateTime.now();
+    final scheduledTime = now.add(Duration(seconds: state.remainingSeconds));
+
+    String? subjectName;
+    if (state.activeSubjectId != null) {
+      try {
+        final subjects = _ref.read(subjectsProvider);
+        final match = subjects.firstWhere(
+          (s) => s.id == state.activeSubjectId,
+        );
+        subjectName = match.name;
+      } catch (_) {}
+    }
+
+    NotificationService().schedulePomodoroCompletion(
+      scheduledTime: scheduledTime,
+      phase: state.phase,
+      subjectName: subjectName,
+    );
+  }
 
   Future<void> selectSubjectAndEvent(String? subjectId, String? eventId) async {
     final hasChanged =
@@ -295,17 +368,21 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel> {
           : focusSeconds,
     );
 
+    _lastResumedAt = now;
     _dao.persistState(state: state, lastResumedAt: now);
     _startTicker();
+    _scheduleNotificationForCurrentPhase();
   }
 
   void pause() {
     _timer?.cancel();
+    _lastResumedAt = null;
     try {
       WakelockPlus.disable();
     } catch (_) {}
     state = state.copyWith(status: PomodoroStatus.paused);
     _dao.persistState(state: state, lastResumedAt: null);
+    NotificationService().cancelPomodoroNotification();
   }
 
   void resume() {
@@ -321,15 +398,19 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel> {
       currentSegmentStartRemainingSeconds:
           state.currentSegmentStartRemainingSeconds ?? state.remainingSeconds,
     );
+    _lastResumedAt = now;
     _dao.persistState(state: state, lastResumedAt: now);
     _startTicker();
+    _scheduleNotificationForCurrentPhase();
   }
 
   void reset() {
     _timer?.cancel();
+    _lastResumedAt = null;
     try {
       WakelockPlus.disable();
     } catch (_) {}
+    NotificationService().cancelPomodoroNotification();
     final settings = _ref.read(settingsProvider);
     final duration = _getPhaseDuration(state.phase, settings);
     state = state.copyWith(
@@ -343,14 +424,18 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel> {
 
   void skipToNextPhase() {
     _timer?.cancel();
+    _lastResumedAt = null;
+    NotificationService().cancelPomodoroNotification();
     _handlePhaseTransition(isNatural: false);
   }
 
   void cancelSession() {
     _timer?.cancel();
+    _lastResumedAt = null;
     try {
       WakelockPlus.disable();
     } catch (_) {}
+    NotificationService().cancelPomodoroNotification();
     final settings = _ref.read(settingsProvider);
     final focusSeconds = settings.focusMinutes * 60;
     state = state.copyWith(
@@ -379,6 +464,9 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel> {
 
   Future<void> _handlePhaseTransition({bool isNatural = true}) async {
     final settings = _ref.read(settingsProvider);
+
+    // Cancelar cualquier notificación pendiente previa
+    NotificationService().cancelPomodoroNotification();
 
     // Reproducir alerta sonora de finalización solo si concluye naturalmente
     if (isNatural) {
@@ -461,7 +549,11 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel> {
       );
 
       if (settings.autoStartBreaks) {
+        _lastResumedAt = nowBreak;
         _startTicker();
+        _scheduleNotificationForCurrentPhase();
+      } else {
+        _lastResumedAt = null;
       }
     } else {
       // Fin del descanso (corto o largo) -> Volver a focus
@@ -491,7 +583,11 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel> {
       );
 
       if (settings.autoStartFocus) {
+        _lastResumedAt = nowFocus;
         _startTicker();
+        _scheduleNotificationForCurrentPhase();
+      } else {
+        _lastResumedAt = null;
       }
     }
   }
@@ -524,6 +620,7 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     try {
       WakelockPlus.disable();

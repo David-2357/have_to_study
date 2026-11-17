@@ -15,9 +15,14 @@ import 'data/database/daos/pomodoro_dao.dart';
 import 'data/database/daos/profile_dao.dart';
 import 'app/router.dart';
 import 'features/settings/domain/settings_models.dart';
+import 'core/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializar notificaciones locales y solicitar permisos para alertas en segundo plano
+  await NotificationService().initialize();
+  await NotificationService().requestPermissions();
 
   // Inicializar localización en español para fechas y calendarios
   await initializeDateFormatting('es', null);

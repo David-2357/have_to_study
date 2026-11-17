@@ -11,7 +11,28 @@ class AudioFeedbackService {
   AudioPlayer? _player;
 
   AudioPlayer get player {
-    _player ??= AudioPlayer();
+    if (_player == null) {
+      _player = AudioPlayer();
+      try {
+        _player!.setAudioContext(
+          AudioContext(
+            android: const AudioContextAndroid(
+              isSpeakerphoneOn: true,
+              stayAwake: true,
+              contentType: AndroidContentType.sonification,
+              usageType: AndroidUsageType.alarm,
+              audioFocus: AndroidAudioFocus.gainTransientMayDuck,
+            ),
+            iOS: AudioContextIOS(
+              category: AVAudioSessionCategory.playback,
+              options: const [
+                AVAudioSessionOptions.duckOthers,
+              ],
+            ),
+          ),
+        );
+      } catch (_) {}
+    }
     return _player!;
   }
 

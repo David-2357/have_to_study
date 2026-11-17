@@ -50,6 +50,8 @@
 | `json_annotation` | `^4.9.0` | JSON serialization annotations |
 | `share_plus` | `^13.3.1` | System share dialog integration |
 | `file_picker` | `^13.3.3` | Native file picker for database imports |
+| `flutter_local_notifications` | `^23.0.2` | Local scheduled device notifications for background alerts |
+| `flutter_timezone` | `^5.1.1` | Native device timezone lookup for accurate notification scheduling |
 
 ## Development & Code Generation Tools
 
