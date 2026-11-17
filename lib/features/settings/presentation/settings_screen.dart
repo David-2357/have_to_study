@@ -253,13 +253,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFE6FFFA), Color(0xFFF0FDF4)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: colors.isDark
+                      ? const LinearGradient(
+                          colors: [Color(0xFF0D2924), Color(0xFF133630)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : const LinearGradient(
+                          colors: [Color(0xFFE6FFFA), Color(0xFFF0FDF4)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: const Color(0xFFB2F5EA)),
+                  border: Border.all(
+                    color: colors.isDark ? const Color(0xFF115E59) : const Color(0xFFB2F5EA),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,16 +275,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Row(
+                        Row(
                           children: [
-                            Icon(Icons.shield_rounded, color: Color(0xFF0F766E), size: 24),
-                            SizedBox(width: 8),
+                            Icon(
+                              Icons.shield_rounded,
+                              color: colors.isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0F766E),
+                              size: 24,
+                            ),
+                            const SizedBox(width: 8),
                             Text(
                               'Privacidad\nSoberana',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w900,
-                                color: Color(0xFF134E4A),
+                                color: colors.isDark ? const Color(0xFF5EEAD4) : const Color(0xFF134E4A),
                                 height: 1.15,
                               ),
                             ),
@@ -301,11 +313,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    const Text(
+                    Text(
                       'Tus notas, estadísticas y sesiones se guardan únicamente en el almacenamiento interno de este dispositivo. Sin servidores remotos, sin rastreo y sin conexión obligatoria.',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Color(0xFF115E59),
+                        color: colors.isDark ? const Color(0xFFCCFBF1) : const Color(0xFF115E59),
                         height: 1.4,
                       ),
                     ),
@@ -575,8 +587,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   notifier.updateSettings(settings.copyWith(unattendedDaysThreshold: days));
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: isSelected ? AppColors.primary : const Color(0xFFEEF2FF),
-                                  foregroundColor: isSelected ? Colors.white : const Color(0xFF4F46E5),
+                                  backgroundColor: isSelected
+                                      ? AppColors.primary
+                                      : (colors.isDark ? colors.surfaceVariant : const Color(0xFFEEF2FF)),
+                                  foregroundColor: isSelected
+                                      ? Colors.white
+                                      : (colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5)),
                                   padding: const EdgeInsets.symmetric(vertical: 8),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -612,10 +628,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEF2FF),
+                          color: colors.isDark
+                              ? const Color(0xFF4F46E5).withValues(alpha: 0.22)
+                              : const Color(0xFFEEF2FF),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(Icons.fact_check_rounded, color: Color(0xFF4F46E5), size: 22),
+                        child: Icon(
+                          Icons.fact_check_rounded,
+                          color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                          size: 22,
+                        ),
                       ),
                       title: const Text(
                         'Cierre de Fin de Curso',
@@ -659,10 +681,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFE6FFFA),
+                                      color: colors.isDark
+                                          ? const Color(0xFF0D9488).withValues(alpha: 0.22)
+                                          : const Color(0xFFE6FFFA),
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: const Icon(Icons.sync_rounded, color: Color(0xFF0D9488), size: 20),
+                                    child: Icon(
+                                      Icons.sync_rounded,
+                                      color: colors.isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
+                                      size: 20,
+                                    ),
                                   ),
                                   const SizedBox(width: 12),
                                   Column(
@@ -751,10 +779,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF0FDF4),
+                          color: colors.isDark
+                              ? const Color(0xFF16A34A).withValues(alpha: 0.22)
+                              : const Color(0xFFF0FDF4),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.save_rounded, color: Color(0xFF16A34A), size: 20),
+                        child: Icon(
+                          Icons.save_rounded,
+                          color: colors.isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
+                          size: 20,
+                        ),
                       ),
                       title: const Text('Crear copia de seguridad local', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                       subtitle: Text(
@@ -774,10 +808,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEF2FF),
+                          color: colors.isDark
+                              ? const Color(0xFF4F46E5).withValues(alpha: 0.22)
+                              : const Color(0xFFEEF2FF),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.settings_backup_restore_rounded, color: Color(0xFF4F46E5), size: 20),
+                        child: Icon(
+                          Icons.settings_backup_restore_rounded,
+                          color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                          size: 20,
+                        ),
                       ),
                       title: const Text('Restaurar copia de seguridad local', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                       subtitle: Text('Restaura la última instantánea guardada en la app', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
@@ -792,10 +832,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFAF5FF),
+                          color: colors.isDark
+                              ? const Color(0xFF9333EA).withValues(alpha: 0.22)
+                              : const Color(0xFFFAF5FF),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.file_download_outlined, color: Color(0xFF9333EA), size: 20),
+                        child: Icon(
+                          Icons.file_download_outlined,
+                          color: colors.isDark ? const Color(0xFFC084FC) : const Color(0xFF9333EA),
+                          size: 20,
+                        ),
                       ),
                       title: const Text('Exportar como archivo JSON (.json)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                       subtitle: Text('Exporta asignaturas, tareas y sesiones en formato JSON transferible', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
@@ -917,7 +963,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         Container(
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFEEF2FF),
+                            color: colors.isDark ? colors.surfaceVariant : const Color(0xFFEEF2FF),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -969,7 +1015,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEEF2FF),
+                        color: colors.isDark ? colors.surfaceVariant : const Color(0xFFEEF2FF),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Row(
@@ -1043,10 +1089,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     required VoidCallback onDecrement,
     required VoidCallback onIncrement,
   }) {
+    final activeColor = colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEF2FF),
+        color: colors.isDark ? colors.surfaceVariant : const Color(0xFFEEF2FF),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -1054,19 +1101,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           IconButton(
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
-            icon: const Icon(Icons.remove_rounded, size: 18, color: Color(0xFF4F46E5)),
+            icon: Icon(Icons.remove_rounded, size: 18, color: activeColor),
             onPressed: onDecrement,
           ),
           const SizedBox(width: 10),
           Text(
             value,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Color(0xFF4F46E5)),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: activeColor),
           ),
           const SizedBox(width: 10),
           IconButton(
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
-            icon: const Icon(Icons.add_rounded, size: 18, color: Color(0xFF4F46E5)),
+            icon: Icon(Icons.add_rounded, size: 18, color: activeColor),
             onPressed: onIncrement,
           ),
         ],
@@ -1134,7 +1181,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
+          color: isSelected ? colors.surface : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Text(
@@ -1142,7 +1189,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           style: TextStyle(
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? const Color(0xFF4F46E5) : colors.textSecondary,
+            color: isSelected
+                ? (colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5))
+                : colors.textSecondary,
           ),
         ),
       ),

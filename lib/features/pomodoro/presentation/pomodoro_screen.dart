@@ -120,7 +120,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
     required List<SubjectModel> subjects,
     required List<AcademicEventModel> events,
   }) {
-    final subjectColor = currentSubject?.color ?? AppColors.primary;
+    final subjectColor = currentSubject?.displayColor(colors.isDark) ?? AppColors.primary;
     final progress = pomodoro.totalSeconds > 0
         ? (pomodoro.remainingSeconds / pomodoro.totalSeconds).clamp(0.0, 1.0)
         : 1.0;
@@ -740,7 +740,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: subject.color.withValues(alpha: 0.12),
+                          color: subject.displayColor(colors.isDark).withValues(alpha: colors.isDark ? 0.22 : 0.12),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
@@ -748,7 +748,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: subject.color,
+                            color: subject.displayColor(colors.isDark),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

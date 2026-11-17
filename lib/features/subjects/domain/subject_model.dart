@@ -33,6 +33,33 @@ class SubjectModel {
 
   Color get color => Color(colorValue);
 
+  /// Devuelve una variante con contraste optimizado cuando el modo oscuro está activo.
+  Color displayColor(bool isDark) {
+    if (!isDark) return Color(colorValue);
+    switch (colorValue) {
+      case 0xFF4F46E5: // Índigo / Azul -> Azul índigo luminoso (Indigo 400)
+        return const Color(0xFF818CF8);
+      case 0xFF16A085: // Verde esmeralda -> Esmeralda 400
+        return const Color(0xFF34D399);
+      case 0xFF8E44AD: // Morado -> Violeta 400
+        return const Color(0xFFA78BFA);
+      case 0xFFB74134: // Terracota -> Coral 400
+        return const Color(0xFFF87171);
+      case 0xFFE67E22: // Naranja -> Naranja 400
+        return const Color(0xFFFB923C);
+      case 0xFF1E3A8A: // Azul marino -> Azul cielo 400
+        return const Color(0xFF60A5FA);
+      case 0xFF2980B9: // Azul petróleo -> Celeste 400
+        return const Color(0xFF38BDF8);
+      default:
+        final hsl = HSLColor.fromColor(Color(colorValue));
+        if (hsl.lightness < 0.60) {
+          return hsl.withLightness((hsl.lightness + 0.28).clamp(0.60, 0.78)).toColor();
+        }
+        return Color(colorValue);
+    }
+  }
+
   IconData get iconData {
     switch (iconKey) {
       case 'sigma':

@@ -132,6 +132,7 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                       separatorBuilder: (_, _) => const SizedBox(height: 14),
                       itemBuilder: (context, index) {
                         final subject = subjects[index];
+                        final subColor = subject.displayColor(colors.isDark);
                         final relatedEvents = events.where((e) => e.subjectId == subject.id && !e.isCompleted).toList();
                         final isSubjectActive = activeSubjectId == subject.id;
 
@@ -140,7 +141,7 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                             color: colors.surface,
                             borderRadius: BorderRadius.circular(18),
                             border: Border.all(
-                              color: isSubjectActive ? subject.color : colors.border,
+                              color: isSubjectActive ? subColor : colors.border,
                               width: isSubjectActive ? 1.5 : 1.0,
                             ),
                             boxShadow: [
@@ -159,10 +160,10 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                               leading: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: subject.color.withValues(alpha: 0.15),
+                                  color: subColor.withValues(alpha: colors.isDark ? 0.25 : 0.15),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Icon(subject.iconData, color: subject.color, size: 22),
+                                child: Icon(subject.iconData, color: subColor, size: 22),
                               ),
                               title: Text(
                                 subject.name,
@@ -183,14 +184,14 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                                     padding: const EdgeInsets.all(6),
                                     decoration: BoxDecoration(
                                       color: isSubjectActive && activeEventId == null
-                                          ? subject.color.withValues(alpha: 0.2)
-                                          : const Color(0xFFF1F5F9),
+                                          ? subColor.withValues(alpha: 0.2)
+                                          : colors.surfaceVariant,
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
                                       Icons.menu_book_rounded,
                                       size: 16,
-                                      color: isSubjectActive && activeEventId == null ? subject.color : colors.textSecondary,
+                                      color: isSubjectActive && activeEventId == null ? subColor : colors.textSecondary,
                                     ),
                                   ),
                                   title: Text(
@@ -198,7 +199,7 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: isSubjectActive && activeEventId == null ? FontWeight.bold : FontWeight.w600,
-                                      color: isSubjectActive && activeEventId == null ? subject.color : colors.textPrimary,
+                                      color: isSubjectActive && activeEventId == null ? subColor : colors.textPrimary,
                                     ),
                                   ),
                                   subtitle: Text(
@@ -206,7 +207,7 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                                     style: TextStyle(fontSize: 11, color: colors.textSecondary),
                                   ),
                                   trailing: isSubjectActive && activeEventId == null
-                                      ? Icon(Icons.check_circle_rounded, color: subject.color, size: 20)
+                                      ? Icon(Icons.check_circle_rounded, color: subColor, size: 20)
                                       : null,
                                   onTap: () async {
                                     final wasFocusMidSession = pomodoro.phase == PomodoroPhase.focus && !pomodoro.isIdle;

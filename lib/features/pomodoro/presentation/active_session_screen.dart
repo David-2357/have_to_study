@@ -695,12 +695,13 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: (currentSubject?.color ?? AppColors.primary).withValues(alpha: 0.15),
+                            color: (currentSubject?.displayColor(colors.isDark) ?? AppColors.primary)
+                                .withValues(alpha: colors.isDark ? 0.25 : 0.15),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
                             currentSubject?.iconData ?? Icons.school_rounded,
-                            color: currentSubject?.color ?? AppColors.primary,
+                            color: currentSubject?.displayColor(colors.isDark) ?? AppColors.primary,
                             size: 20,
                           ),
                         ),

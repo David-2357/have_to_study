@@ -122,7 +122,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE9EDF5),
+                    color: colors.surfaceVariant,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -208,7 +208,9 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: _selectedTab == 1 ? AppColors.primaryLight : const Color(0xFFDCE2EE),
+                                    color: _selectedTab == 1
+                                        ? (colors.isDark ? AppColors.primary.withValues(alpha: 0.25) : AppColors.primaryLight)
+                                        : (colors.isDark ? colors.surface : const Color(0xFFDCE2EE)),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Text(
@@ -468,6 +470,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
           separatorBuilder: (_, _) => const SizedBox(height: 14),
           itemBuilder: (context, index) {
             final subject = filtered[index];
+            final subColor = subject.displayColor(colors.isDark);
             final relatedEvents = events.where((e) => e.subjectId == subject.id && !e.isCompleted).toList();
             final nextExam = relatedEvents.where((e) => e.type == EventType.exam).firstOrNull;
             final pendingDeliveries = relatedEvents.where((e) => e.type != EventType.exam).length;
@@ -493,7 +496,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border(
-                        left: BorderSide(color: subject.color, width: 6),
+                        left: BorderSide(color: subColor, width: 6),
                       ),
                     ),
                     padding: const EdgeInsets.all(16),
@@ -507,10 +510,10 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                               width: 44,
                               height: 44,
                               decoration: BoxDecoration(
-                                color: subject.color.withValues(alpha: 0.12),
+                                color: subColor.withValues(alpha: colors.isDark ? 0.22 : 0.12),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Icon(subject.iconData, color: subject.color, size: 22),
+                              child: Icon(subject.iconData, color: subColor, size: 22),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -542,19 +545,25 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFEEF2FF),
+                                color: colors.isDark
+                                    ? const Color(0xFF4F46E5).withValues(alpha: 0.22)
+                                    : const Color(0xFFEEF2FF),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.access_time_rounded, size: 12, color: Color(0xFF4F46E5)),
+                                  Icon(
+                                    Icons.access_time_rounded,
+                                    size: 12,
+                                    color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                                  ),
                                   const SizedBox(width: 4),
                                   Text(
                                     TimeUtils.formatDurationHoursMinutes(subject.totalStudySeconds),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFF4F46E5),
+                                      color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
                                     ),
                                   ),
                                 ],
@@ -587,20 +596,26 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: AppColors.warningLight,
+                                  color: colors.isDark
+                                      ? AppColors.warning.withValues(alpha: 0.22)
+                                      : AppColors.warningLight,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.assignment_outlined, size: 13, color: AppColors.warning),
+                                    Icon(
+                                      Icons.assignment_outlined,
+                                      size: 13,
+                                      color: colors.isDark ? const Color(0xFFFDBA74) : AppColors.warning,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       '$pendingDeliveries entregas pendientes',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w700,
-                                        color: AppColors.warning,
+                                        color: colors.isDark ? const Color(0xFFFDBA74) : AppColors.warning,
                                       ),
                                     ),
                                   ],
@@ -610,20 +625,26 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFEEF2FF),
+                                  color: colors.isDark
+                                      ? const Color(0xFF4F46E5).withValues(alpha: 0.22)
+                                      : const Color(0xFFEEF2FF),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.calendar_today_rounded, size: 13, color: Color(0xFF4F46E5)),
+                                    Icon(
+                                      Icons.calendar_today_rounded,
+                                      size: 13,
+                                      color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       'Examen: ${TimeUtils.formatEventDate(nextExam.dueAt)}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w700,
-                                        color: Color(0xFF4F46E5),
+                                        color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
                                       ),
                                     ),
                                   ],
@@ -633,20 +654,26 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: AppColors.successLight,
+                                  color: colors.isDark
+                                      ? AppColors.success.withValues(alpha: 0.22)
+                                      : AppColors.successLight,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.check_circle_outline_rounded, size: 13, color: AppColors.success),
-                                    SizedBox(width: 4),
+                                    Icon(
+                                      Icons.check_circle_outline_rounded,
+                                      size: 13,
+                                      color: colors.isDark ? const Color(0xFF86EFAC) : AppColors.success,
+                                    ),
+                                    const SizedBox(width: 4),
                                     Text(
                                       'Todo al día',
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w700,
-                                        color: AppColors.success,
+                                        color: colors.isDark ? const Color(0xFF86EFAC) : AppColors.success,
                                       ),
                                     ),
                                   ],
@@ -702,10 +729,10 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                               width: 32,
                               height: 32,
                               decoration: BoxDecoration(
-                                color: subject.color.withValues(alpha: 0.15),
+                                color: subject.displayColor(colors.isDark).withValues(alpha: colors.isDark ? 0.25 : 0.15),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Icon(subject.iconData, color: subject.color, size: 16),
+                              child: Icon(subject.iconData, color: subject.displayColor(colors.isDark), size: 16),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -845,7 +872,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
+        color: colors.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -858,7 +885,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: iconColor.withValues(alpha: 0.15),
+                    color: iconColor.withValues(alpha: colors.isDark ? 0.25 : 0.15),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(icon, color: iconColor, size: 16),
@@ -876,7 +903,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE2E8F0),
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -884,7 +911,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: colors.textSecondary,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ),

@@ -289,10 +289,10 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: subject.color.withValues(alpha: 0.15),
+                  color: subject.displayColor(colors.isDark).withValues(alpha: colors.isDark ? 0.25 : 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(subject.iconData, color: subject.color, size: 22),
+                child: Icon(subject.iconData, color: subject.displayColor(colors.isDark), size: 22),
               ),
               const SizedBox(width: 12),
               Expanded(

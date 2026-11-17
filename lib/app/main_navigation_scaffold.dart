@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import '../core/theme/app_colors.dart';
 import '../core/theme/app_color_theme.dart';
 
 class MainNavigationScaffold extends StatelessWidget {
@@ -39,6 +40,10 @@ class MainNavigationScaffold extends StatelessWidget {
             ],
           ),
           child: BottomNavigationBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            selectedItemColor: AppColors.primary,
+            unselectedItemColor: colors.textMuted,
             currentIndex: navigationShell.currentIndex,
             onTap: (index) {
               if (index == navigationShell.currentIndex) {

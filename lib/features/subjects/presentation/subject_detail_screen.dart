@@ -129,7 +129,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border(
-                        left: BorderSide(color: subject.color, width: 6),
+                        left: BorderSide(color: subject.displayColor(colors.isDark), width: 6),
                       ),
                     ),
                     padding: const EdgeInsets.all(16),
@@ -142,10 +142,10 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                               width: 48,
                               height: 48,
                               decoration: BoxDecoration(
-                                color: subject.color.withValues(alpha: 0.12),
+                                color: subject.displayColor(colors.isDark).withValues(alpha: colors.isDark ? 0.25 : 0.12),
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              child: Icon(subject.iconData, color: subject.color, size: 26),
+                              child: Icon(subject.iconData, color: subject.displayColor(colors.isDark), size: 26),
                             ),
                             const SizedBox(width: 14),
                             Expanded(

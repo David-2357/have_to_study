@@ -89,7 +89,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
         child: Container(
           decoration: BoxDecoration(
             border: Border(
-              left: BorderSide(color: subject.color, width: 6),
+              left: BorderSide(color: subject.displayColor(colors.isDark), width: 6),
             ),
           ),
           padding: const EdgeInsets.all(16),
@@ -193,7 +193,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: subject.color,
+                      color: subject.displayColor(colors.isDark),
                       shape: BoxShape.circle,
                     ),
                   ),

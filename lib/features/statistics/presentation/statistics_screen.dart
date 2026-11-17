@@ -159,7 +159,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE9EDF5),
+                    color: colors.surfaceVariant,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -531,9 +531,11 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF0FDF4),
+                      color: colors.isDark ? const Color(0xFF132F23) : const Color(0xFFF0FDF4),
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: const Color(0xFFDCFCE7)),
+                      border: Border.all(
+                        color: colors.isDark ? const Color(0xFF166534) : const Color(0xFFDCFCE7),
+                      ),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -565,15 +567,15 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFDCFCE7),
+                                      color: colors.isDark ? const Color(0xFF166534) : const Color(0xFFDCFCE7),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
                                       goldenZoneLabel,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xFF15803D),
+                                        color: colors.isDark ? const Color(0xFF86EFAC) : const Color(0xFF15803D),
                                       ),
                                     ),
                                   ),
@@ -621,7 +623,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
+            color: isSelected ? colors.surface : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             boxShadow: isSelected
                 ? [
@@ -682,7 +684,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 ),
                 Container(
                   padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                    color: colors.isDark ? iconColor.withValues(alpha: 0.22) : iconBg,
+                    shape: BoxShape.circle,
+                  ),
                   child: Icon(icon, color: iconColor, size: 14),
                 ),
               ],
