@@ -125,16 +125,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   height: 120,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(28),
+                    border: Border.all(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.12)
+                          : Colors.black.withValues(alpha: 0.06),
+                      width: 1.5,
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.28),
+                        color: AppColors.primary.withValues(alpha: isDark ? 0.35 : 0.22),
                         blurRadius: 24,
                         offset: const Offset(0, 10),
                       ),
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(28),
+                    borderRadius: BorderRadius.circular(26),
                     child: Image.asset(
                       'assets/icon/app_icon.png',
                       fit: BoxFit.cover,
