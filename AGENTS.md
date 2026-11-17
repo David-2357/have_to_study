@@ -73,3 +73,23 @@ Before creating commits:
 - Use clear headings and a logical structure.
 - Every section must provide useful information to the reader.
 
+## Technical Requirements Documentation
+
+- Maintain `docs/TECHNICAL_REQUIREMENTS.md` as the single source of truth for the project's technical dependencies, versions, and environment requirements.
+- Document only technical information, including:
+  - Programming languages and SDK versions.
+  - Frameworks and libraries, including their versions.
+  - Direct and relevant transitive dependencies.
+  - Development tools and code generation tools.
+  - Platform requirements and compatibility constraints.
+  - Build tools, configurations, and environment requirements.
+  - External technical integrations and their required versions.
+- Keep the document synchronized with the actual project configuration files, such as `pubspec.yaml`, platform-specific configuration files, and other relevant manifests.
+- Update the document whenever dependencies, versions, SDK requirements, tools, or technical configurations change.
+- Consult this document when performing tasks involving dependencies, versions, compatibility, or technical configuration.
+- Never include feature descriptions, application architecture explanations, coding conventions, business logic, or general development guidelines.
+- Remove outdated entries and avoid duplicating information.
+
+**Goal:** Maintain an accurate and up-to-date technical inventory of the project's dependencies, versions, and environment requirements.
+
+
