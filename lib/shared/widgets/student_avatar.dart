@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../features/profile/domain/profile_model.dart';
-import '../theme/app_colors.dart';
+import '../../core/theme/app_colors.dart';
 
 class AvatarPreset {
   final String key;

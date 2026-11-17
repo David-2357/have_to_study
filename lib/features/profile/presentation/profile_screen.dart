@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/providers.dart';
-import '../../../core/widgets/student_avatar.dart';
+import '../../../shared/widgets/student_avatar.dart';
 import '../domain/profile_model.dart';
 
 class ProfileScreen extends ConsumerWidget {

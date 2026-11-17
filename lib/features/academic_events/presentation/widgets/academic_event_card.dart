@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/time/time_utils.dart';
+import '../../../../shared/utils/time_utils.dart';
 import '../../../../core/providers.dart';
 import '../../domain/academic_event_model.dart';
 import '../../../subjects/domain/subject_model.dart';

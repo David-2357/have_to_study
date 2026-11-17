@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/time/time_utils.dart';
-import '../../../core/widgets/app_header.dart';
+import '../../../shared/utils/time_utils.dart';
+import '../../../shared/widgets/app_header.dart';
 import '../../../core/providers.dart';
 import '../../subjects/domain/subject_model.dart';
 
