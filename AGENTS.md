@@ -92,4 +92,32 @@ Before creating commits:
 
 **Goal:** Maintain an accurate and up-to-date technical inventory of the project's dependencies, versions, and environment requirements.
 
+## Shared Components
+
+- Maintain a `lib/shared/` directory at the same level as `features/` and `data/`.
+- Use this directory for reusable components, widgets, utilities, and other resources shared across multiple features.
+- Before creating a new shared component, check whether an existing implementation can be reused.
+- Avoid duplicating components or functionality across features.
+- Keep feature-specific components inside their respective feature directories.
+- Shared components must remain independent of specific features whenever possible.
+- When moving or creating shared components, update all affected imports and references.
+
+## Project Structure Documentation
+
+- Maintain `docs/PROJECT_STRUCTURE.md` as the reference for the project's current directory and file organization.
+- Document the purpose and responsibilities of the main directories and relevant subdirectories.
+- Keep the document synchronized with the actual project structure.
+- Update it whenever directories, modules, or significant files are created, removed, moved, or reorganized.
+- Consult this document when deciding where new files or components should be placed.
+- Keep the documentation concise and remove outdated references.
+
+## Documentation Consistency
+
+- Keep `README.md`, `docs/TECHNICAL_REQUIREMENTS.md`, and `docs/PROJECT_STRUCTURE.md` synchronized with the actual implementation.
+- Before finishing a task, review whether any of these documents need updates.
+- Update only the documents affected by the changes.
+- Never leave documentation describing outdated dependencies, project structures, setup instructions, or functionality.
+- Avoid duplicating the same information across multiple documents. Each document must have a clearly defined responsibility.
+
+
 

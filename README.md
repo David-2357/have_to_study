@@ -74,8 +74,7 @@ lib/
 ├── core/
 │   ├── providers.dart    # Riverpod state notifiers and providers
 │   ├── services/         # Audio feedback and backup services
-│   ├── theme/            # Color palettes and app themes
-│   └── widgets/          # Shared atomic widgets (header, avatar)
+│   └── theme/            # Color palettes and app themes
 ├── data/
 │   └── database/         # Drift tables, DAOs, and database configuration
 ├── features/
@@ -88,6 +87,9 @@ lib/
 │   ├── splash/           # Splash screen
 │   ├── statistics/       # Study analytics and charts
 │   └── subjects/         # Subjects CRUD, detail views, and course modes
+├── shared/
+│   ├── utils/            # Shared formatting and time utilities
+│   └── widgets/          # Reusable UI widgets (header, avatar)
 └── main.dart             # Application entry point
 ```
 
