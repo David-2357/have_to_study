@@ -1,13 +1,13 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_color_theme.dart';
-import '../../../../shared/utils/time_utils.dart';
-import '../../../../core/providers.dart';
-import '../../domain/academic_event_model.dart';
-import '../../../subjects/domain/subject_model.dart';
-import '../create_event_sheet.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_color_theme.dart';
+import '../utils/time_utils.dart';
+import '../../core/providers.dart';
+import '../../features/academic_events/domain/academic_event_model.dart';
+import '../../features/subjects/domain/subject_model.dart';
+import '../../features/academic_events/presentation/create_event_sheet.dart';
 
 class AcademicEventCard extends ConsumerStatefulWidget {
   final AcademicEventModel event;
@@ -132,19 +132,25 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFEF3C7),
+                          color: colors.isDark
+                              ? const Color(0xFFD97706).withValues(alpha: 0.22)
+                              : const Color(0xFFFEF3C7),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.access_time_filled_rounded, size: 11, color: Color(0xFFD97706)),
+                            Icon(
+                              Icons.access_time_filled_rounded,
+                              size: 11,
+                              color: colors.isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               TimeUtils.formatRelativeDate(event.dueAt),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFFD97706),
+                                color: colors.isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
                               ),
                             ),
                           ],
@@ -288,7 +294,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: event.progress,
-                    backgroundColor: const Color(0xFFE2E8F0),
+                    backgroundColor: colors.isDark ? colors.surfaceVariant : const Color(0xFFE2E8F0),
                     valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
                     minHeight: 6,
                   ),

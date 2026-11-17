@@ -9,7 +9,7 @@ import '../../../core/providers.dart';
 import '../domain/subject_model.dart';
 import '../../academic_events/domain/academic_event_model.dart';
 import '../../academic_events/presentation/create_event_sheet.dart';
-import '../../academic_events/presentation/widgets/academic_event_card.dart';
+import '../../../shared/widgets/academic_event_card.dart';
 
 class StudiesScreen extends ConsumerStatefulWidget {
   const StudiesScreen({super.key});

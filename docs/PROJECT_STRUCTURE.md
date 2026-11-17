@@ -62,7 +62,7 @@ Local data persistence using Drift and SQLite.
 
 ### 4. `lib/features/`
 Autonomous feature modules grouped by business capability. Each feature directory contains its domain models and presentation screens/widgets:
-- `academic_events/`: Management of homework, deliverables, and exams (`academic_event_card.dart`, `create_event_sheet.dart`).
+- `academic_events/`: Management of homework, deliverables, and exams (`create_event_sheet.dart`).
 - `calendar/`: Monthly calendar view with scheduled activity indicators (`calendar_screen.dart`).
 - `onboarding/`: First-run tutorial and student profile setup flow (`onboarding_screen.dart`).
 - `pomodoro/`: Focus tracking timers, including standard Pomodoro and continuous Unbounded sessions (`active_session_screen.dart`, `pomodoro_screen.dart`).
@@ -77,6 +77,7 @@ Reusable components, widgets, and utilities shared across multiple features. Fea
 - `utils/`:
   - `time_utils.dart`: Reusable time formatting, countdown calculations, and date display helpers.
 - `widgets/`:
+  - `academic_event_card.dart`: Reusable expandable card for academic deadlines, exams, and deliverables used across Calendar and Studies.
   - `app_header.dart`: Common header displaying screen title, logo, settings shortcut, and user avatar.
   - `student_avatar.dart`: Reusable avatar widget rendering custom presets, user images, or initials.
 
