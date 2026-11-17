@@ -11,7 +11,8 @@ have_to_study/
 │   └── icon/             # Launcher and application branding icons
 ├── docs/                 # Project documentation
 │   ├── PROJECT_STRUCTURE.md       # Directory organization and module responsibilities
-│   └── TECHNICAL_REQUIREMENTS.md  # Technical inventory, dependencies, and versions
+│   ├── TECHNICAL_REQUIREMENTS.md  # Technical inventory, dependencies, and versions
+│   └── THEME_GUIDELINES.md        # Semantic theme color tokens and UI role usage guide
 ├── ios/                  # iOS platform configuration and build scripts
 ├── lib/                  # Dart/Flutter source code
 ├── test/                 # Unit and widget test suite
@@ -47,8 +48,9 @@ Foundational services, state notifiers, and design system definitions.
   - `audio_feedback_service.dart`: Sound effect generation and playback for timer events.
   - `backup_service.dart`: Automated and manual SQLite/JSON backup, restore, and file sharing.
 - `theme/`:
-  - `app_colors.dart`: Semantic color definitions, gradients, and UI palettes.
-  - `app_theme.dart`: ThemeData configurations for light and dark modes.
+  - `app_colors.dart`: Static brand tokens, status colors, and event milestone palettes.
+  - `app_color_theme.dart`: Reactive ThemeExtension with dynamic surface and typography tokens.
+  - `app_theme.dart`: ThemeData configurations registering extensions for light and dark modes.
 
 ### 3. `lib/data/`
 Local data persistence using Drift and SQLite.

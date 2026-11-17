@@ -119,5 +119,12 @@ Before creating commits:
 - Never leave documentation describing outdated dependencies, project structures, setup instructions, or functionality.
 - Avoid duplicating the same information across multiple documents. Each document must have a clearly defined responsibility.
 
+## Theme Guidelines Reference
+
+- Refer to `docs/THEME_GUIDELINES.md` as the single source of truth for semantic color usage throughout the application.
+- Consult this document whenever creating, modifying, or reviewing UI components involving colors.
+- Follow its semantic color usage guidelines consistently across all features.
+
+
 
 
