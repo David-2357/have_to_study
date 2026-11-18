@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_color_theme.dart';
 import '../utils/time_utils.dart';
@@ -79,11 +80,34 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
     final targetSeconds = event.targetPomodoros * pomodoroSeconds;
 
     // Calcular el tiempo real dedicado a este evento específico a partir de las sesiones
-    final eventSessions = sessions.where((s) => s.academicEventId == event.id);
+    final eventSessions = sessions.where((s) => s.academicEventId == event.id).toList();
     final actualSessionsSecs = eventSessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
     final dedicatedSeconds = actualSessionsSecs > 0
         ? actualSessionsSecs
         : (event.completedPomodoros * pomodoroSeconds);
+
+    // Obtener la fecha de la última sesión dedicada a este evento
+    DateTime? lastDedicatedDate;
+    if (eventSessions.isNotEmpty) {
+      lastDedicatedDate = eventSessions
+          .map((s) => s.completedAt)
+          .reduce((a, b) => a.isAfter(b) ? a : b);
+    }
+
+    final String lastSessionDateStr;
+    final String lastSessionSubStr;
+    if (lastDedicatedDate != null) {
+      lastSessionDateStr = TimeUtils.formatRelativeDate(lastDedicatedDate);
+      final formattedDay = DateFormat('d MMM', 'es').format(lastDedicatedDate);
+      if (lastSessionDateStr == formattedDay) {
+        lastSessionSubStr = DateFormat('HH:mm').format(lastDedicatedDate);
+      } else {
+        lastSessionSubStr = formattedDay;
+      }
+    } else {
+      lastSessionDateStr = 'Nunca';
+      lastSessionSubStr = 'Sin sesiones';
+    }
 
     final progress = targetSeconds > 0
         ? (dedicatedSeconds / targetSeconds).clamp(0.0, 1.0)
@@ -311,9 +335,9 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                 Row(
                   children: [
                     _buildMetricPill(
-                      title: 'Dedicado',
-                      val: TimeUtils.formatDurationHoursMinutes(dedicatedSeconds),
-                      sub: '${(dedicatedSeconds / pomodoroSeconds).toStringAsFixed(dedicatedSeconds % pomodoroSeconds == 0 ? 0 : 1)} pomos equiv.',
+                      title: 'Último día',
+                      val: lastSessionDateStr,
+                      sub: lastSessionSubStr,
                     ),
                     const SizedBox(width: 8),
                     _buildMetricPill(
@@ -399,6 +423,8 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                 color: colors.textSecondary,
                 fontWeight: FontWeight.w500,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 2),
             Text(
@@ -408,6 +434,8 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                 fontWeight: FontWeight.bold,
                 color: colors.textPrimary,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
               sub,
@@ -415,6 +443,8 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                 fontSize: 9,
                 color: colors.textSecondary,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
