@@ -77,7 +77,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
 
     final focusMinutes = settings.focusMinutes > 0 ? settings.focusMinutes : 25;
     final pomodoroSeconds = focusMinutes * 60;
-    final targetSeconds = event.targetPomodoros * pomodoroSeconds;
+    final targetSeconds = event.targetMinutes * 60;
 
     // Calcular el tiempo real dedicado a este evento específico a partir de las sesiones
     final eventSessions = sessions.where((s) => s.academicEventId == event.id).toList();
@@ -274,10 +274,10 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                   ),
                   AppChip(
                     label: isGoalReached
-                        ? '${event.targetPomodoros}/${event.targetPomodoros} Pomos'
+                        ? '${TimeUtils.formatDurationHoursMinutes(targetSeconds)} logrados'
                         : (dedicatedSeconds > 0
                             ? '${TimeUtils.formatDurationHoursMinutes(dedicatedSeconds)} / ${TimeUtils.formatDurationHoursMinutes(targetSeconds)}'
-                            : '${event.completedPomodoros} / ${event.targetPomodoros} Pomos'),
+                            : 'Meta: ${TimeUtils.formatDurationHoursMinutes(targetSeconds)}'),
                     icon: isGoalReached ? Icons.check_circle_rounded : Icons.timer_outlined,
                     variant: isGoalReached ? AppChipVariant.success : AppChipVariant.neutral,
                     iconSize: 12,
@@ -350,8 +350,8 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                     const SizedBox(width: 8),
                     _buildMetricPill(
                       title: 'Meta',
-                      val: '${event.targetPomodoros} pomos',
-                      sub: '${TimeUtils.formatDurationHoursMinutes(targetSeconds)} objetivo',
+                      val: TimeUtils.formatDurationHoursMinutes(targetSeconds),
+                      sub: '~${(event.targetMinutes / focusMinutes).toStringAsFixed(1).replaceAll('.0', '')} pomos objetivo',
                     ),
                   ],
                 ),

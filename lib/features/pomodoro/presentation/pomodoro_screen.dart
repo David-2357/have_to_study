@@ -784,7 +784,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                       ],
                     ),
                     Text(
-                      '• ${event.completedPomodoros}/${event.targetPomodoros} bloques',
+                      '• Meta: ${TimeUtils.formatDurationHoursMinutes(event.targetMinutes * 60)}',
                       style: TextStyle(
                         fontSize: 11,
                         color: colors.textMuted,

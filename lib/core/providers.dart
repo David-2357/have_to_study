@@ -256,7 +256,8 @@ class AcademicEventsNotifier extends StateNotifier<List<AcademicEventModel>> {
     String description = '',
     required DateTime dueAt,
     bool hasDueTime = true,
-    int targetPomodoros = 4,
+    int? targetMinutes,
+    int? targetPomodoros,
     int academicWeight = 0,
     bool isPriority = false,
   }) async {
@@ -268,7 +269,7 @@ class AcademicEventsNotifier extends StateNotifier<List<AcademicEventModel>> {
       description: description,
       dueAt: dueAt,
       hasDueTime: hasDueTime,
-      targetPomodoros: targetPomodoros,
+      targetMinutes: targetMinutes ?? (targetPomodoros != null ? (targetPomodoros <= 20 ? targetPomodoros * 25 : targetPomodoros) : 100),
       completedPomodoros: 0,
       academicWeight: academicWeight,
       isPriority: isPriority,
@@ -324,7 +325,7 @@ class AcademicEventsNotifier extends StateNotifier<List<AcademicEventModel>> {
 
     final focusMinutes = _ref?.read(settingsProvider).focusMinutes ?? 25;
     final pomodoroSeconds = focusMinutes * 60;
-    final targetSeconds = event.targetPomodoros * pomodoroSeconds;
+    final targetSeconds = event.targetMinutes * 60;
 
     // Obtener todas las sesiones dedicadas a este evento
     final eventSessions = await _ref?.read(focusSessionsDaoProvider).getSessionsByEvent(eventId) ?? [];

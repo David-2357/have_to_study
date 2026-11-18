@@ -271,7 +271,7 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                                         ),
                                       ),
                                       subtitle: Text(
-                                        'Avance: ${event.completedPomodoros}/${event.targetPomodoros} bloques · ${TimeUtils.formatEventDate(event.dueAt)}',
+                                        'Meta: ${TimeUtils.formatDurationHoursMinutes(event.targetMinutes * 60)} · ${TimeUtils.formatEventDate(event.dueAt)}',
                                         style: TextStyle(fontSize: 11, color: colors.textSecondary),
                                       ),
                                       trailing: isThisEventActive

@@ -454,7 +454,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                       Builder(builder: (context) {
                         final examSessions = sessions.where((s) => s.academicEventId == nextExam.id);
                         final actualExamSecs = examSessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
-                        final targetExamSecs = nextExam.targetPomodoros * 25 * 60;
+                        final targetExamSecs = nextExam.targetMinutes * 60;
                         final examProgress = targetExamSecs > 0
                             ? (actualExamSecs / targetExamSecs).clamp(0.0, 1.0)
                             : nextExam.progress;
@@ -848,7 +848,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                         Icon(Icons.timer_outlined, size: 11, color: colors.textSecondary),
                         const SizedBox(width: 4),
                         Text(
-                          '${event.completedPomodoros} / ${event.targetPomodoros} Pomos',
+                          'Meta: ${TimeUtils.formatDurationHoursMinutes(event.targetMinutes * 60)}',
                           style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: colors.textSecondary),
                         ),
                       ],

@@ -33,10 +33,32 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
   late DateTime _selectedDate;
   late TimeOfDay _selectedTime;
   late bool _includeTime;
-  late int _targetPomodoros;
+  late int _targetMinutes;
   late bool _isPriority;
 
   bool get _isEditing => widget.eventToEdit != null;
+
+  String get _estimatedPomosStr {
+    final focusMins = ref.watch(settingsProvider).focusMinutes;
+    final validFocusMins = focusMins > 0 ? focusMins : 25;
+    final pomos = _targetMinutes / validFocusMins;
+    if (pomos == pomos.roundToDouble()) {
+      return pomos.toInt().toString();
+    }
+    return pomos.toStringAsFixed(1);
+  }
+
+  String _formatTargetMinutes(int minutes) {
+    if (minutes < 60) {
+      return '$minutes min';
+    }
+    final hours = minutes ~/ 60;
+    final mins = minutes % 60;
+    if (mins == 0) {
+      return '${hours}h 00m';
+    }
+    return '${hours}h ${mins.toString().padLeft(2, '0')}m';
+  }
 
   @override
   void initState() {
@@ -64,7 +86,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
         ? TimeOfDay(hour: event.dueAt.hour, minute: event.dueAt.minute)
         : const TimeOfDay(hour: 10, minute: 0);
     _includeTime = event?.hasDueTime ?? true;
-    _targetPomodoros = event?.targetPomodoros ?? 8;
+    _targetMinutes = event?.targetMinutes ?? 50;
     _isPriority = event?.isPriority ?? true;
   }
 
@@ -438,7 +460,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
 
             const SizedBox(height: 14),
 
-            // Meta de Pomodoros
+            // Meta de Tiempo
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -454,11 +476,30 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                         Icon(Icons.timer_outlined, color: AppColors.primary, size: 20),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
-                            'Meta de Pomodoros',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: colors.textPrimary),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Meta de tiempo',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w800,
+                                  color: colors.textPrimary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                '~$_estimatedPomosStr pomodoros estimados',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: colors.textSecondary,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -480,16 +521,16 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                           constraints: const BoxConstraints(),
                           icon: const Icon(Icons.remove_rounded, size: 18),
                           onPressed: () {
-                            if (_targetPomodoros > 1) {
-                              setState(() => _targetPomodoros--);
+                            if (_targetMinutes > 5) {
+                              setState(() => _targetMinutes -= 5);
                             }
                           },
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Text(
-                            '$_targetPomodoros',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: AppColors.primary),
+                            _formatTargetMinutes(_targetMinutes),
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: AppColors.primary),
                           ),
                         ),
                         IconButton(
@@ -497,8 +538,8 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                           constraints: const BoxConstraints(),
                           icon: const Icon(Icons.add_rounded, size: 18),
                           onPressed: () {
-                            if (_targetPomodoros < 50) {
-                              setState(() => _targetPomodoros++);
+                            if (_targetMinutes < 720) {
+                              setState(() => _targetMinutes += 5);
                             }
                           },
                         ),
@@ -629,7 +670,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                       description: _notesController.text.trim(),
                       dueAt: dueDateTime,
                       hasDueTime: _includeTime,
-                      targetPomodoros: _targetPomodoros,
+                      targetMinutes: _targetMinutes,
                       academicWeight: int.tryParse(_weightController.text) ?? 0,
                       isPriority: _isPriority,
                     );
@@ -642,7 +683,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                           description: _notesController.text.trim(),
                           dueAt: dueDateTime,
                           hasDueTime: _includeTime,
-                          targetPomodoros: _targetPomodoros,
+                          targetMinutes: _targetMinutes,
                           academicWeight: int.tryParse(_weightController.text) ?? 0,
                           isPriority: _isPriority,
                         );

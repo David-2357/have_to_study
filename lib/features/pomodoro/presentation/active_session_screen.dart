@@ -838,8 +838,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                           Builder(builder: (context) {
                             final eventSessions = sessions.where((s) => s.academicEventId == currentEvent.id);
                             final actualSecs = eventSessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
-                            final focusMins = settings.focusMinutes > 0 ? settings.focusMinutes : 25;
-                            final targetSecs = currentEvent.targetPomodoros * focusMins * 60;
+                            final targetSecs = currentEvent.targetMinutes * 60;
                             final pct = targetSecs > 0
                                 ? ((actualSecs / targetSecs).clamp(0.0, 1.0) * 100).round()
                                 : currentEvent.progressPercent;
@@ -848,9 +847,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                                 const Icon(Icons.pie_chart_outline_rounded, size: 14, color: AppColors.teal),
                                 const SizedBox(width: 4),
                                 Text(
-                                  actualSecs > 0
-                                      ? '${TimeUtils.formatDurationHoursMinutes(actualSecs)} / ${TimeUtils.formatDurationHoursMinutes(targetSecs)} ($pct%)'
-                                      : '${currentEvent.completedPomodoros} / ${currentEvent.targetPomodoros} bloques (${currentEvent.progressPercent}%)',
+                                  '${TimeUtils.formatDurationHoursMinutes(actualSecs)} / ${TimeUtils.formatDurationHoursMinutes(targetSecs)} ($pct%)',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,

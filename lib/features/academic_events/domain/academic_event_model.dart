@@ -91,7 +91,7 @@ class AcademicEventModel {
   final String description;
   final DateTime dueAt;
   final bool hasDueTime;
-  final int targetPomodoros;
+  final int targetMinutes;
   final int completedPomodoros;
   final bool isCompleted;
   final int academicWeight; // Ponderación opcional en nota (ej. 30%)
@@ -105,16 +105,24 @@ class AcademicEventModel {
     this.description = '',
     required this.dueAt,
     this.hasDueTime = true,
-    this.targetPomodoros = 4,
+    int? targetMinutes,
+    int? targetPomodoros,
     this.completedPomodoros = 0,
     this.isCompleted = false,
     this.academicWeight = 0,
     this.isPriority = false,
-  });
+  }) : targetMinutes = targetMinutes ??
+            (targetPomodoros != null
+                ? (targetPomodoros <= 20 ? targetPomodoros * 25 : targetPomodoros)
+                : 100);
+
+  int get targetPomodoros => targetMinutes > 0 ? (targetMinutes / 25).ceil() : 1;
 
   double get progress {
-    if (targetPomodoros <= 0) return 0.0;
-    final val = completedPomodoros / targetPomodoros;
+    if (targetMinutes <= 0) return 0.0;
+    final targetSecs = targetMinutes * 60;
+    final completedSecs = completedPomodoros * 25 * 60;
+    final val = completedSecs / targetSecs;
     return val > 1.0 ? 1.0 : val;
   }
 
@@ -128,6 +136,7 @@ class AcademicEventModel {
     String? description,
     DateTime? dueAt,
     bool? hasDueTime,
+    int? targetMinutes,
     int? targetPomodoros,
     int? completedPomodoros,
     bool? isCompleted,
@@ -142,7 +151,10 @@ class AcademicEventModel {
       description: description ?? this.description,
       dueAt: dueAt ?? this.dueAt,
       hasDueTime: hasDueTime ?? this.hasDueTime,
-      targetPomodoros: targetPomodoros ?? this.targetPomodoros,
+      targetMinutes: targetMinutes ??
+          (targetPomodoros != null
+              ? (targetPomodoros <= 20 ? targetPomodoros * 25 : targetPomodoros)
+              : this.targetMinutes),
       completedPomodoros: completedPomodoros ?? this.completedPomodoros,
       isCompleted: isCompleted ?? this.isCompleted,
       academicWeight: academicWeight ?? this.academicWeight,
@@ -158,6 +170,7 @@ class AcademicEventModel {
     'description': description,
     'dueAt': dueAt.toIso8601String(),
     'hasDueTime': hasDueTime,
+    'targetMinutes': targetMinutes,
     'targetPomodoros': targetPomodoros,
     'completedPomodoros': completedPomodoros,
     'isCompleted': isCompleted,
@@ -177,7 +190,8 @@ class AcademicEventModel {
         description: json['description'] as String? ?? '',
         dueAt: DateTime.parse(json['dueAt'] as String),
         hasDueTime: json['hasDueTime'] as bool? ?? true,
-        targetPomodoros: json['targetPomodoros'] as int? ?? 4,
+        targetMinutes: json['targetMinutes'] as int?,
+        targetPomodoros: json['targetPomodoros'] as int?,
         completedPomodoros: json['completedPomodoros'] as int? ?? 0,
         isCompleted: json['isCompleted'] as bool? ?? false,
         academicWeight: json['academicWeight'] as int? ?? 0,
