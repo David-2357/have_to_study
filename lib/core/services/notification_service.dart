@@ -35,8 +35,8 @@ class NotificationService {
     // 1. Inicializar base de datos de zonas horarias
     try {
       tz.initializeTimeZones();
-      final String timeZoneName = await FlutterTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(timeZoneName));
+      final timeZoneInfo = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
     } catch (e) {
       debugPrint('[NotificationService] Error al configurar zona horaria: $e');
       try {
@@ -58,7 +58,7 @@ class NotificationService {
     );
 
     await _notificationsPlugin.initialize(
-      initSettings,
+      settings: initSettings,
       onDidReceiveNotificationResponse: (response) {
         debugPrint('[NotificationService] Notificación tocada: ${response.payload}');
       },
@@ -193,14 +193,12 @@ class NotificationService {
 
     try {
       await _notificationsPlugin.zonedSchedule(
-        pomodoroNotificationId,
-        title,
-        body,
-        tzScheduledTime,
-        notificationDetails,
+        id: pomodoroNotificationId,
+        title: title,
+        body: body,
+        scheduledDate: tzScheduledTime,
+        notificationDetails: notificationDetails,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
       );
       debugPrint('[NotificationService] Notificación programada para: $tzScheduledTime');
     } catch (e) {
@@ -211,7 +209,7 @@ class NotificationService {
   /// Cancelar la notificación programada de Pomodoro
   Future<void> cancelPomodoroNotification() async {
     try {
-      await _notificationsPlugin.cancel(pomodoroNotificationId);
+      await _notificationsPlugin.cancel(id: pomodoroNotificationId);
     } catch (e) {
       debugPrint('[NotificationService] Error al cancelar notificación: $e');
     }
@@ -269,10 +267,10 @@ class NotificationService {
 
     try {
       await _notificationsPlugin.show(
-        pomodoroNotificationId,
-        title,
-        body,
-        notificationDetails,
+        id: pomodoroNotificationId,
+        title: title,
+        body: body,
+        notificationDetails: notificationDetails,
       );
     } catch (e) {
       debugPrint('[NotificationService] Error mostrando notificación inmediata: $e');
@@ -358,14 +356,12 @@ class NotificationService {
 
     try {
       await _notificationsPlugin.zonedSchedule(
-        notifId,
-        title,
-        body,
-        tzScheduledTime,
-        notificationDetails,
+        id: notifId,
+        title: title,
+        body: body,
+        scheduledDate: tzScheduledTime,
+        notificationDetails: notificationDetails,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
       );
       debugPrint('[NotificationService] Notificación de evento prioritario programada: $tzScheduledTime (ID: $notifId)');
     } catch (e) {
@@ -377,10 +373,9 @@ class NotificationService {
   Future<void> cancelEventNotification(String eventId) async {
     try {
       final notifId = _eventNotificationId(eventId);
-      await _notificationsPlugin.cancel(notifId);
+      await _notificationsPlugin.cancel(id: notifId);
     } catch (e) {
       debugPrint('[NotificationService] Error al cancelar notificación de evento: $e');
     }
-  }
   }
 }

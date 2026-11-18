@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.havetostudy.have_to_study"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
