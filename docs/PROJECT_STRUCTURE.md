@@ -66,7 +66,7 @@ Autonomous feature modules grouped by business capability. Each feature director
 - `academic_events/`: Management of homework, deliverables, and exams (`create_event_sheet.dart`).
 - `calendar/`: Monthly calendar view with scheduled activity indicators (`calendar_screen.dart`).
 - `onboarding/`: First-run tutorial and student profile setup flow (`onboarding_screen.dart`).
-- `pomodoro/`: Focus tracking timers, including standard Pomodoro and continuous Unbounded sessions (`active_session_screen.dart`, `pomodoro_screen.dart`).
+- `pomodoro/`: Focus tracking timers, including standard Pomodoro and continuous Unbounded sessions (`active_session_screen.dart`, `pomodoro_screen.dart`, `pomodoro_quick_settings_sheet.dart`).
 - `profile/`: Student profile details, avatar selector, and academic status (`profile_screen.dart`).
 - `settings/`: Application preferences, timer defaults, and backup management (`settings_screen.dart`).
 - `splash/`: Application launch screen with database initialization check (`splash_screen.dart`).

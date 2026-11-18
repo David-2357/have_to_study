@@ -11,6 +11,7 @@ import '../../subjects/domain/subject_model.dart';
 import '../../academic_events/domain/academic_event_model.dart';
 import 'widgets/circular_timer_widget.dart';
 import 'widgets/select_activity_sheet.dart';
+import 'widgets/pomodoro_quick_settings_sheet.dart';
 
 enum ActiveSessionMode { pomodoro, unbounded }
 
@@ -174,6 +175,11 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
             tooltip: 'Cambiar actividad',
             onPressed: () => showSelectActivitySheet(context, ref),
           ),
+          IconButton(
+            icon: const Icon(Icons.tune_rounded),
+            tooltip: 'Ajustes del Pomodoro',
+            onPressed: () => showPomodoroQuickSettingsSheet(context),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: StudentAvatar(
@@ -305,7 +311,33 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                   }),
                 ),
 
-                const SizedBox(height: 28),
+                const SizedBox(height: 12),
+
+                // Botón directo a ajustes de Pomodoro y ciclos
+                InkWell(
+                  onTap: () => showPomodoroQuickSettingsSheet(context),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.tune_rounded, size: 14, color: colors.textSecondary),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Ajustes de pomodoro y ciclos',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
 
                 // Dos botones: Volver a 0 y Pasar de fase
                 Row(
