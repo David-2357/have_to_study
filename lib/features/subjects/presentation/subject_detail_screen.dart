@@ -44,6 +44,26 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
     final weekSubjectSessions = subjectSessions.where((s) => !s.completedAt.toLocal().isBefore(startOfWeek));
     final weekStudySeconds = weekSubjectSessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
 
+    final totalTargetPomos = subjectEvents.fold<int>(0, (sum, e) => sum + e.targetPomodoros);
+    final double pomoProgress;
+    final String pomoSub;
+    final bool showPomoProgress;
+
+    if (totalTargetPomos > 0) {
+      pomoProgress = (subject.completedPomodoros / totalTargetPomos).clamp(0.0, 1.0);
+      final pct = (pomoProgress * 100).round();
+      pomoSub = '$pct% del objetivo';
+      showPomoProgress = true;
+    } else if (subject.completedPomodoros > 0) {
+      pomoProgress = 1.0;
+      pomoSub = 'Sin meta fijada';
+      showPomoProgress = false;
+    } else {
+      pomoProgress = 0.0;
+      pomoSub = 'Sin actividades';
+      showPomoProgress = false;
+    }
+
     final nextExam = pendingEvents.where((e) => e.type == EventType.exam).firstOrNull;
 
     return Scaffold(
@@ -284,10 +304,11 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                   _buildStatCard(
                     title: 'POMODOROS',
                     val: '${subject.completedPomodoros} pomos',
-                    sub: 'Progreso constante',
+                    sub: pomoSub,
                     icon: Icons.hourglass_empty_rounded,
                     iconColor: AppColors.primary,
-                    showProgress: true,
+                    showProgress: showPomoProgress,
+                    progress: pomoProgress,
                   ),
                   const SizedBox(width: 10),
                   _buildStatCard(
@@ -552,6 +573,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
     required IconData icon,
     required Color iconColor,
     bool showProgress = false,
+    double progress = 0.0,
   }) {
     return Expanded(
       child: Container(
@@ -577,10 +599,10 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
               const SizedBox(height: 4),
               ClipRRect(
                 borderRadius: BorderRadius.circular(2),
-                child: const LinearProgressIndicator(
-                  value: 0.7,
-                  backgroundColor: Color(0xFFE2E8F0),
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  backgroundColor: colors.isDark ? colors.surfaceVariant : const Color(0xFFE2E8F0),
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
                   minHeight: 4,
                 ),
               ),
