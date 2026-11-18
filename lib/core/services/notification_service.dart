@@ -18,6 +18,7 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   static const int pomodoroNotificationId = 888;
+  static const int pomodoroCompletionNotificationId = 889;
   static const String pomodoroChannelId = 'pomodoro_timer_channel';
   static const String pomodoroChannelName = 'Temporizador Pomodoro';
   static const String pomodoroChannelDesc =
@@ -232,7 +233,17 @@ class NotificationService {
     }
   }
 
-  /// Mostrar notificación inmediata
+  /// Cancelar todas las notificaciones de pomodoro (programada y completada)
+  Future<void> cancelAllPomodoroNotifications() async {
+    try {
+      await _notificationsPlugin.cancel(id: pomodoroNotificationId);
+      await _notificationsPlugin.cancel(id: pomodoroCompletionNotificationId);
+    } catch (e) {
+      debugPrint('[NotificationService] Error al cancelar notificaciones: $e');
+    }
+  }
+
+  /// Mostrar notificación inmediata cuando concluye la fase en segundo plano o fuera de la app
   Future<void> showImmediateCompletionNotification({
     required PomodoroPhase phase,
     String? subjectName,
@@ -241,6 +252,9 @@ class NotificationService {
       await initialize();
     }
 
+    // Cancelar la alarma programada para evitar duplicados
+    await cancelPomodoroNotification();
+
     final String title;
     final String body;
 
@@ -248,16 +262,16 @@ class NotificationService {
       case PomodoroPhase.focus:
         title = '¡Pomodoro completado!';
         body = subjectName != null && subjectName.trim().isNotEmpty
-            ? 'Completaste tu sesión de $subjectName.'
-            : '¡Excelente trabajo! Has completado tu tiempo de estudio.';
+            ? 'Completaste tu sesión de $subjectName. ¡Momento de descansar!'
+            : '¡Excelente trabajo! Has completado tu tiempo de estudio. ¡Tómate un descanso!';
         break;
       case PomodoroPhase.shortBreak:
-        title = '¡Descanso finalizado!';
-        body = 'Tu descanso ha terminado. ¡Hora de concentrarse!';
+        title = '¡Descanso terminado!';
+        body = 'Tu descanso corto ha concluido. ¿Listo para concentrarte de nuevo?';
         break;
       case PomodoroPhase.longBreak:
-        title = '¡Descanso largo terminado!';
-        body = 'Descanso concluido. ¡A por la siguiente ronda!';
+        title = '¡Descanso largo finalizado!';
+        body = 'Has recargado energías. ¡Hora de iniciar una nueva ronda de concentración!';
         break;
     }
 
@@ -271,24 +285,29 @@ class NotificationService {
       enableVibration: true,
       category: AndroidNotificationCategory.alarm,
       visibility: NotificationVisibility.public,
+      fullScreenIntent: true,
+    );
+
+    const darwinDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      interruptionLevel: InterruptionLevel.timeSensitive,
     );
 
     const notificationDetails = NotificationDetails(
       android: androidDetails,
-      iOS: DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-      ),
+      iOS: darwinDetails,
     );
 
     try {
       await _notificationsPlugin.show(
-        id: pomodoroNotificationId,
+        id: pomodoroCompletionNotificationId,
         title: title,
         body: body,
         notificationDetails: notificationDetails,
       );
+      debugPrint('[NotificationService] Notificación inmediata enviada: $title - $body');
     } catch (e) {
       debugPrint('[NotificationService] Error mostrando notificación inmediata: $e');
     }

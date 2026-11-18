@@ -361,7 +361,9 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
         _startTicker();
         _scheduleNotificationForCurrentPhase();
       } else {
-        Future.microtask(() => _handlePhaseTransition(isNatural: true));
+        Future.microtask(
+          () => _handlePhaseTransition(isNatural: true, playSound: false),
+        );
       }
     }
   }
@@ -388,7 +390,8 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
       final newRemaining = state.remainingSeconds - elapsed;
       if (newRemaining <= 0) {
         _timer?.cancel();
-        _handlePhaseTransition(isNatural: true);
+        final playSound = elapsed <= (state.remainingSeconds + 5);
+        _handlePhaseTransition(isNatural: true, playSound: playSound);
       } else {
         state = state.copyWith(remainingSeconds: newRemaining);
         _lastResumedAt = now;
@@ -495,6 +498,7 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
   }
 
   void startFocus() {
+    NotificationService().cancelAllPomodoroNotifications();
     final settings = _ref.read(settingsProvider);
     final focusSeconds = settings.focusMinutes * 60;
     final now = DateTime.now();
@@ -530,7 +534,7 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
     } catch (_) {}
     state = state.copyWith(status: PomodoroStatus.paused);
     _dao.persistState(state: state, lastResumedAt: null);
-    NotificationService().cancelPomodoroNotification();
+    NotificationService().cancelAllPomodoroNotifications();
   }
 
   void resume() {
@@ -558,7 +562,7 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
     try {
       WakelockPlus.disable();
     } catch (_) {}
-    NotificationService().cancelPomodoroNotification();
+    NotificationService().cancelAllPomodoroNotifications();
 
     // Si estaba en concentración y no en reposo, registrar el tiempo si duró >= 60s (sin contar como pomodoro natural)
     if (state.phase == PomodoroPhase.focus && !state.isIdle) {
@@ -579,7 +583,7 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
   void skipToNextPhase() {
     _timer?.cancel();
     _lastResumedAt = null;
-    NotificationService().cancelPomodoroNotification();
+    NotificationService().cancelAllPomodoroNotifications();
     _handlePhaseTransition(isNatural: false);
   }
 
@@ -589,7 +593,7 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
     try {
       WakelockPlus.disable();
     } catch (_) {}
-    NotificationService().cancelPomodoroNotification();
+    NotificationService().cancelAllPomodoroNotifications();
 
     // Si estaba en concentración y no en reposo, registrar el tiempo si duró >= 60s (sin contar como pomodoro natural)
     if (state.phase == PomodoroPhase.focus && !state.isIdle) {
@@ -622,15 +626,41 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
     });
   }
 
-  Future<void> _handlePhaseTransition({bool isNatural = true}) async {
+  Future<void> _handlePhaseTransition({
+    bool isNatural = true,
+    bool playSound = true,
+  }) async {
     final settings = _ref.read(settingsProvider);
+    final isForeground =
+        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
 
-    // Cancelar cualquier notificación pendiente previa
-    NotificationService().cancelPomodoroNotification();
-
-    // Reproducir alerta sonora de finalización solo si concluye naturalmente
     if (isNatural) {
-      await AudioFeedbackService().playCompletionAlert(settings.completionSound);
+      if (playSound) {
+        await AudioFeedbackService().playCompletionAlert(settings.completionSound);
+      }
+
+      // La notificación solo se envía si NO está dentro de la app (en segundo plano o cerrada)
+      if (!isForeground) {
+        String? subjectName;
+        if (state.activeSubjectId != null) {
+          try {
+            final subjects = _ref.read(subjectsProvider);
+            final match = subjects.firstWhere(
+              (s) => s.id == state.activeSubjectId,
+            );
+            subjectName = match.name;
+          } catch (_) {}
+        }
+        await NotificationService().showImmediateCompletionNotification(
+          phase: state.phase,
+          subjectName: subjectName,
+        );
+      } else {
+        // Si está en primer plano dentro de la app, cancelar las notificaciones de pomodoro para que no aparezca push
+        await NotificationService().cancelAllPomodoroNotifications();
+      }
+    } else {
+      await NotificationService().cancelAllPomodoroNotifications();
     }
 
     if (state.phase == PomodoroPhase.focus) {
