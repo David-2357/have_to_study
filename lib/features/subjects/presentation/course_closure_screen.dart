@@ -59,6 +59,8 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
     final initialStart = currentStart.isBefore(DateTime.now()) ? DateTime.now() : currentStart;
     final initialEnd = currentEnd.isAfter(initialStart) ? currentEnd : initialStart.add(const Duration(days: 120));
 
+    final isDark = colors.isDark;
+
     final pickedRange = await showDateRangePicker(
       context: context,
       initialDateRange: DateTimeRange(start: initialStart, end: initialEnd),
@@ -67,6 +69,78 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
       helpText: 'PERIODO DEL PRÓXIMO CURSO',
       confirmText: 'ESTABLECER',
       cancelText: 'CANCELAR',
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            scaffoldBackgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+            appBarTheme: AppBarTheme(
+              backgroundColor: isDark ? const Color(0xFF1E293B) : AppColors.primary,
+              foregroundColor: Colors.white,
+              elevation: 0,
+            ),
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+              headerBackgroundColor: isDark ? const Color(0xFF1E293B) : AppColors.primary,
+              headerForegroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
+              rangePickerHeaderBackgroundColor: isDark ? const Color(0xFF1E293B) : AppColors.primary,
+              rangePickerHeaderForegroundColor: Colors.white,
+              rangeSelectionBackgroundColor: isDark
+                  ? AppColors.primary.withValues(alpha: 0.22)
+                  : AppColors.primary.withValues(alpha: 0.15),
+              rangeSelectionOverlayColor: WidgetStateProperty.all(
+                AppColors.primary.withValues(alpha: 0.1),
+              ),
+              todayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.primary;
+                }
+                return Colors.transparent;
+              }),
+              todayForegroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Colors.white;
+                }
+                return AppColors.primary;
+              }),
+              dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.primary;
+                }
+                return null;
+              }),
+              dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Colors.white;
+                }
+                return isDark ? const Color(0xFFF8FAFC) : const Color(0xFF1E2638);
+              }),
+            ),
+            colorScheme: isDark
+                ? ColorScheme.dark(
+                    primary: AppColors.primary,
+                    onPrimary: Colors.white,
+                    secondary: AppColors.primary,
+                    surface: const Color(0xFF1E293B),
+                    onSurface: const Color(0xFFF8FAFC),
+                    primaryContainer: AppColors.primary.withValues(alpha: 0.25),
+                    onPrimaryContainer: Colors.white,
+                    secondaryContainer: AppColors.primary.withValues(alpha: 0.2),
+                    onSecondaryContainer: Colors.white,
+                  )
+                : ColorScheme.light(
+                    primary: AppColors.primary,
+                    onPrimary: Colors.white,
+                    secondary: AppColors.primary,
+                    surface: Colors.white,
+                    onSurface: const Color(0xFF1E2638),
+                    primaryContainer: AppColors.primary.withValues(alpha: 0.15),
+                    onPrimaryContainer: AppColors.primary,
+                  ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (pickedRange != null) {
       setState(() {
@@ -434,10 +508,10 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: isDark ? AppColors.primary.withValues(alpha: 0.15) : const Color(0xFFEEF2FF),
+                color: colors.surfaceVariant,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: isDark ? AppColors.primary.withValues(alpha: 0.35) : const Color(0xFFC7D2FE),
+                  color: colors.border,
                 ),
               ),
               child: Column(
@@ -449,10 +523,10 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                       Expanded(
                         child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.calendar_today_rounded,
                               size: 14,
-                              color: isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA),
+                              color: AppColors.primary,
                             ),
                             const SizedBox(width: 6),
                             Expanded(
@@ -461,7 +535,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
-                                  color: isDark ? const Color(0xFFE0E7FF) : const Color(0xFF312E81),
+                                  color: colors.textPrimary,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -474,14 +548,14 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                       InkWell(
                         onTap: () => _selectNewDates(context, subject),
                         borderRadius: BorderRadius.circular(6),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           child: Text(
                             'Cambiar',
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
-                              color: isDark ? const Color(0xFF818CF8) : AppColors.primary,
+                              color: AppColors.primary,
                             ),
                           ),
                         ),
@@ -494,7 +568,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                       Icon(
                         Icons.hourglass_empty_rounded,
                         size: 12,
-                        color: isDark ? const Color(0xFFC7D2FE).withValues(alpha: 0.8) : const Color(0xFF4338CA),
+                        color: colors.textSecondary,
                       ),
                       const SizedBox(width: 4),
                       Expanded(
@@ -503,7 +577,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
-                            color: isDark ? const Color(0xFFC7D2FE).withValues(alpha: 0.85) : const Color(0xFF4338CA),
+                            color: colors.textSecondary,
                           ),
                         ),
                       ),
