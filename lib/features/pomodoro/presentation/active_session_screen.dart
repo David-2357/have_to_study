@@ -147,7 +147,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                 currentEvent.isCompleted ? Icons.check_circle_rounded : Icons.check_circle_outline_rounded,
                 color: currentEvent.isCompleted ? const Color(0xFF16A34A) : colors.textPrimary,
               ),
-              tooltip: currentEvent.isCompleted ? 'Desmarcar actividad' : 'Completar actividad pendiente',
+              tooltip: currentEvent.isCompleted ? 'Desmarcar actividad' : 'Completar actividad',
               onPressed: () async {
                 final wasCompleted = currentEvent.isCompleted;
                 await ref.read(academicEventsProvider.notifier).toggleComplete(currentEvent.id);
@@ -156,7 +156,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(wasCompleted
-                          ? 'Actividad marcada como pendiente.'
+                          ? 'Actividad reabierta.'
                           : '¡Actividad "${currentEvent.title}" completada! 🎉'),
                       behavior: SnackBarBehavior.floating,
                       backgroundColor: wasCompleted ? colors.surfaceVariant : const Color(0xFF16A34A),
@@ -916,7 +916,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                               },
                               icon: const Icon(Icons.check_circle_rounded, size: 18),
                               label: const Text(
-                                'Completar actividad pendiente',
+                                'Completar actividad',
                                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                               ),
                               style: ElevatedButton.styleFrom(

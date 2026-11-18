@@ -172,8 +172,8 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                               ),
                               subtitle: Text(
                                 relatedEvents.isNotEmpty
-                                    ? '${relatedEvents.length} tareas pendientes'
-                                    : 'Sin compromisos pendientes',
+                                    ? '${relatedEvents.length} actividades pendientes'
+                                    : 'Sin actividades pendientes',
                                 style: TextStyle(fontSize: 12, color: colors.textSecondary),
                               ),
                               children: [

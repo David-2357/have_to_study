@@ -20,7 +20,7 @@ class SubjectDetailScreen extends ConsumerStatefulWidget {
 
 class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
   AppColorTheme get colors => context.colors;
-  int _selectedTab = 0; // 0: Compromisos, 1: Historial
+  int _selectedTab = 0; // 0: Actividades, 1: Historial
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.add_circle_outline_rounded, color: AppColors.primary),
-            tooltip: 'Agregar compromiso',
+            tooltip: 'Agregar actividad',
             onPressed: () {
               showModalBottomSheet(
                 context: context,
@@ -312,10 +312,10 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                   ),
                   const SizedBox(width: 10),
                   _buildStatCard(
-                    title: 'ENTREGAS',
+                    title: 'ACTIVIDADES',
                     val: '${pendingEvents.length}',
-                    sub: 'por entregar',
-                    icon: Icons.inbox_rounded,
+                    sub: 'pendientes',
+                    icon: Icons.assignment_outlined,
                     iconColor: const Color(0xFF8B5CF6),
                   ),
                 ],
@@ -495,7 +495,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                 const SizedBox(height: 20),
               ],
 
-              // Toggle Compromisos | Historial
+              // Toggle Actividades | Historial
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
@@ -516,7 +516,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            'Compromisos (${pendingEvents.length})',
+                            'Actividades (${pendingEvents.length})',
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: _selectedTab == 0 ? FontWeight.bold : FontWeight.w600,
@@ -556,7 +556,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
 
               // Lista según tab
               if (_selectedTab == 0)
-                _buildCommitmentsList(context, pendingEvents, completedEvents, subject)
+                _buildActivitiesList(context, pendingEvents, completedEvents, subject)
               else
                 _buildHistoryList(subjectSessions),
             ],
@@ -615,7 +615,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
     );
   }
 
-  Widget _buildCommitmentsList(
+  Widget _buildActivitiesList(
     BuildContext context,
     List<AcademicEventModel> pending,
     List<AcademicEventModel> completed,
@@ -638,7 +638,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                 );
               },
               icon: const Icon(Icons.add_rounded, size: 20),
-              label: const Text('Nuevo pendiente'),
+              label: const Text('Nueva actividad'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
@@ -660,25 +660,25 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Text(
-                'No hay pendientes asociados a esta asignatura.',
+                'No hay actividades asociadas a esta asignatura.',
                 style: TextStyle(color: colors.textSecondary),
               ),
             ),
           )
         else ...[
-          ...pending.map((e) => _buildCommitmentCard(context, e, false)),
+          ...pending.map((e) => _buildActivityCard(context, e, false)),
           if (completed.isNotEmpty) ...[
             const SizedBox(height: 12),
-            Text('Completados', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textSecondary)),
+            Text('Completadas', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textSecondary)),
             const SizedBox(height: 8),
-            ...completed.map((e) => _buildCommitmentCard(context, e, true)),
+            ...completed.map((e) => _buildActivityCard(context, e, true)),
           ],
         ],
       ],
     );
   }
 
-  Widget _buildCommitmentCard(BuildContext context, AcademicEventModel event, bool isDone) {
+  Widget _buildActivityCard(BuildContext context, AcademicEventModel event, bool isDone) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -769,7 +769,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(wasCompleted ? 'Pendiente reabierto' : '¡"${event.title}" completado! 🎉'),
+                                content: Text(wasCompleted ? 'Actividad reabierta' : '¡"${event.title}" completada! 🎉'),
                                 duration: const Duration(seconds: 4),
                                 behavior: SnackBarBehavior.floating,
                                 action: SnackBarAction(

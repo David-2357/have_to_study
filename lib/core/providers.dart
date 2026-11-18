@@ -150,7 +150,7 @@ class AcademicEventsNotifier extends StateNotifier<List<AcademicEventModel>> {
 
   AcademicEventsNotifier(this._dao, List<AcademicEventModel> initial, [this._ref])
       : super(initial) {
-    // Sincronizar notificaciones de pendientes prioritarios
+    // Sincronizar notificaciones de actividades prioritarias
     Future.microtask(() => rescheduleAllPriorityNotifications());
   }
 
@@ -291,7 +291,7 @@ final academicEventsProvider =
   return AcademicEventsNotifier(dao, [], ref);
 });
 
-// Provider para controlar la pestaña activa en Estudios (0: Asignaturas, 1: Pendientes)
+// Provider para controlar la pestaña activa en Estudios (0: Asignaturas, 1: Actividades)
 final studiesActiveTabProvider = StateProvider<int>((ref) => 0);
 
 // ==========================================
@@ -408,7 +408,7 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
             );
       }
 
-      // La meta del pendiente se completa por tiempo acumulado
+      // La meta de la actividad se completa por tiempo acumulado
       if (state.activeEventId != null) {
         await _ref.read(academicEventsProvider.notifier).recordEventStudyTime(
               state.activeEventId!,

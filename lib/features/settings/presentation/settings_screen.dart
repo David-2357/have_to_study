@@ -169,7 +169,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const Text('Contenido detectado:'),
                 const SizedBox(height: 6),
                 Text('• $subjectsCount asignaturas'),
-                Text('• $eventsCount pendientes / eventos'),
+                Text('• $eventsCount actividades'),
                 Text('• $sessionsCount sesiones de estudio'),
                 const SizedBox(height: 14),
                 const Text(
@@ -603,12 +603,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Aviso de pendientes prioritarios',
+                                'Aviso de actividades prioritarias',
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: colors.textPrimary),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'Días de antelación para notificar tareas prioritarias',
+                                'Días de antelación para notificar actividades prioritarias',
                                 style: TextStyle(fontSize: 11, color: colors.textSecondary),
                               ),
                             ],
@@ -1263,7 +1263,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Text('¿Restablecer ajustes predeterminados?', style: TextStyle(fontWeight: FontWeight.bold)),
           content: const Text(
-            'Esta acción restaurará los valores predeterminados de Pomodoro (25 min concentración, 5 min descanso corto, 15 min descanso largo, 4 ciclos por ronda), el objetivo diario (3 h), el sonido y las preferencias del sistema.\n\nTus asignaturas, pendientes e historial de sesiones permanecerán intactos.',
+            'Esta acción restaurará los valores predeterminados de Pomodoro (25 min concentración, 5 min descanso corto, 15 min descanso largo, 4 ciclos por ronda), el objetivo diario (3 h), el sonido y las preferencias del sistema.\n\nTus asignaturas, actividades e historial de sesiones permanecerán intactos.',
           ),
           actions: [
             TextButton(

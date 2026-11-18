@@ -23,9 +23,9 @@ class NotificationService {
       'Notificaciones y alertas al finalizar tus sesiones de concentración y descansos';
 
   static const String priorityEventsChannelId = 'priority_events_channel';
-  static const String priorityEventsChannelName = 'Pendientes Prioritarios';
+  static const String priorityEventsChannelName = 'Actividades Prioritarias';
   static const String priorityEventsChannelDesc =
-      'Alertas con antelación para entregas y exámenes prioritarios';
+      'Alertas con antelación para actividades prioritarias';
 
   bool _isInitialized = false;
 
@@ -283,7 +283,7 @@ class NotificationService {
     return 1000 + (eventId.hashCode.abs() % 1000000);
   }
 
-  /// Programar recordatorio con días de antelación para un pendiente prioritario
+  /// Programar recordatorio con días de antelación para una actividad prioritaria
   Future<void> schedulePriorityEventNotification({
     required AcademicEventModel event,
     required String subjectName,
@@ -328,9 +328,9 @@ class NotificationService {
     final tzScheduledTime = tz.TZDateTime.from(scheduledDate, tz.local);
 
     final String dayWord = noticeDays == 1 ? '1 día' : '$noticeDays días';
-    final String title = '⚠️ Pendiente prioritario: ${event.title}';
+    final String title = '⚠️ Actividad prioritaria: ${event.title}';
     final String formattedDate = TimeUtils.formatEventDate(event.dueAt, includeTime: event.hasDueTime);
-    final String body = 'El compromiso de $subjectName vence el $formattedDate ($dayWord de antelación). ¡No lo dejes para el final!';
+    final String body = 'La actividad de $subjectName vence el $formattedDate ($dayWord de antelación). ¡No la dejes para el final!';
 
     const androidDetails = AndroidNotificationDetails(
       priorityEventsChannelId,

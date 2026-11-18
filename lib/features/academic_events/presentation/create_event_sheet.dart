@@ -125,7 +125,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _isEditing ? 'EDITAR COMPROMISO' : 'NUEVO COMPROMISO',
+                      _isEditing ? 'EDITAR ACTIVIDAD' : 'NUEVA ACTIVIDAD',
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
@@ -135,7 +135,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      _isEditing ? 'Editar Pendiente Académico' : 'Crear Pendiente Académico',
+                      _isEditing ? 'Editar Actividad' : 'Nueva Actividad',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
@@ -530,7 +530,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Pendiente prioritario',
+                          'Actividad prioritaria',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -628,7 +628,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                   }
                 },
                 icon: const Icon(Icons.check_circle_outline_rounded, size: 20),
-                label: Text(_isEditing ? 'Guardar Cambios' : 'Guardar Compromiso'),
+                label: Text(_isEditing ? 'Guardar Cambios' : 'Guardar Actividad'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,

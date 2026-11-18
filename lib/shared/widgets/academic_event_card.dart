@@ -53,7 +53,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(wasCompleted ? 'Pendiente reabierto' : '¡Compromiso completado! 🎉'),
+        content: Text(wasCompleted ? 'Actividad reabierta' : '¡Actividad completada! 🎉'),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 4),
         action: SnackBarAction(

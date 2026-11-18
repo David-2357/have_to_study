@@ -339,7 +339,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     ),
                     AppChip(
                       label: dayEvents.where((e) => !e.isCompleted).isNotEmpty
-                          ? '${dayEvents.where((e) => !e.isCompleted).length} pendientes'
+                          ? '${dayEvents.where((e) => !e.isCompleted).length} actividades'
                           : '${dayEvents.length} completadas',
                       variant: AppChipVariant.primary,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -371,7 +371,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         const Icon(Icons.event_available_rounded, size: 36, color: AppColors.teal),
                         const SizedBox(height: 8),
                         Text(
-                          'Día despejado de compromisos',
+                          'Día despejado de actividades',
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: colors.textPrimary),
                         ),
                         const SizedBox(height: 4),
@@ -392,7 +392,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                             );
                           },
                           icon: const Icon(Icons.add_rounded, size: 16),
-                          label: const Text('Crear pendiente aquí'),
+                          label: const Text('Crear actividad aquí'),
                         ),
                       ],
                     ),

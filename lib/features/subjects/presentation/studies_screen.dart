@@ -48,7 +48,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppHeader(
-                subtitle: _selectedTab == 0 ? 'Asignaturas' : 'Pendientes',
+                subtitle: _selectedTab == 0 ? 'Asignaturas' : 'Actividades',
               ),
 
               // Cabecera con Título y Botón "+ Nueva"
@@ -61,7 +61,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _selectedTab == 0 ? 'Asignaturas' : 'Pendientes y Entregas',
+                          _selectedTab == 0 ? 'Asignaturas' : 'Actividades',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w900,
@@ -73,7 +73,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                         Text(
                           _selectedTab == 0
                               ? '${subjects.where((s) => !s.isArchived && !s.isPassed).length} materias activas'
-                              : '${pendingEvents.length} compromisos próximos esta semana',
+                              : '${pendingEvents.length} actividades próximas esta semana',
                           style: TextStyle(
                             fontSize: 13,
                             color: colors.textSecondary,
@@ -97,7 +97,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                         }
                       },
                       icon: const Icon(Icons.add_rounded, size: 18),
-                      label: Text(_selectedTab == 0 ? 'Nueva' : 'Nuevo'),
+                      label: Text(_selectedTab == 0 ? 'Nueva' : 'Nueva'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
@@ -199,7 +199,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'Pendientes',
+                                  'Actividades',
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: _selectedTab == 1 ? FontWeight.bold : FontWeight.w600,
@@ -418,7 +418,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Crea tus asignaturas del ciclo para organizar tus compromisos y sesiones de estudio.',
+                  'Crea tus asignaturas del ciclo para organizar tus actividades y sesiones de estudio.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,
@@ -589,7 +589,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                           children: [
                             if (pendingDeliveries > 0)
                               AppChip(
-                                label: '$pendingDeliveries entregas pendientes',
+                                label: '$pendingDeliveries actividades pendientes',
                                 icon: Icons.assignment_outlined,
                                 variant: AppChipVariant.warning,
                                 iconSize: 13,
@@ -907,7 +907,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Center(
           child: Text(
-            'No hay pendientes en esta categoría',
+            'No hay actividades en esta categoría',
             style: TextStyle(color: colors.textSecondary),
           ),
         ),

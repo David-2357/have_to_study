@@ -456,7 +456,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Próximos Pendientes',
+                    'Próximas Actividades',
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
@@ -539,7 +539,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'No tienes entregas ni exámenes pendientes.',
+                    'No tienes actividades pendientes.',
                     style: TextStyle(
                       fontSize: 12,
                       color: colors.textSecondary,
@@ -550,7 +550,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                   OutlinedButton.icon(
                     onPressed: () => _openCreateEventSheet(context),
                     icon: const Icon(Icons.add_rounded, size: 16),
-                    label: const Text('Crear pendiente'),
+                    label: const Text('Crear actividad'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primary,
                       side: const BorderSide(color: AppColors.primary),
@@ -594,7 +594,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                   },
                   icon: const Icon(Icons.expand_more_rounded, size: 20),
                   label: Text(
-                    'Cargar más pendientes (${pendingEvents.length - _visibleEventsCount} restantes)',
+                    'Cargar más actividades (${pendingEvents.length - _visibleEventsCount} restantes)',
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                   ),
                   style: TextButton.styleFrom(
@@ -659,7 +659,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(wasCompleted ? 'Pendiente reabierto' : '¡"${event.title}" completado con éxito! 🎉'),
+                    content: Text(wasCompleted ? 'Actividad reabierta' : '¡"${event.title}" completada con éxito! 🎉'),
                     duration: const Duration(seconds: 4),
                     behavior: SnackBarBehavior.floating,
                     action: SnackBarAction(
