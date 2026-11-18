@@ -69,6 +69,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
+                useSafeArea: true,
                 backgroundColor: Colors.transparent,
                 builder: (context) => CreateEventSheet(preselectedSubjectId: subject.id),
               );
@@ -578,23 +579,58 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
     List<AcademicEventModel> completed,
     dynamic subject,
   ) {
-    if (pending.isEmpty && completed.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Text('No hay compromisos asociados a esta materia.', style: TextStyle(color: colors.textSecondary)),
-        ),
-      );
-    }
-
     return Column(
       children: [
-        ...pending.map((e) => _buildCommitmentCard(context, e, false)),
-        if (completed.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Text('Completados', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textSecondary)),
-          const SizedBox(height: 8),
-          ...completed.map((e) => _buildCommitmentCard(context, e, true)),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  useSafeArea: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => CreateEventSheet(preselectedSubjectId: subject.id),
+                );
+              },
+              icon: const Icon(Icons.add_rounded, size: 20),
+              label: const Text('Nuevo pendiente'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (pending.isEmpty && completed.isEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(
+                'No hay pendientes asociados a esta asignatura.',
+                style: TextStyle(color: colors.textSecondary),
+              ),
+            ),
+          )
+        else ...[
+          ...pending.map((e) => _buildCommitmentCard(context, e, false)),
+          if (completed.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text('Completados', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textSecondary)),
+            const SizedBox(height: 8),
+            ...completed.map((e) => _buildCommitmentCard(context, e, true)),
+          ],
         ],
       ],
     );
@@ -656,6 +692,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
+                            useSafeArea: true,
                             backgroundColor: Colors.transparent,
                             builder: (context) => CreateEventSheet(eventToEdit: event),
                           );
