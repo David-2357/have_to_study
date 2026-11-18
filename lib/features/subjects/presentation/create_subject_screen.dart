@@ -21,11 +21,24 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
   late final TextEditingController _codeController;
   String _selectedIcon = 'sigma';
   int _selectedColor = 0xFFB74134;
-  int _weeklySessions = 8;
+  int _weeklyMinutes = 120; // Meta semanal en minutos (incrementos de 5 min)
+  int get _estimatedPomos => (_weeklyMinutes / 25.0).ceil();
   bool _isAnnual = false; // false: Semestral, true: Anual
   late DateTime _startDate;
   late DateTime _endDate;
   bool _isEditing = false;
+
+  static String _formatWeeklyMinutes(int minutes) {
+    if (minutes < 60) {
+      return '$minutes min';
+    }
+    final hours = minutes ~/ 60;
+    final mins = minutes % 60;
+    if (mins == 0) {
+      return '${hours}h';
+    }
+    return '${hours}h ${mins}m';
+  }
 
   static DateTime _calculateDefaultStartDate({required bool isAnnual}) {
     return TimeUtils.calculateDefaultSubjectStartDate(isAnnual: isAnnual);
@@ -201,7 +214,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '$_weeklySessions pomodoros/semana · ${_isAnnual ? 'Anual' : 'Semestral'}',
+                            '${_formatWeeklyMinutes(_weeklyMinutes)}/sem (~$_estimatedPomos pomos) · ${_isAnnual ? 'Anual' : 'Semestral'}',
                             style: TextStyle(
                               fontSize: 12,
                               color: colors.textSecondary,
@@ -425,63 +438,61 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Meta semanal',
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: colors.textPrimary),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                '~ ${( _weeklySessions * 25 ) ~/ 60}h ${( _weeklySessions * 25 ) % 60}m de concentración',
-                                style: TextStyle(fontSize: 12, color: colors.textSecondary),
-                              ),
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Meta semanal',
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: colors.textPrimary),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '~$_estimatedPomos ${_estimatedPomos == 1 ? 'pomodoro estimado' : 'pomodoros estimados'}',
+                                  style: TextStyle(fontSize: 12, color: colors.textSecondary),
+                                ),
+                              ],
+                            ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               color: colors.surface,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(color: colors.border),
                             ),
                             child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
                                   icon: const Icon(Icons.remove_rounded, size: 18),
                                   onPressed: () {
-                                    if (_weeklySessions > 1) {
-                                      setState(() => _weeklySessions--);
+                                    if (_weeklyMinutes > 5) {
+                                      setState(() => _weeklyMinutes -= 5);
                                     }
                                   },
                                 ),
-                                const SizedBox(width: 10),
-                                RichText(
-                                  text: TextSpan(
-                                    text: '$_weeklySessions',
-                                    style: TextStyle(
-                                      fontSize: 18,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Text(
+                                    _formatWeeklyMinutes(_weeklyMinutes),
+                                    style: const TextStyle(
+                                      fontSize: 15,
                                       fontWeight: FontWeight.w900,
                                       color: AppColors.primary,
                                     ),
-                                    children: [
-                                      TextSpan(
-                                        text: ' ses.',
-                                        style: TextStyle(fontSize: 11, color: colors.textSecondary, fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
                                   ),
                                 ),
-                                const SizedBox(width: 10),
                                 IconButton(
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
                                   icon: const Icon(Icons.add_rounded, size: 18),
                                   onPressed: () {
-                                    setState(() => _weeklySessions++);
+                                    if (_weeklyMinutes < 3600) {
+                                      setState(() => _weeklyMinutes += 5);
+                                    }
                                   },
                                 ),
                               ],
