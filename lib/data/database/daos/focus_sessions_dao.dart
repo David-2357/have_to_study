@@ -69,4 +69,21 @@ class FocusSessionsDao {
       ),
     );
   }
+
+  Future<void> deleteSession(String id) async {
+    await (_db.delete(_db.focusSessions)..where((t) => t.id.equals(id))).go();
+  }
+
+  Future<void> updateSession(FocusSessionModel session) async {
+    await (_db.update(_db.focusSessions)..where((t) => t.id.equals(session.id))).write(
+      FocusSessionsCompanion(
+        subjectId: Value(session.subjectId),
+        academicEventId: Value(session.academicEventId),
+        startedAt: Value(session.startedAt),
+        completedAt: Value(session.completedAt),
+        durationSeconds: Value(session.durationSeconds),
+        status: const Value('completed'),
+      ),
+    );
+  }
 }

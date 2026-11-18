@@ -129,6 +129,26 @@ class FocusSessionModel {
     required this.durationSeconds,
   });
 
+  FocusSessionModel copyWith({
+    String? id,
+    String? subjectId,
+    String? academicEventId,
+    DateTime? startedAt,
+    DateTime? completedAt,
+    int? durationSeconds,
+    bool clearSubject = false,
+    bool clearEvent = false,
+  }) {
+    return FocusSessionModel(
+      id: id ?? this.id,
+      subjectId: clearSubject ? null : (subjectId ?? this.subjectId),
+      academicEventId: clearEvent ? null : (academicEventId ?? this.academicEventId),
+      startedAt: startedAt ?? this.startedAt,
+      completedAt: completedAt ?? this.completedAt,
+      durationSeconds: durationSeconds ?? this.durationSeconds,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'subjectId': subjectId,

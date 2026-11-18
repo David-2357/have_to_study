@@ -177,6 +177,25 @@ class SubjectsNotifier extends StateNotifier<List<SubjectModel>> {
     }
   }
 
+  Future<void> syncSubjectStats(String subjectId) async {
+    final sessions = await _ref?.read(focusSessionsDaoProvider).getSessionsBySubject(subjectId) ?? [];
+    final current = state.where((s) => s.id == subjectId).firstOrNull;
+    if (current == null) return;
+
+    final totalSeconds = sessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
+    final lastStudied = sessions.isNotEmpty
+        ? sessions.map((s) => s.completedAt).reduce((a, b) => a.isAfter(b) ? a : b)
+        : null;
+
+    final updated = current.copyWith(
+      totalStudySeconds: totalSeconds,
+      lastStudiedAt: lastStudied,
+    );
+    state = state.map((s) => s.id == subjectId ? updated : s).toList();
+    await _dao.updateSubject(updated);
+    _syncNotificationForSubject(updated);
+  }
+
   Future<void> reload() async {
     state = await _dao.getAllSubjects();
     rescheduleAllUnattendedSubjectNotifications();
@@ -796,18 +815,63 @@ final pomodoroProvider =
 // ==========================================
 class FocusSessionsNotifier extends StateNotifier<List<FocusSessionModel>> {
   final FocusSessionsDao _dao;
+  final Ref? _ref;
 
-  FocusSessionsNotifier(this._dao, List<FocusSessionModel> initial) : super(initial);
+  FocusSessionsNotifier(this._dao, List<FocusSessionModel> initial, [this._ref])
+      : super(initial);
 
   Future<void> reload() async {
     state = await _dao.getAllSessions();
+  }
+
+  Future<void> deleteSession(String sessionId) async {
+    final session = state.where((s) => s.id == sessionId).firstOrNull;
+    if (session == null) return;
+
+    await _dao.deleteSession(sessionId);
+    state = state.where((s) => s.id != sessionId).toList();
+
+    if (_ref != null) {
+      if (session.subjectId != null) {
+        await _ref!.read(subjectsProvider.notifier).syncSubjectStats(session.subjectId!);
+      }
+      if (session.academicEventId != null) {
+        await _ref!.read(academicEventsProvider.notifier).recordEventStudyTime(session.academicEventId!, 0);
+      }
+    }
+  }
+
+  Future<void> updateSession(FocusSessionModel updated) async {
+    final oldSession = state.where((s) => s.id == updated.id).firstOrNull;
+    if (oldSession == null) return;
+
+    await _dao.updateSession(updated);
+    state = state.map((s) => s.id == updated.id ? updated : s).toList();
+
+    if (_ref != null) {
+      // Sincronizar estadísticas de la asignatura vieja y nueva
+      if (oldSession.subjectId != null) {
+        await _ref!.read(subjectsProvider.notifier).syncSubjectStats(oldSession.subjectId!);
+      }
+      if (updated.subjectId != null && updated.subjectId != oldSession.subjectId) {
+        await _ref!.read(subjectsProvider.notifier).syncSubjectStats(updated.subjectId!);
+      }
+
+      // Sincronizar estadísticas de la actividad vieja y nueva
+      if (oldSession.academicEventId != null) {
+        await _ref!.read(academicEventsProvider.notifier).recordEventStudyTime(oldSession.academicEventId!, 0);
+      }
+      if (updated.academicEventId != null && updated.academicEventId != oldSession.academicEventId) {
+        await _ref!.read(academicEventsProvider.notifier).recordEventStudyTime(updated.academicEventId!, 0);
+      }
+    }
   }
 }
 
 final focusSessionsProvider =
     StateNotifierProvider<FocusSessionsNotifier, List<FocusSessionModel>>((ref) {
   final dao = ref.watch(focusSessionsDaoProvider);
-  return FocusSessionsNotifier(dao, []);
+  return FocusSessionsNotifier(dao, [], ref);
 });
 
 // ==========================================

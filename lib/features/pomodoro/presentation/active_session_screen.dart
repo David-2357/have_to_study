@@ -13,6 +13,7 @@ import '../../academic_events/domain/academic_event_model.dart';
 import 'widgets/circular_timer_widget.dart';
 import 'widgets/select_activity_sheet.dart';
 import 'widgets/pomodoro_quick_settings_sheet.dart';
+import 'widgets/session_history_widget.dart';
 
 enum ActiveSessionMode { pomodoro, unbounded }
 
@@ -1005,6 +1006,11 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                   ],
                 ),
               ),
+
+              const SizedBox(height: 20),
+
+              // Historial de Pomos / Bloques completados
+              const SessionHistoryWidget(),
             ],
           ),
         ),

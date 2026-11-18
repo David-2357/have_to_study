@@ -62,9 +62,9 @@ void main() async {
     ProviderScope(
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
-        subjectsProvider.overrideWith((ref) => SubjectsNotifier(subjectsDao, initialSubjects)),
+        subjectsProvider.overrideWith((ref) => SubjectsNotifier(subjectsDao, initialSubjects, ref)),
         academicEventsProvider.overrideWith((ref) => AcademicEventsNotifier(eventsDao, initialEvents, ref)),
-        focusSessionsProvider.overrideWith((ref) => FocusSessionsNotifier(sessionsDao, initialSessions)),
+        focusSessionsProvider.overrideWith((ref) => FocusSessionsNotifier(sessionsDao, initialSessions, ref)),
         pomodoroProvider.overrideWith((ref) => PomodoroNotifier(pomodoroDao, ref, initialPomodoroState)),
         settingsProvider.overrideWith((ref) => SettingsNotifier(pomodoroDao, initialSettings, ref)),
         profileProvider.overrideWith((ref) => ProfileNotifier(profileDao, initialProfile)),
