@@ -96,6 +96,22 @@ class HaveToStudyApp extends ConsumerWidget {
         break;
     }
 
+    final platformBrightness = View.of(context).platformDispatcher.platformBrightness;
+    final isDark = settings.themePreference == AppThemePreference.dark ||
+        (settings.themePreference == AppThemePreference.system && platformBrightness == Brightness.dark);
+    final navBarColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+
+    final systemOverlayStyle = SystemUiOverlayStyle(
+      systemNavigationBarColor: navBarColor,
+      systemNavigationBarDividerColor: Colors.transparent,
+      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemNavigationBarContrastEnforced: false,
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemStatusBarContrastEnforced: false,
+    );
+    SystemChrome.setSystemUIOverlayStyle(systemOverlayStyle);
+
     return MaterialApp.router(
       title: 'Have to Study',
       debugShowCheckedModeBanner: false,
@@ -104,16 +120,8 @@ class HaveToStudyApp extends ConsumerWidget {
       themeMode: themeMode,
       routerConfig: router,
       builder: (context, child) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        final colors = context.colors;
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(
-            systemNavigationBarColor: colors.surface,
-            systemNavigationBarDividerColor: Colors.transparent,
-            systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-          ),
+          value: systemOverlayStyle,
           child: child!,
         );
       },

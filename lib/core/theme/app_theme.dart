@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'app_colors.dart';
 import 'app_color_theme.dart';
 
@@ -28,6 +29,15 @@ class AppTheme {
           color: Color(0xFF1E2638),
           fontSize: 20,
           fontWeight: FontWeight.bold,
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          systemStatusBarContrastEnforced: false,
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarDividerColor: Colors.transparent,
+          systemNavigationBarContrastEnforced: false,
         ),
       ),
       cardTheme: CardThemeData(
@@ -122,6 +132,15 @@ class AppTheme {
           color: Color(0xFFF8FAFC),
           fontSize: 20,
           fontWeight: FontWeight.bold,
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          systemStatusBarContrastEnforced: false,
+          systemNavigationBarColor: Color(0xFF1E293B),
+          systemNavigationBarIconBrightness: Brightness.light,
+          systemNavigationBarDividerColor: Colors.transparent,
+          systemNavigationBarContrastEnforced: false,
         ),
       ),
       dialogTheme: DialogThemeData(

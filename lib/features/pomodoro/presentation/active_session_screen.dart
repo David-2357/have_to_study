@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
@@ -129,7 +130,17 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
       cycleSubtitle = 'Ciclo ${pomodoro.currentCycle} de ${pomodoro.cyclesBeforeLongBreak}';
     }
 
-    return Scaffold(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: colors.isDark ? Brightness.light : Brightness.dark,
+        systemStatusBarContrastEnforced: false,
+        systemNavigationBarColor: colors.background,
+        systemNavigationBarIconBrightness: colors.isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarContrastEnforced: false,
+      ),
+      child: Scaffold(
       backgroundColor: colors.background,
       appBar: AppBar(
         leading: IconButton(
@@ -1012,6 +1023,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
