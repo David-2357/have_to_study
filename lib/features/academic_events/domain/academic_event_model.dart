@@ -50,6 +50,27 @@ enum EventType {
     }
   }
 
+  Color displayBackgroundColor(bool isDark) {
+    if (isDark) {
+      return color.withValues(alpha: 0.22);
+    }
+    return backgroundColor;
+  }
+
+  Color displayForegroundColor(bool isDark) {
+    if (isDark) {
+      switch (this) {
+        case EventType.exam:
+          return const Color(0xFFFCA5A5);
+        case EventType.assignment:
+          return const Color(0xFF86EFAC);
+        case EventType.academicActivity:
+          return const Color(0xFF93C5FD);
+      }
+    }
+    return color;
+  }
+
   IconData get iconData {
     switch (this) {
       case EventType.exam:

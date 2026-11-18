@@ -237,7 +237,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: pomodoro.phase.backgroundColor,
+                    color: pomodoro.phase.displayBackgroundColor(colors.isDark),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -247,7 +247,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                         width: 8,
                         height: 8,
                         decoration: BoxDecoration(
-                          color: pomodoro.phase.color,
+                          color: pomodoro.phase.displayForegroundColor(colors.isDark),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -259,7 +259,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
-                          color: pomodoro.phase.color,
+                          color: pomodoro.phase.displayForegroundColor(colors.isDark),
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -826,8 +826,8 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                           AppChip(
                             label: currentEvent.type.displayName,
                             variant: AppChipVariant.custom,
-                            customBackgroundColor: currentEvent.type.backgroundColor,
-                            customForegroundColor: currentEvent.type.color,
+                            customBackgroundColor: currentEvent.type.displayBackgroundColor(colors.isDark),
+                            customForegroundColor: currentEvent.type.displayForegroundColor(colors.isDark),
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             borderRadius: BorderRadius.circular(6),
                             textStyle: const TextStyle(

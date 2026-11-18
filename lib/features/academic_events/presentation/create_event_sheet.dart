@@ -148,8 +148,8 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                   onPressed: () => Navigator.pop(context),
                   icon: Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF1F5F9),
+                    decoration: BoxDecoration(
+                      color: colors.surfaceVariant,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(Icons.close_rounded, size: 18, color: colors.textSecondary),
@@ -196,7 +196,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary : const Color(0xFFF1F5F9),
+                          color: isSelected ? AppColors.primary : colors.surfaceVariant,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -293,16 +293,24 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFEEF2FF),
+                            color: colors.isDark ? const Color(0xFF4F46E5).withValues(alpha: 0.22) : const Color(0xFFEEF2FF),
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.calendar_today_rounded, size: 16, color: Color(0xFF4F46E5)),
+                              Icon(
+                                Icons.calendar_today_rounded,
+                                size: 16,
+                                color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 DateFormat('E, d MMM', 'es').format(_selectedDate),
-                                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF4F46E5)),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                                ),
                               ),
                             ],
                           ),
@@ -345,16 +353,24 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFEEF2FF),
+                              color: colors.isDark ? const Color(0xFF4F46E5).withValues(alpha: 0.22) : const Color(0xFFEEF2FF),
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.access_time_rounded, size: 16, color: Color(0xFF4F46E5)),
+                                Icon(
+                                  Icons.access_time_rounded,
+                                  size: 16,
+                                  color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                                ),
                                 const SizedBox(width: 6),
                                 Text(
                                   _selectedTime.format(context),
-                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF4F46E5)),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                                  ),
                                 ),
                               ],
                             ),
@@ -377,12 +393,16 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
+                color: colors.surfaceVariant,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.percent_rounded, color: Color(0xFF0D9488), size: 18),
+                  Icon(
+                    Icons.percent_rounded,
+                    color: colors.isDark ? const Color(0xFF5EEAD4) : const Color(0xFF0D9488),
+                    size: 18,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -399,7 +419,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                       decoration: InputDecoration(
                         isDense: true,
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: colors.surface,
                         hintText: '30',
                         hintStyle: TextStyle(color: colors.textMuted),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -660,22 +680,26 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
 
   Widget _buildTypeCard(EventType type, String label, IconData icon) {
     final isSelected = _selectedType == type;
+    final fgColor = isSelected ? type.displayForegroundColor(colors.isDark) : colors.textSecondary;
+    final bgColor = isSelected ? type.displayBackgroundColor(colors.isDark) : colors.surfaceVariant;
+    final borderColor = isSelected ? fgColor : colors.border.withValues(alpha: 0.5);
+
     return Expanded(
       child: GestureDetector(
         onTap: () => setState(() => _selectedType = type),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: isSelected ? type.backgroundColor : const Color(0xFFF1F5F9),
+            color: bgColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? type.color : Colors.transparent,
+              color: borderColor,
               width: 1.5,
             ),
           ),
           child: Column(
             children: [
-              Icon(icon, color: isSelected ? type.color : colors.textSecondary, size: 22),
+              Icon(icon, color: fgColor, size: 22),
               const SizedBox(height: 6),
               Text(
                 label,
@@ -683,7 +707,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                  color: isSelected ? type.color : colors.textPrimary,
+                  color: isSelected ? fgColor : colors.textPrimary,
                   height: 1.1,
                 ),
               ),

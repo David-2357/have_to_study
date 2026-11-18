@@ -160,8 +160,8 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                       AppChip(
                         label: event.type.shortTag,
                         variant: AppChipVariant.custom,
-                        customBackgroundColor: event.type.backgroundColor,
-                        customForegroundColor: event.type.color,
+                        customBackgroundColor: event.type.displayBackgroundColor(colors.isDark),
+                        customForegroundColor: event.type.displayForegroundColor(colors.isDark),
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         borderRadius: BorderRadius.circular(6),
                       ),

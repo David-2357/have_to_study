@@ -243,41 +243,44 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                                       : 'Sin sesiones aún'),
                               style: TextStyle(fontSize: 12, color: colors.textSecondary),
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: subject.isPassed
-                                    ? const Color(0xFFDCFCE7)
-                                    : (subject.isArchived ? colors.surfaceVariant : const Color(0xFFE6F4EA)),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    subject.isPassed
-                                        ? Icons.verified_rounded
-                                        : (subject.isArchived ? Icons.archive_outlined : Icons.check_circle_outline_rounded),
-                                    size: 12,
-                                    color: subject.isPassed
-                                        ? const Color(0xFF15803D)
-                                        : (subject.isArchived ? colors.textSecondary : const Color(0xFF137333)),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    subject.isPassed
-                                        ? 'Aprobada'
-                                        : (subject.isArchived ? 'Archivada' : 'En curso activo'),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: subject.isPassed
-                                          ? const Color(0xFF15803D)
-                                          : (subject.isArchived ? colors.textSecondary : const Color(0xFF137333)),
+                            Builder(builder: (context) {
+                              final statusBg = subject.isPassed
+                                  ? (colors.isDark ? const Color(0xFF22C55E).withValues(alpha: 0.22) : const Color(0xFFDCFCE7))
+                                  : (subject.isArchived ? colors.surfaceVariant : (colors.isDark ? const Color(0xFF22C55E).withValues(alpha: 0.22) : const Color(0xFFE6F4EA)));
+                              final statusFg = subject.isPassed
+                                  ? (colors.isDark ? const Color(0xFF86EFAC) : const Color(0xFF15803D))
+                                  : (subject.isArchived ? colors.textSecondary : (colors.isDark ? const Color(0xFF86EFAC) : const Color(0xFF137333)));
+
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: statusBg,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      subject.isPassed
+                                          ? Icons.verified_rounded
+                                          : (subject.isArchived ? Icons.archive_outlined : Icons.check_circle_outline_rounded),
+                                      size: 12,
+                                      color: statusFg,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      subject.isPassed
+                                          ? 'Aprobada'
+                                          : (subject.isArchived ? 'Archivada' : 'En curso activo'),
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: statusFg,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
                           ],
                         ),
                       ],
@@ -499,7 +502,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE9EDF5),
+                  color: colors.surfaceVariant,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
@@ -511,7 +514,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
-                            color: _selectedTab == 0 ? Colors.white : Colors.transparent,
+                            color: _selectedTab == 0 ? colors.surface : Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           alignment: Alignment.center,
@@ -533,7 +536,7 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
-                            color: _selectedTab == 1 ? Colors.white : Colors.transparent,
+                            color: _selectedTab == 1 ? colors.surface : Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           alignment: Alignment.center,
@@ -590,7 +593,17 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(title, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: colors.textSecondary)),
-                Icon(icon, size: 14, color: iconColor),
+                Icon(
+                  icon,
+                  size: 14,
+                  color: colors.isDark
+                      ? (iconColor == AppColors.primary
+                          ? const Color(0xFFF87171)
+                          : (iconColor == AppColors.info
+                              ? const Color(0xFF60A5FA)
+                              : const Color(0xFFC4B5FD)))
+                      : iconColor,
+                ),
               ],
             ),
             const SizedBox(height: 6),
@@ -707,8 +720,8 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                       AppChip(
                         label: event.type.shortTag,
                         variant: AppChipVariant.custom,
-                        customBackgroundColor: event.type.backgroundColor,
-                        customForegroundColor: event.type.color,
+                        customBackgroundColor: event.type.displayBackgroundColor(colors.isDark),
+                        customForegroundColor: event.type.displayForegroundColor(colors.isDark),
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         borderRadius: BorderRadius.circular(6),
                       ),

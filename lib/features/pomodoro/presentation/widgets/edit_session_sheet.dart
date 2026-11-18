@@ -471,8 +471,8 @@ class _EditSessionSheetState extends ConsumerState<EditSessionSheet> {
                                 AppChip(
                                   label: event.type.displayName,
                                   variant: AppChipVariant.custom,
-                                  customBackgroundColor: event.type.backgroundColor,
-                                  customForegroundColor: event.type.color,
+                                  customBackgroundColor: event.type.displayBackgroundColor(colors.isDark),
+                                  customForegroundColor: event.type.displayForegroundColor(colors.isDark),
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   borderRadius: BorderRadius.circular(4),
                                   textStyle: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),

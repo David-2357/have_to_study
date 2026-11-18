@@ -777,14 +777,25 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                     letterSpacing: 0.5,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: colors.isDark ? iconColor.withValues(alpha: 0.22) : iconBg,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, color: iconColor, size: 14),
-                ),
+                Builder(builder: (context) {
+                  final effectiveIconColor = colors.isDark
+                      ? (iconColor == AppColors.primary
+                          ? const Color(0xFFF87171)
+                          : (iconColor == const Color(0xFF9333EA)
+                              ? const Color(0xFFD8B4FE)
+                              : (iconColor == const Color(0xFF4F46E5)
+                                  ? const Color(0xFF818CF8)
+                                  : (iconColor == AppColors.teal ? const Color(0xFF5EEAD4) : iconColor))))
+                      : iconColor;
+                  return Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: colors.isDark ? effectiveIconColor.withValues(alpha: 0.22) : iconBg,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, color: effectiveIconColor, size: 14),
+                  );
+                }),
               ],
             ),
             const SizedBox(height: 8),

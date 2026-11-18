@@ -44,12 +44,12 @@ class _SessionHistoryWidgetState extends ConsumerState<SessionHistoryWidget> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFFFEE2E2),
+                color: colors.isDark ? const Color(0xFFEF4444).withValues(alpha: 0.18) : const Color(0xFFFEE2E2),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.delete_outline_rounded,
-                color: Color(0xFFDC2626),
+                color: colors.isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
                 size: 20,
               ),
             ),
@@ -382,8 +382,8 @@ class _SessionHistoryWidgetState extends ConsumerState<SessionHistoryWidget> {
                                   AppChip(
                                     label: event.type.displayName,
                                     variant: AppChipVariant.custom,
-                                    customBackgroundColor: event.type.backgroundColor,
-                                    customForegroundColor: event.type.color,
+                                    customBackgroundColor: event.type.displayBackgroundColor(colors.isDark),
+                                    customForegroundColor: event.type.displayForegroundColor(colors.isDark),
                                     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                                     borderRadius: BorderRadius.circular(4),
                                     textStyle: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),

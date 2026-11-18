@@ -168,7 +168,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: pomodoro.phase.backgroundColor,
+                            color: pomodoro.phase.displayBackgroundColor(colors.isDark),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -178,7 +178,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                                 width: 7,
                                 height: 7,
                                 decoration: BoxDecoration(
-                                  color: pomodoro.phase.color,
+                                  color: pomodoro.phase.displayForegroundColor(colors.isDark),
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -190,7 +190,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w800,
-                                  color: pomodoro.phase.color,
+                                  color: pomodoro.phase.displayForegroundColor(colors.isDark),
                                   letterSpacing: 0.5,
                                 ),
                               ),
@@ -202,7 +202,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
-                                  color: pomodoro.phase.color.withValues(alpha: 0.8),
+                                  color: pomodoro.phase.displayForegroundColor(colors.isDark).withValues(alpha: 0.8),
                                 ),
                               ),
                             ],
@@ -276,8 +276,8 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                                     AppChip(
                                       label: currentEvent.type.shortTag,
                                       variant: AppChipVariant.custom,
-                                      customBackgroundColor: currentEvent.type.backgroundColor,
-                                      customForegroundColor: currentEvent.type.color,
+                                      customBackgroundColor: currentEvent.type.displayBackgroundColor(colors.isDark),
+                                      customForegroundColor: currentEvent.type.displayForegroundColor(colors.isDark),
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                       borderRadius: BorderRadius.circular(6),
                                       textStyle: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
@@ -705,8 +705,8 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                     AppChip(
                       label: event.type.shortTag,
                       variant: AppChipVariant.custom,
-                      customBackgroundColor: event.type.backgroundColor,
-                      customForegroundColor: event.type.color,
+                      customBackgroundColor: event.type.displayBackgroundColor(colors.isDark),
+                      customForegroundColor: event.type.displayForegroundColor(colors.isDark),
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       borderRadius: BorderRadius.circular(6),
                       textStyle: const TextStyle(
@@ -873,13 +873,13 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                           ),
                           Container(
                             padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(
-                              color: AppColors.primaryLight,
+                            decoration: BoxDecoration(
+                              color: colors.isDark ? AppColors.primary.withValues(alpha: 0.22) : AppColors.primaryLight,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.local_fire_department_rounded,
-                              color: AppColors.primary,
+                              color: colors.isDark ? const Color(0xFFF87171) : AppColors.primary,
                               size: 16,
                             ),
                           ),
@@ -909,10 +909,10 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                       const SizedBox(height: 4),
                       Text(
                         'Objetivo diario en $goalPercent%',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF0D9488),
+                          color: colors.isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
                         ),
                       ),
                     ],
@@ -947,13 +947,13 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                           ),
                           Container(
                             padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFEBF5FB),
+                            decoration: BoxDecoration(
+                              color: colors.isDark ? AppColors.info.withValues(alpha: 0.22) : const Color(0xFFEBF5FB),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.access_time_rounded,
-                              color: AppColors.info,
+                              color: colors.isDark ? const Color(0xFF60A5FA) : AppColors.info,
                               size: 16,
                             ),
                           ),

@@ -38,6 +38,27 @@ enum PomodoroPhase {
         return AppColors.infoLight;
     }
   }
+
+  Color displayBackgroundColor(bool isDark) {
+    if (isDark) {
+      return color.withValues(alpha: 0.22);
+    }
+    return backgroundColor;
+  }
+
+  Color displayForegroundColor(bool isDark) {
+    if (isDark) {
+      switch (this) {
+        case PomodoroPhase.focus:
+          return const Color(0xFFF87171);
+        case PomodoroPhase.shortBreak:
+          return const Color(0xFF5EEAD4);
+        case PomodoroPhase.longBreak:
+          return const Color(0xFF93C5FD);
+      }
+    }
+    return color;
+  }
 }
 
 enum PomodoroStatus {

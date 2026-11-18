@@ -206,15 +206,15 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE6F4EA),
+                        color: colors.isDark ? const Color(0xFF22C55E).withValues(alpha: 0.22) : const Color(0xFFE6F4EA),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Borrador',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF137333),
+                          color: colors.isDark ? const Color(0xFF86EFAC) : const Color(0xFF137333),
                         ),
                       ),
                     ),
@@ -287,7 +287,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEDF2F7),
+                        color: colors.surfaceVariant,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Wrap(
@@ -302,7 +302,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                               width: 44,
                               height: 44,
                               decoration: BoxDecoration(
-                                color: isSelected ? Colors.white : Colors.transparent,
+                                color: isSelected ? colors.surface : Colors.transparent,
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: isSelected
                                     ? [
@@ -392,12 +392,16 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE0F2FE),
+                            color: colors.isDark ? const Color(0xFF0284C7).withValues(alpha: 0.22) : const Color(0xFFE0F2FE),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Hábito',
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF0369A1)),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: colors.isDark ? const Color(0xFF7DD3FC) : const Color(0xFF0369A1),
+                            ),
                           ),
                         ),
                       ],
@@ -408,7 +412,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
+                        color: colors.surfaceVariant,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -491,7 +495,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
+                        color: colors.surfaceVariant,
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Row(
@@ -594,7 +598,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
+                          color: colors.surfaceVariant,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(color: colors.border),
                         ),
@@ -633,18 +637,25 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE6FFFA),
+                  color: colors.isDark ? AppColors.teal.withValues(alpha: 0.15) : const Color(0xFFE6FFFA),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFB2F5EA)),
+                  border: Border.all(color: colors.isDark ? AppColors.teal.withValues(alpha: 0.3) : const Color(0xFFB2F5EA)),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.lightbulb_outline_rounded, color: Color(0xFF0D9488)),
-                    SizedBox(width: 10),
+                    Icon(
+                      Icons.lightbulb_outline_rounded,
+                      color: colors.isDark ? const Color(0xFF5EEAD4) : const Color(0xFF0D9488),
+                    ),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         'Configurar una meta semanal visible activa el efecto Zeigarnik positivo, impulsando hábitos de estudio constantes.',
-                        style: TextStyle(fontSize: 12, color: Color(0xFF0F766E), height: 1.3),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colors.isDark ? const Color(0xFF99F6E4) : const Color(0xFF0F766E),
+                          height: 1.3,
+                        ),
                       ),
                     ),
                   ],

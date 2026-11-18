@@ -913,10 +913,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFFBEB),
+                          color: colors.isDark ? const Color(0xFFF59E0B).withValues(alpha: 0.18) : const Color(0xFFFFFBEB),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.file_upload_outlined, color: Color(0xFFD97706), size: 20),
+                        child: Icon(
+                          Icons.file_upload_outlined,
+                          color: colors.isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
+                          size: 20,
+                        ),
                       ),
                       title: const Text('Importar desde archivo JSON (.json)', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                       subtitle: Text('Selecciona un archivo .json desde tu explorador para cargar datos', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
@@ -931,17 +935,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFEE2E2),
+                          color: colors.isDark ? const Color(0xFFEF4444).withValues(alpha: 0.18) : const Color(0xFFFEE2E2),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.delete_forever_rounded, color: Color(0xFFDC2626), size: 20),
+                        child: Icon(
+                          Icons.delete_forever_rounded,
+                          color: colors.isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
+                          size: 20,
+                        ),
                       ),
-                      title: const Text(
+                      title: Text(
                         'Borrar todos los datos locales',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFFDC2626)),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: colors.textPrimary,
+                        ),
                       ),
                       subtitle: Text('Acción irreversible en el almacenamiento interno', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
-                      trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFDC2626)),
+                      trailing: Icon(Icons.chevron_right_rounded, color: colors.textSecondary),
                       onTap: () => _confirmResetAll(context, ref),
                     ),
                   ],
@@ -1075,17 +1087,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         color: colors.isDark ? colors.surfaceVariant : const Color(0xFFEEF2FF),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.circle, size: 8, color: Color(0xFF10B981)),
-                          SizedBox(width: 6),
+                          const Icon(Icons.circle, size: 8, color: Color(0xFF10B981)),
+                          const SizedBox(width: 6),
                           Text(
                             'HAVE TO STUDY · v1.2.0 (LOCAL BUILD)',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
-                              color: Color(0xFF4F46E5),
+                              color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
                               letterSpacing: 0.5,
                             ),
                           ),

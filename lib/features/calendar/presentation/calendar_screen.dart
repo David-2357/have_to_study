@@ -93,11 +93,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFDE8E8),
+                      decoration: BoxDecoration(
+                        color: colors.isDark ? AppColors.primary.withValues(alpha: 0.22) : const Color(0xFFFDE8E8),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.touch_app_rounded, color: AppColors.primary, size: 14),
+                      child: Icon(
+                        Icons.touch_app_rounded,
+                        color: colors.isDark ? const Color(0xFFF87171) : AppColors.primary,
+                        size: 14,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
