@@ -23,6 +23,47 @@ class ProfileScreen extends ConsumerWidget {
     final completedEvents = events.where((e) => e.isCompleted).length;
     final totalEvents = events.length;
 
+    // Calcular racha actual y récord histórico de días consecutivos con sesiones
+    int currentStreak = 0;
+    int maxStreak = 0;
+    if (sessions.isNotEmpty) {
+      final now = DateTime.now();
+      final studyDays = sessions
+          .map((s) {
+            final local = s.completedAt.toLocal();
+            return DateTime(local.year, local.month, local.day);
+          })
+          .toSet()
+          .toList()
+        ..sort((a, b) => b.compareTo(a));
+
+      final today = DateTime(now.year, now.month, now.day);
+      final yesterday = today.subtract(const Duration(days: 1));
+
+      if (studyDays.contains(today) || studyDays.contains(yesterday)) {
+        var checkDay = studyDays.contains(today) ? today : yesterday;
+        while (studyDays.contains(checkDay)) {
+          currentStreak++;
+          checkDay = checkDay.subtract(const Duration(days: 1));
+        }
+      }
+
+      final sortedAsc = studyDays.toList()..sort((a, b) => a.compareTo(b));
+      int tempStreak = 0;
+      DateTime? prevDay;
+      for (final day in sortedAsc) {
+        if (prevDay == null || day.difference(prevDay).inDays == 1) {
+          tempStreak++;
+        } else if (day.difference(prevDay).inDays > 1) {
+          tempStreak = 1;
+        }
+        if (tempStreak > maxStreak) {
+          maxStreak = tempStreak;
+        }
+        prevDay = day;
+      }
+    }
+
     return Scaffold(
       backgroundColor: colors.background,
       appBar: AppBar(
@@ -199,8 +240,8 @@ class ProfileScreen extends ConsumerWidget {
                   _buildStatCard(
                     colors: colors,
                     title: 'CONSTANCIA',
-                    val: '12 días',
-                    sub: 'Récord: 24 días',
+                    val: '$currentStreak ${currentStreak == 1 ? "día" : "días"}',
+                    sub: maxStreak > 0 ? 'Récord: $maxStreak ${maxStreak == 1 ? "día" : "días"}' : 'Sin racha activa',
                     icon: Icons.local_fire_department_rounded,
                     iconBg: const Color(0xFFFFF7ED),
                     iconColor: const Color(0xFFEA580C),

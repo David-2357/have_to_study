@@ -28,28 +28,130 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
     final subjects = ref.watch(subjectsProvider);
     final settings = ref.watch(settingsProvider);
 
-    // Filtrar sesiones según periodo
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final currentWeekday = now.weekday; // 1: Lun .. 7: Dom
+    final thisMonday = today.subtract(Duration(days: currentWeekday - 1));
+    final nextMonday = thisMonday.add(const Duration(days: 7));
+    final lastMonday = thisMonday.subtract(const Duration(days: 7));
+
+    final currentMonthStart = DateTime(now.year, now.month, 1);
+    final nextMonthStart = DateTime(now.year, now.month + 1, 1);
+    final previousMonthStart = DateTime(now.year, now.month - 1, 1);
+
+    // Filtrar sesiones según periodo
     final filteredSessions = sessions.where((s) {
+      final completed = s.completedAt.toLocal();
       if (_selectedPeriod == 0) {
-        // Esta semana
-        final diff = now.difference(s.completedAt).inDays;
-        return diff <= 7;
+        // Esta semana (lunes a domingo de la semana en curso)
+        return !completed.isBefore(thisMonday) && completed.isBefore(nextMonday);
       } else if (_selectedPeriod == 1) {
-        // Este mes
-        return s.completedAt.year == now.year && s.completedAt.month == now.month;
+        // Este mes (día 1 al final del mes)
+        return !completed.isBefore(currentMonthStart) && completed.isBefore(nextMonthStart);
       }
       return true; // Global
     }).toList();
 
     final totalSeconds = filteredSessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
     final totalCycles = filteredSessions.length;
-    final daysInPeriod = _selectedPeriod == 0 ? 7 : (_selectedPeriod == 1 ? 30 : 90);
-    final dailyAvgSeconds = daysInPeriod > 0 ? (totalSeconds ~/ daysInPeriod) : 0;
+
+    // Comparación con el periodo anterior
+    int previousPeriodSeconds = 0;
+    if (_selectedPeriod == 0) {
+      previousPeriodSeconds = sessions.where((s) {
+        final completed = s.completedAt.toLocal();
+        return !completed.isBefore(lastMonday) && completed.isBefore(thisMonday);
+      }).fold<int>(0, (sum, s) => sum + s.durationSeconds);
+    } else if (_selectedPeriod == 1) {
+      previousPeriodSeconds = sessions.where((s) {
+        final completed = s.completedAt.toLocal();
+        return !completed.isBefore(previousMonthStart) && completed.isBefore(currentMonthStart);
+      }).fold<int>(0, (sum, s) => sum + s.durationSeconds);
+    }
+
+    final diffSeconds = totalSeconds - previousPeriodSeconds;
+    String timeSubText;
+    IconData? timeSubIcon;
+    Color timeSubColor;
+
+    if (_selectedPeriod == 0) {
+      if (totalSeconds == 0 && previousPeriodSeconds == 0) {
+        timeSubText = 'Sin tiempo registrado';
+        timeSubIcon = null;
+        timeSubColor = colors.textSecondary;
+      } else if (previousPeriodSeconds == 0) {
+        timeSubText = '+${TimeUtils.formatDurationHoursMinutes(totalSeconds)} vs sem. ant.';
+        timeSubIcon = Icons.trending_up_rounded;
+        timeSubColor = AppColors.teal;
+      } else if (diffSeconds > 0) {
+        timeSubText = '+${TimeUtils.formatDurationHoursMinutes(diffSeconds)} vs sem. ant.';
+        timeSubIcon = Icons.trending_up_rounded;
+        timeSubColor = AppColors.teal;
+      } else if (diffSeconds < 0) {
+        timeSubText = '-${TimeUtils.formatDurationHoursMinutes(-diffSeconds)} vs sem. ant.';
+        timeSubIcon = Icons.trending_down_rounded;
+        timeSubColor = colors.isDark ? const Color(0xFFF87171) : AppColors.primary;
+      } else {
+        timeSubText = '= Igual que sem. anterior';
+        timeSubIcon = Icons.trending_flat_rounded;
+        timeSubColor = colors.textSecondary;
+      }
+    } else if (_selectedPeriod == 1) {
+      if (totalSeconds == 0 && previousPeriodSeconds == 0) {
+        timeSubText = 'Sin tiempo registrado';
+        timeSubIcon = null;
+        timeSubColor = colors.textSecondary;
+      } else if (previousPeriodSeconds == 0) {
+        timeSubText = '+${TimeUtils.formatDurationHoursMinutes(totalSeconds)} vs mes ant.';
+        timeSubIcon = Icons.trending_up_rounded;
+        timeSubColor = AppColors.teal;
+      } else if (diffSeconds > 0) {
+        timeSubText = '+${TimeUtils.formatDurationHoursMinutes(diffSeconds)} vs mes ant.';
+        timeSubIcon = Icons.trending_up_rounded;
+        timeSubColor = AppColors.teal;
+      } else if (diffSeconds < 0) {
+        timeSubText = '-${TimeUtils.formatDurationHoursMinutes(-diffSeconds)} vs mes ant.';
+        timeSubIcon = Icons.trending_down_rounded;
+        timeSubColor = colors.isDark ? const Color(0xFFF87171) : AppColors.primary;
+      } else {
+        timeSubText = '= Igual que mes anterior';
+        timeSubIcon = Icons.trending_flat_rounded;
+        timeSubColor = colors.textSecondary;
+      }
+    } else {
+      timeSubText = '$totalCycles sesiones acumuladas';
+      timeSubIcon = Icons.all_inclusive_rounded;
+      timeSubColor = colors.textSecondary;
+    }
+
+    // Días transcurridos en el periodo para promedio diario exacto
+    final int daysElapsedInPeriod = _selectedPeriod == 0
+        ? currentWeekday.clamp(1, 7)
+        : (_selectedPeriod == 1
+            ? now.day.clamp(1, 31)
+            : (sessions.isNotEmpty
+                ? (now.difference(sessions.map((s) => s.completedAt).reduce((a, b) => a.isBefore(b) ? a : b)).inDays + 1)
+                : 1).clamp(1, 99999));
+    final dailyAvgSeconds = daysElapsedInPeriod > 0 ? (totalSeconds ~/ daysElapsedInPeriod) : 0;
+
+    // Subtítulo de ciclos según periodo
+    final focusMins = settings.focusMinutes > 0 ? settings.focusMinutes : 25;
+    String cyclesSubText;
+    if (_selectedPeriod == 0) {
+      final weeklyGoalCycles = (settings.dailyGoalHours * 7 * 60) ~/ focusMins;
+      cyclesSubText = 'Meta semanal: $weeklyGoalCycles ciclos';
+    } else if (_selectedPeriod == 1) {
+      final daysInMonth = DateTime(now.year, now.month + 1, 0).day;
+      final monthlyGoalCycles = (settings.dailyGoalHours * daysInMonth * 60) ~/ focusMins;
+      cyclesSubText = 'Meta mensual: $monthlyGoalCycles ciclos';
+    } else {
+      cyclesSubText = totalCycles > 0
+          ? 'Promedio: ${((totalSeconds / 60) / totalCycles).round()} min / ciclo'
+          : 'Sin ciclos completados';
+    }
 
     // Cálculo dinámico de 7 días (Lunes a Domingo) para el gráfico de barras
-    final currentWeekday = now.weekday; // 1: Lun .. 7: Dom
-    final monday = DateTime(now.year, now.month, now.day).subtract(Duration(days: currentWeekday - 1));
+    final monday = thisMonday;
     final dailyHours = List<double>.filled(7, 0.0);
     int completedDaysCount = 0;
     final dailyGoal = settings.dailyGoalHours.toDouble();
@@ -185,18 +287,18 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                         _buildSummaryCard(
                           title: 'TIEMPO TOTAL',
                           val: TimeUtils.formatDurationHoursMinutes(totalSeconds),
-                          sub: '+3h 15m vs semana ant.',
+                          sub: timeSubText,
                           icon: Icons.access_time_rounded,
                           iconBg: const Color(0xFFFDE8E8),
                           iconColor: AppColors.primary,
-                          subIcon: Icons.trending_up_rounded,
-                          subColor: AppColors.teal,
+                          subIcon: timeSubIcon,
+                          subColor: timeSubColor,
                         ),
                         const SizedBox(width: 12),
                         _buildSummaryCard(
                           title: 'CICLOS COMPLETOS',
                           val: '$totalCycles',
-                          sub: 'Objetivo semanal: ${(settings.dailyGoalHours * 7 * 60) ~/ settings.focusMinutes}',
+                          sub: cyclesSubText,
                           icon: Icons.check_circle_outline_rounded,
                           iconBg: const Color(0xFFE6FFFA),
                           iconColor: AppColors.teal,
@@ -209,7 +311,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                         _buildSummaryCard(
                           title: 'PROMEDIO DIARIO',
                           val: TimeUtils.formatDurationHoursMinutes(dailyAvgSeconds),
-                          sub: 'Meta: ${settings.dailyGoalHours}h 00m',
+                          sub: 'Meta: ${settings.dailyGoalHours}h 00m diaria',
                           icon: Icons.nightlight_round,
                           iconBg: const Color(0xFFEEF2FF),
                           iconColor: const Color(0xFF4F46E5),
@@ -218,11 +320,13 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                         _buildSummaryCard(
                           title: 'EFICIENCIA',
                           val: '$efficiencyPercent%',
-                          sub: totalCycles > 0 ? '$completedDaysCount de $daysElapsed días en meta' : 'Sin sesiones aún',
+                          sub: totalCycles > 0
+                              ? '$completedDaysCount de $daysElapsedInPeriod días en meta'
+                              : 'Sin sesiones aún',
                           icon: Icons.bolt_rounded,
                           iconBg: const Color(0xFFFAF5FF),
                           iconColor: const Color(0xFF9333EA),
-                          subColor: AppColors.teal,
+                          subColor: efficiencyPercent > 0 ? AppColors.teal : colors.textSecondary,
                         ),
                       ],
                     ),

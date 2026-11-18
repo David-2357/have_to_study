@@ -39,6 +39,11 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
     final completedEvents = subjectEvents.where((e) => e.isCompleted).toList();
     final subjectSessions = sessions.where((s) => s.subjectId == subject.id).toList();
 
+    final now = DateTime.now();
+    final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: now.weekday - 1));
+    final weekSubjectSessions = subjectSessions.where((s) => !s.completedAt.toLocal().isBefore(startOfWeek));
+    final weekStudySeconds = weekSubjectSessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
+
     final nextExam = pendingEvents.where((e) => e.type == EventType.exam).firstOrNull;
 
     return Scaffold(
@@ -269,7 +274,9 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                   _buildStatCard(
                     title: 'DEDICADO',
                     val: TimeUtils.formatDurationHoursMinutes(subject.totalStudySeconds),
-                    sub: '+3h 15m esta sem.',
+                    sub: weekStudySeconds > 0
+                        ? '+${TimeUtils.formatDurationHoursMinutes(weekStudySeconds)} esta sem.'
+                        : '0m esta semana',
                     icon: Icons.access_time_rounded,
                     iconColor: AppColors.info,
                   ),
