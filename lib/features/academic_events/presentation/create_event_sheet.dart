@@ -489,6 +489,76 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
               ),
             ),
 
+            const SizedBox(height: 14),
+
+            // Marcador de Pendiente Prioritario
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: colors.isDark
+                    ? (_isPriority
+                        ? const Color(0xFFF59E0B).withValues(alpha: 0.15)
+                        : colors.surfaceVariant)
+                    : (_isPriority ? const Color(0xFFFFFBEB) : colors.surfaceVariant),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: _isPriority
+                      ? (colors.isDark ? const Color(0xFFF59E0B) : const Color(0xFFFCD34D))
+                      : colors.border,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: _isPriority
+                          ? const Color(0xFFF59E0B)
+                          : colors.textSecondary.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      _isPriority ? Icons.star_rounded : Icons.star_outline_rounded,
+                      color: _isPriority ? Colors.white : colors.textSecondary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Pendiente prioritario',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: colors.textPrimary,
+                          ),
+                        ),
+                        Text(
+                          _isPriority
+                              ? 'Aviso anticipado con notificación según ajustes'
+                              : 'Activa para recibir recordatorio previo',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Switch.adaptive(
+                    value: _isPriority,
+                    activeThumbColor: const Color(0xFFF59E0B),
+                    activeTrackColor: const Color(0xFFFCD34D),
+                    onChanged: (val) => setState(() => _isPriority = val),
+                  ),
+                ],
+              ),
+            ),
+
             const SizedBox(height: 16),
 
             // Nota de privacidad

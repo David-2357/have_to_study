@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../app_database.dart';
 import '../../../features/pomodoro/domain/pomodoro_models.dart';
 import '../../../features/settings/domain/settings_models.dart';
@@ -13,8 +14,11 @@ class PomodoroDao {
   // ==========================================
   Future<PomodoroSettingsModel> getSettings() async {
     final row = await (_db.select(_db.pomodoroSettingsEntries)..where((t) => t.id.equals(1))).getSingleOrNull();
+    final prefs = await SharedPreferences.getInstance();
+    final priorityNoticeDays = prefs.getInt('priority_event_notice_days') ?? 2;
+
     if (row == null) {
-      return PomodoroSettingsModel();
+      return PomodoroSettingsModel(priorityEventNoticeDays: priorityNoticeDays);
     }
     return PomodoroSettingsModel(
       focusMinutes: row.focusMinutes,
@@ -34,10 +38,14 @@ class PomodoroDao {
       weekStartDay: row.weekStartDay,
       notifyUnattendedSubjects: row.notifyUnattendedSubjects,
       unattendedDaysThreshold: row.unattendedDaysThreshold,
+      priorityEventNoticeDays: priorityNoticeDays,
     );
   }
 
   Future<void> saveSettings(PomodoroSettingsModel settings) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('priority_event_notice_days', settings.priorityEventNoticeDays);
+
     await _db.into(_db.pomodoroSettingsEntries).insertOnConflictUpdate(
       PomodoroSettingsEntriesCompanion(
         id: const Value(1),

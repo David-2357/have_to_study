@@ -63,7 +63,7 @@ void main() async {
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
         subjectsProvider.overrideWith((ref) => SubjectsNotifier(subjectsDao, initialSubjects)),
-        academicEventsProvider.overrideWith((ref) => AcademicEventsNotifier(eventsDao, initialEvents)),
+        academicEventsProvider.overrideWith((ref) => AcademicEventsNotifier(eventsDao, initialEvents, ref)),
         focusSessionsProvider.overrideWith((ref) => FocusSessionsNotifier(sessionsDao, initialSessions)),
         pomodoroProvider.overrideWith((ref) => PomodoroNotifier(pomodoroDao, ref, initialPomodoroState)),
         settingsProvider.overrideWith((ref) => SettingsNotifier(pomodoroDao, initialSettings, ref)),

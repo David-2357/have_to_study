@@ -5,6 +5,8 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import '../../features/pomodoro/domain/pomodoro_models.dart';
+import '../../features/academic_events/domain/academic_event_model.dart';
+import '../../../shared/utils/time_utils.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -19,6 +21,11 @@ class NotificationService {
   static const String pomodoroChannelName = 'Temporizador Pomodoro';
   static const String pomodoroChannelDesc =
       'Notificaciones y alertas al finalizar tus sesiones de concentración y descansos';
+
+  static const String priorityEventsChannelId = 'priority_events_channel';
+  static const String priorityEventsChannelName = 'Pendientes Prioritarios';
+  static const String priorityEventsChannelDesc =
+      'Alertas con antelación para entregas y exámenes prioritarios';
 
   bool _isInitialized = false;
 
@@ -73,7 +80,18 @@ class NotificationService {
         showBadge: true,
       );
 
+      const priorityChannel = AndroidNotificationChannel(
+        priorityEventsChannelId,
+        priorityEventsChannelName,
+        description: priorityEventsChannelDesc,
+        importance: Importance.high,
+        playSound: true,
+        enableVibration: true,
+        showBadge: true,
+      );
+
       await androidImplementation?.createNotificationChannel(channel);
+      await androidImplementation?.createNotificationChannel(priorityChannel);
     }
 
     _isInitialized = true;
@@ -259,5 +277,110 @@ class NotificationService {
     } catch (e) {
       debugPrint('[NotificationService] Error mostrando notificación inmediata: $e');
     }
+  }
+
+  int _eventNotificationId(String eventId) {
+    return 1000 + (eventId.hashCode.abs() % 1000000);
+  }
+
+  /// Programar recordatorio con días de antelación para un pendiente prioritario
+  Future<void> schedulePriorityEventNotification({
+    required AcademicEventModel event,
+    required String subjectName,
+    required int noticeDays,
+  }) async {
+    if (!_isInitialized) {
+      await initialize();
+    }
+
+    final notifId = _eventNotificationId(event.id);
+    await cancelEventNotification(event.id);
+
+    // Solo programar si es prioritario y no está completado
+    if (!event.isPriority || event.isCompleted) {
+      return;
+    }
+
+    final now = DateTime.now();
+
+    // Calcular fecha y hora de la notificación con los días de antelación configurados
+    DateTime scheduledDate;
+    if (event.hasDueTime) {
+      scheduledDate = event.dueAt.subtract(Duration(days: noticeDays));
+    } else {
+      // Si el evento no tiene hora fija, notificar a las 09:00 AM de esa fecha de antelación
+      final targetDay = event.dueAt.subtract(Duration(days: noticeDays));
+      scheduledDate = DateTime(targetDay.year, targetDay.month, targetDay.day, 9, 0);
+    }
+
+    // Si la fecha calculada ya pasó:
+    // Comprobamos si el evento aún no ha vencido
+    if (scheduledDate.isBefore(now)) {
+      if (event.dueAt.isAfter(now.add(const Duration(minutes: 30)))) {
+        // Vence pronto: notificar en 5 segundos
+        scheduledDate = now.add(const Duration(seconds: 5));
+      } else {
+        // Ya venció o está venciendo ahora mismo, no programar
+        return;
+      }
+    }
+
+    final tzScheduledTime = tz.TZDateTime.from(scheduledDate, tz.local);
+
+    final String dayWord = noticeDays == 1 ? '1 día' : '$noticeDays días';
+    final String title = '⚠️ Pendiente prioritario: ${event.title}';
+    final String formattedDate = TimeUtils.formatEventDate(event.dueAt, includeTime: event.hasDueTime);
+    final String body = 'El compromiso de $subjectName vence el $formattedDate ($dayWord de antelación). ¡No lo dejes para el final!';
+
+    const androidDetails = AndroidNotificationDetails(
+      priorityEventsChannelId,
+      priorityEventsChannelName,
+      channelDescription: priorityEventsChannelDesc,
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: true,
+      enableVibration: true,
+      category: AndroidNotificationCategory.reminder,
+      visibility: NotificationVisibility.public,
+    );
+
+    const darwinDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      interruptionLevel: InterruptionLevel.timeSensitive,
+    );
+
+    const notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: darwinDetails,
+    );
+
+    try {
+      await _notificationsPlugin.zonedSchedule(
+        notifId,
+        title,
+        body,
+        tzScheduledTime,
+        notificationDetails,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+      );
+      debugPrint('[NotificationService] Notificación de evento prioritario programada: $tzScheduledTime (ID: $notifId)');
+    } catch (e) {
+      debugPrint('[NotificationService] Error al programar notificación de evento prioritario: $e');
+    }
+  }
+
+  /// Cancelar recordatorio de un evento
+  Future<void> cancelEventNotification(String eventId) async {
+    try {
+      final notifId = _eventNotificationId(eventId);
+      await _notificationsPlugin.cancel(notifId);
+    } catch (e) {
+      debugPrint('[NotificationService] Error al cancelar notificación de evento: $e');
+    }
+  }
   }
 }

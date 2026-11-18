@@ -30,6 +30,7 @@ class PomodoroSettingsModel {
   final String weekStartDay;
   final bool notifyUnattendedSubjects;
   final int unattendedDaysThreshold;
+  final int priorityEventNoticeDays;
 
   PomodoroSettingsModel({
     this.focusMinutes = 25,
@@ -46,6 +47,7 @@ class PomodoroSettingsModel {
     this.weekStartDay = 'Lunes',
     this.notifyUnattendedSubjects = true,
     this.unattendedDaysThreshold = 3,
+    this.priorityEventNoticeDays = 2,
   });
 
   PomodoroSettingsModel copyWith({
@@ -63,6 +65,7 @@ class PomodoroSettingsModel {
     String? weekStartDay,
     bool? notifyUnattendedSubjects,
     int? unattendedDaysThreshold,
+    int? priorityEventNoticeDays,
   }) {
     return PomodoroSettingsModel(
       focusMinutes: focusMinutes ?? this.focusMinutes,
@@ -82,6 +85,7 @@ class PomodoroSettingsModel {
           notifyUnattendedSubjects ?? this.notifyUnattendedSubjects,
       unattendedDaysThreshold:
           unattendedDaysThreshold ?? this.unattendedDaysThreshold,
+      priorityEventNoticeDays: (priorityEventNoticeDays ?? this.priorityEventNoticeDays).clamp(1, 14),
     );
   }
 
@@ -100,6 +104,7 @@ class PomodoroSettingsModel {
     'weekStartDay': weekStartDay,
     'notifyUnattendedSubjects': notifyUnattendedSubjects,
     'unattendedDaysThreshold': unattendedDaysThreshold,
+    'priorityEventNoticeDays': priorityEventNoticeDays,
   };
 
   factory PomodoroSettingsModel.fromJson(Map<String, dynamic> json) =>
@@ -123,5 +128,7 @@ class PomodoroSettingsModel {
             json['notifyUnattendedSubjects'] as bool? ?? true,
         unattendedDaysThreshold:
             json['unattendedDaysThreshold'] as int? ?? 3,
+        priorityEventNoticeDays:
+            json['priorityEventNoticeDays'] as int? ?? 2,
       );
 }
