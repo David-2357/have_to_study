@@ -62,7 +62,7 @@ class SubjectsNotifier extends StateNotifier<List<SubjectModel>> {
 
   void _syncNotificationForSubject(SubjectModel subject, [PomodoroSettingsModel? currentSettings]) {
     if (_ref == null) return;
-    final settings = currentSettings ?? _ref!.read(settingsProvider);
+    final PomodoroSettingsModel settings = currentSettings ?? _ref!.read(settingsProvider);
 
     if (!settings.notifyUnattendedSubjects || subject.isArchived || subject.isPassed) {
       NotificationService().cancelSubjectNotification(subject.id);
