@@ -98,7 +98,7 @@ class SubjectsDao {
     }
   }
 
-  Future<void> addStudyTime(String subjectId, int seconds, [int pomodorosToAdd = 1]) async {
+  Future<void> addStudyTime(String subjectId, int seconds, [int pomodorosToAdd = 0]) async {
     final current = await getSubjectById(subjectId);
     if (current != null) {
       await updateSubject(

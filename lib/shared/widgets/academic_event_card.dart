@@ -71,6 +71,25 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
     final colors = context.colors;
     final event = widget.event;
     final subject = widget.subject;
+    final sessions = ref.watch(focusSessionsProvider);
+    final settings = ref.watch(settingsProvider);
+
+    final focusMinutes = settings.focusMinutes > 0 ? settings.focusMinutes : 25;
+    final pomodoroSeconds = focusMinutes * 60;
+    final targetSeconds = event.targetPomodoros * pomodoroSeconds;
+
+    // Calcular el tiempo real dedicado a este evento específico a partir de las sesiones
+    final eventSessions = sessions.where((s) => s.academicEventId == event.id);
+    final actualSessionsSecs = eventSessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
+    final dedicatedSeconds = actualSessionsSecs > 0
+        ? actualSessionsSecs
+        : (event.completedPomodoros * pomodoroSeconds);
+
+    final progress = targetSeconds > 0
+        ? (dedicatedSeconds / targetSeconds).clamp(0.0, 1.0)
+        : (event.isCompleted ? 1.0 : 0.0);
+    final progressPercent = (progress * 100).round();
+    final isGoalReached = targetSeconds > 0 && dedicatedSeconds >= targetSeconds;
 
     return Container(
       decoration: BoxDecoration(
@@ -230,9 +249,13 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                     ],
                   ),
                   AppChip(
-                    label: '${event.completedPomodoros} / ${event.targetPomodoros} Pomos',
-                    icon: Icons.timer_outlined,
-                    variant: AppChipVariant.neutral,
+                    label: isGoalReached
+                        ? '${event.targetPomodoros}/${event.targetPomodoros} Pomos'
+                        : (dedicatedSeconds > 0
+                            ? '${TimeUtils.formatDurationHoursMinutes(dedicatedSeconds)} / ${TimeUtils.formatDurationHoursMinutes(targetSeconds)}'
+                            : '${event.completedPomodoros} / ${event.targetPomodoros} Pomos'),
+                    icon: isGoalReached ? Icons.check_circle_rounded : Icons.timer_outlined,
+                    variant: isGoalReached ? AppChipVariant.success : AppChipVariant.neutral,
                     iconSize: 12,
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     borderRadius: BorderRadius.circular(8),
@@ -261,11 +284,13 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                       ),
                     ),
                     Text(
-                      '${event.progressPercent}% completado',
-                      style: const TextStyle(
+                      isGoalReached
+                          ? '100% completado (Meta lograda)'
+                          : '$progressPercent% completado',
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                        color: isGoalReached ? AppColors.success : AppColors.primary,
                       ),
                     ),
                   ],
@@ -274,9 +299,11 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
-                    value: event.progress,
+                    value: progress,
                     backgroundColor: colors.isDark ? colors.surfaceVariant : const Color(0xFFE2E8F0),
-                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isGoalReached ? AppColors.success : AppColors.primary,
+                    ),
                     minHeight: 6,
                   ),
                 ),
@@ -285,20 +312,22 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                   children: [
                     _buildMetricPill(
                       title: 'Dedicado',
-                      val: '${(event.completedPomodoros * 25) ~/ 60}h ${(event.completedPomodoros * 25) % 60}m',
-                      sub: '${event.completedPomodoros} pomos',
+                      val: TimeUtils.formatDurationHoursMinutes(dedicatedSeconds),
+                      sub: '${(dedicatedSeconds / pomodoroSeconds).toStringAsFixed(dedicatedSeconds % pomodoroSeconds == 0 ? 0 : 1)} pomos equiv.',
                     ),
                     const SizedBox(width: 8),
                     _buildMetricPill(
                       title: 'Restante',
-                      val: '${((event.targetPomodoros - event.completedPomodoros).clamp(0, 99) * 25)}m',
-                      sub: '${(event.targetPomodoros - event.completedPomodoros).clamp(0, 99)} pomos',
+                      val: TimeUtils.formatDurationHoursMinutes((targetSeconds - dedicatedSeconds).clamp(0, 999999)),
+                      sub: isGoalReached
+                          ? '¡Meta lograda!'
+                          : '${((targetSeconds - dedicatedSeconds).clamp(0, 999999) / pomodoroSeconds).toStringAsFixed(1)} pomos rest.',
                     ),
                     const SizedBox(width: 8),
                     _buildMetricPill(
                       title: 'Meta',
                       val: '${event.targetPomodoros} pomos',
-                      sub: '${event.targetPomodoros * 25} min total',
+                      sub: '${TimeUtils.formatDurationHoursMinutes(targetSeconds)} objetivo',
                     ),
                   ],
                 ),

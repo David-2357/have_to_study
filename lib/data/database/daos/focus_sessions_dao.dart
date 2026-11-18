@@ -48,6 +48,14 @@ class FocusSessionsDao {
     return rows.map(_toModel).toList();
   }
 
+  Future<List<FocusSessionModel>> getSessionsByEvent(String eventId) async {
+    final rows = await (_db.select(_db.focusSessions)
+          ..where((t) => t.academicEventId.equals(eventId))
+          ..orderBy([(t) => OrderingTerm(expression: t.completedAt, mode: OrderingMode.desc)]))
+        .get();
+    return rows.map(_toModel).toList();
+  }
+
   Future<void> insertSession(FocusSessionModel session) async {
     await _db.into(_db.focusSessions).insertOnConflictUpdate(
       FocusSessionsCompanion.insert(

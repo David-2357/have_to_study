@@ -116,7 +116,7 @@ class SubjectsNotifier extends StateNotifier<List<SubjectModel>> {
     await _dao.togglePassed(id);
   }
 
-  Future<void> addStudyTime(String subjectId, int seconds, [int pomodorosToAdd = 1]) async {
+  Future<void> addStudyTime(String subjectId, int seconds, [int pomodorosToAdd = 0]) async {
     state = state.map((s) {
       if (s.id == subjectId) {
         return s.copyWith(
@@ -251,6 +251,34 @@ class AcademicEventsNotifier extends StateNotifier<List<AcademicEventModel>> {
     await _dao.incrementEventPomodoro(eventId, amount);
   }
 
+  Future<void> recordEventStudyTime(String eventId, int addedSeconds, {bool isNatural = false}) async {
+    final event = state.where((e) => e.id == eventId).firstOrNull;
+    if (event == null) return;
+
+    final focusMinutes = _ref?.read(settingsProvider).focusMinutes ?? 25;
+    final pomodoroSeconds = focusMinutes * 60;
+    final targetSeconds = event.targetPomodoros * pomodoroSeconds;
+
+    // Obtener todas las sesiones dedicadas a este evento
+    final eventSessions = await _ref?.read(focusSessionsDaoProvider).getSessionsByEvent(eventId) ?? [];
+    final totalDedicatedSeconds = eventSessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
+
+    // Los pomodoros equivalentes se calculan por el tiempo acumulado
+    final equivalentPomos = pomodoroSeconds > 0 ? (totalDedicatedSeconds ~/ pomodoroSeconds) : 0;
+
+    // La meta se completa por tiempo si el acumulado alcanza o supera el objetivo
+    final isGoalReached = targetSeconds > 0 && totalDedicatedSeconds >= targetSeconds;
+
+    final updated = event.copyWith(
+      completedPomodoros: equivalentPomos.clamp(0, event.targetPomodoros),
+      isCompleted: isGoalReached ? true : event.isCompleted,
+    );
+
+    state = state.map((e) => e.id == eventId ? updated : e).toList();
+    await _dao.updateEvent(updated);
+    _syncNotificationForEvent(updated);
+  }
+
   Future<void> reload() async {
     state = await _dao.getAllEvents();
     rescheduleAllPriorityNotifications();
@@ -348,38 +376,60 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
     );
   }
 
+  Future<void> _recordFocusSession({required bool isNatural}) async {
+    if (state.phase != PomodoroPhase.focus) return;
+
+    final segmentStart =
+        state.currentSegmentStartRemainingSeconds ?? state.totalSeconds;
+    final elapsed = isNatural
+        ? segmentStart
+        : (segmentStart - state.remainingSeconds);
+
+    // Solo se registra si el tiempo dura más de un minuto (>= 60 segundos)
+    if (elapsed >= 60) {
+      final now = DateTime.now();
+      final session = FocusSessionModel(
+        id: const Uuid().v4(),
+        subjectId: state.activeSubjectId,
+        academicEventId: state.activeEventId,
+        startedAt: now.subtract(Duration(seconds: elapsed)),
+        completedAt: now,
+        durationSeconds: elapsed,
+      );
+      await _ref.read(focusSessionsDaoProvider).insertSession(session);
+
+      // Si es natural cuenta como pomodoro natural completado (1).
+      // Si fue cancelado o saltado antes de terminar, NO cuenta como pomodoro natural (0).
+      if (state.activeSubjectId != null) {
+        await _ref.read(subjectsProvider.notifier).addStudyTime(
+              state.activeSubjectId!,
+              elapsed,
+              isNatural ? 1 : 0,
+            );
+      }
+
+      // La meta del pendiente se completa por tiempo acumulado
+      if (state.activeEventId != null) {
+        await _ref.read(academicEventsProvider.notifier).recordEventStudyTime(
+              state.activeEventId!,
+              elapsed,
+              isNatural: isNatural,
+            );
+      }
+
+      await _ref.read(focusSessionsProvider.notifier).reload();
+    }
+  }
+
   Future<void> selectSubjectAndEvent(String? subjectId, String? eventId) async {
     final hasChanged =
         state.activeSubjectId != subjectId || state.activeEventId != eventId;
     if (!hasChanged) return;
 
     // Si se cambia en medio de una sesión de concentración activa (no en reposo),
-    // registrar el tiempo acumulado en la actividad/tarea anterior.
+    // registrar el tiempo si duró más de 1 minuto (sin contar como pomodoro natural)
     if (state.phase == PomodoroPhase.focus && !state.isIdle) {
-      final segmentStart =
-          state.currentSegmentStartRemainingSeconds ?? state.totalSeconds;
-      final elapsedInSegment = segmentStart - state.remainingSeconds;
-
-      if (elapsedInSegment > 0) {
-        final now = DateTime.now();
-        final session = FocusSessionModel(
-          id: const Uuid().v4(),
-          subjectId: state.activeSubjectId,
-          academicEventId: state.activeEventId,
-          startedAt: now.subtract(Duration(seconds: elapsedInSegment)),
-          completedAt: now,
-          durationSeconds: elapsedInSegment,
-        );
-        await _ref.read(focusSessionsDaoProvider).insertSession(session);
-
-        if (state.activeSubjectId != null) {
-          await _ref
-              .read(subjectsProvider.notifier)
-              .addStudyTime(state.activeSubjectId!, elapsedInSegment);
-        }
-
-        await _ref.read(focusSessionsProvider.notifier).reload();
-      }
+      await _recordFocusSession(isNatural: false);
     }
 
     state = state.copyWith(
@@ -387,7 +437,6 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
       activeEventId: eventId,
       clearActiveSubject: subjectId == null,
       clearActiveEvent: eventId == null,
-      // La nueva actividad solo contabilizará el tiempo desde que se cambió
       currentSegmentStartRemainingSeconds: state.remainingSeconds,
     );
     await _dao.persistState(state: state);
@@ -462,6 +511,12 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
       WakelockPlus.disable();
     } catch (_) {}
     NotificationService().cancelPomodoroNotification();
+
+    // Si estaba en concentración y no en reposo, registrar el tiempo si duró >= 60s (sin contar como pomodoro natural)
+    if (state.phase == PomodoroPhase.focus && !state.isIdle) {
+      _recordFocusSession(isNatural: false);
+    }
+
     final settings = _ref.read(settingsProvider);
     final duration = _getPhaseDuration(state.phase, settings);
     state = state.copyWith(
@@ -487,6 +542,12 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
       WakelockPlus.disable();
     } catch (_) {}
     NotificationService().cancelPomodoroNotification();
+
+    // Si estaba en concentración y no en reposo, registrar el tiempo si duró >= 60s (sin contar como pomodoro natural)
+    if (state.phase == PomodoroPhase.focus && !state.isIdle) {
+      _recordFocusSession(isNatural: false);
+    }
+
     final settings = _ref.read(settingsProvider);
     final focusSeconds = settings.focusMinutes * 60;
     state = state.copyWith(
@@ -525,42 +586,8 @@ class PomodoroNotifier extends StateNotifier<PomodoroStateModel>
     }
 
     if (state.phase == PomodoroPhase.focus) {
-      // SOLO registrar la sesión si concluyó naturalmente sin saltar
-      if (isNatural) {
-        final segmentStart =
-            state.currentSegmentStartRemainingSeconds ?? state.totalSeconds;
-        final elapsedInFinalSegment = segmentStart;
-
-        if (elapsedInFinalSegment > 0) {
-          final now = DateTime.now();
-          final session = FocusSessionModel(
-            id: const Uuid().v4(),
-            subjectId: state.activeSubjectId,
-            academicEventId: state.activeEventId,
-            startedAt: now.subtract(Duration(seconds: elapsedInFinalSegment)),
-            completedAt: now,
-            durationSeconds: elapsedInFinalSegment,
-          );
-          await _ref.read(focusSessionsDaoProvider).insertSession(session);
-
-          // Actualizar asignatura con el tiempo transcurrido en este segmento
-          if (state.activeSubjectId != null) {
-            await _ref
-                .read(subjectsProvider.notifier)
-                .addStudyTime(state.activeSubjectId!, elapsedInFinalSegment);
-          }
-        }
-
-        // Actualizar evento (pomodoro completado)
-        if (state.activeEventId != null) {
-          await _ref
-              .read(academicEventsProvider.notifier)
-              .incrementEventPomodoro(state.activeEventId!);
-        }
-
-        // Actualizar sesiones provider
-        await _ref.read(focusSessionsProvider.notifier).reload();
-      }
+      // Registrar sesión (si es natural cuenta como pomodoro natural; si no, solo si duró >= 60s y sin pomodoro natural)
+      await _recordFocusSession(isNatural: isNatural);
 
       // Transición a descanso: si el ciclo actual alcanza los ciclos por ronda -> Descanso largo
       final isLongBreak = state.currentCycle >= settings.cyclesBeforeLongBreak;
@@ -864,19 +891,12 @@ class UnboundedSessionNotifier extends StateNotifier<UnboundedSessionState> {
 
   Future<void> _saveCurrentSession() async {
     final seconds = state.elapsedSeconds;
-    if (seconds <= 0) return;
+    // Solo se registra si duró al menos un minuto (>= 60s)
+    if (seconds < 60) return;
 
     final pomosEarned = (seconds / 1500).round();
     final subjectId = state.activeSubjectId;
     final eventId = state.activeEventId;
-
-    if (subjectId != null && subjectId.isNotEmpty) {
-      await _ref.read(subjectsProvider.notifier).addStudyTime(subjectId, seconds, pomosEarned);
-    }
-
-    if (eventId != null && eventId.isNotEmpty && pomosEarned > 0) {
-      await _ref.read(academicEventsProvider.notifier).incrementEventPomodoro(eventId, pomosEarned);
-    }
 
     final session = FocusSessionModel(
       id: const Uuid().v4(),
@@ -888,6 +908,15 @@ class UnboundedSessionNotifier extends StateNotifier<UnboundedSessionState> {
     );
 
     await _ref.read(focusSessionsDaoProvider).insertSession(session);
+
+    if (subjectId != null && subjectId.isNotEmpty) {
+      await _ref.read(subjectsProvider.notifier).addStudyTime(subjectId, seconds, pomosEarned);
+    }
+
+    if (eventId != null && eventId.isNotEmpty) {
+      await _ref.read(academicEventsProvider.notifier).recordEventStudyTime(eventId, seconds, isNatural: false);
+    }
+
     await _ref.read(focusSessionsProvider.notifier).reload();
   }
 

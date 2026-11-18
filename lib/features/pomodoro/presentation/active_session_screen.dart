@@ -91,6 +91,8 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
     final subjects = ref.watch(subjectsProvider);
     final events = ref.watch(academicEventsProvider);
     final profile = ref.watch(profileProvider);
+    final sessions = ref.watch(focusSessionsProvider);
+    final settings = ref.watch(settingsProvider);
 
     final activeSubjectId = _activeMode == ActiveSessionMode.pomodoro
         ? pomodoro.activeSubjectId
@@ -452,7 +454,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                           title: const Text('¿Cancelar sesión de estudio?', style: TextStyle(fontWeight: FontWeight.bold)),
                           content: const Text(
-                            'Tienes progreso acumulado en este bloque. Si cancelas la sesión ahora, el tiempo transcurrido no se registrará como completado.',
+                            'Si cancelas ahora y has estudiado más de 1 minuto, el tiempo transcurrido se guardará en tus estadísticas, pero no contará como pomodoro natural completado.',
                           ),
                           actions: [
                             TextButton(
@@ -832,20 +834,31 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Row(
-                            children: [
-                              const Icon(Icons.pie_chart_outline_rounded, size: 14, color: AppColors.teal),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${currentEvent.completedPomodoros} / ${currentEvent.targetPomodoros} bloques (${currentEvent.progressPercent}%)',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: colors.textPrimary,
+                          Builder(builder: (context) {
+                            final eventSessions = sessions.where((s) => s.academicEventId == currentEvent.id);
+                            final actualSecs = eventSessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
+                            final focusMins = settings.focusMinutes > 0 ? settings.focusMinutes : 25;
+                            final targetSecs = currentEvent.targetPomodoros * focusMins * 60;
+                            final pct = targetSecs > 0
+                                ? ((actualSecs / targetSecs).clamp(0.0, 1.0) * 100).round()
+                                : currentEvent.progressPercent;
+                            return Row(
+                              children: [
+                                const Icon(Icons.pie_chart_outline_rounded, size: 14, color: AppColors.teal),
+                                const SizedBox(width: 4),
+                                Text(
+                                  actualSecs > 0
+                                      ? '${TimeUtils.formatDurationHoursMinutes(actualSecs)} / ${TimeUtils.formatDurationHoursMinutes(targetSecs)} ($pct%)'
+                                      : '${currentEvent.completedPomodoros} / ${currentEvent.targetPomodoros} bloques (${currentEvent.progressPercent}%)',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: colors.textPrimary,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            );
+                          }),
                         ],
                       ),
                       const SizedBox(height: 8),

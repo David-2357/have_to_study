@@ -427,23 +427,47 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Preparación del examen', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
-                          Text('${nextExam.progressPercent}% preparado', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.primary)),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: nextExam.progress,
-                          backgroundColor: const Color(0xFFE2E8F0),
-                          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-                          minHeight: 6,
-                        ),
-                      ),
+                      Builder(builder: (context) {
+                        final examSessions = sessions.where((s) => s.academicEventId == nextExam.id);
+                        final actualExamSecs = examSessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
+                        final targetExamSecs = nextExam.targetPomodoros * 25 * 60;
+                        final examProgress = targetExamSecs > 0
+                            ? (actualExamSecs / targetExamSecs).clamp(0.0, 1.0)
+                            : nextExam.progress;
+                        final examPercent = (examProgress * 100).round();
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Preparación del examen', style: TextStyle(fontSize: 11, color: colors.textSecondary)),
+                                Text(
+                                  examPercent >= 100
+                                      ? '100% preparado (Meta lograda)'
+                                      : '$examPercent% preparado (${TimeUtils.formatDurationHoursMinutes(actualExamSecs)})',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: examPercent >= 100 ? AppColors.success : AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: examProgress,
+                                backgroundColor: const Color(0xFFE2E8F0),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  examPercent >= 100 ? AppColors.success : AppColors.primary,
+                                ),
+                                minHeight: 6,
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
                     ],
                   ),
                 ),
