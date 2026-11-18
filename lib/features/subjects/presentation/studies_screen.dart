@@ -285,7 +285,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
     final chips = [
       {'label': 'Activas (${active.length})', 'index': 0},
       {'label': 'Con entregas ($withEvents)', 'index': 1},
-      if (upcoming.isNotEmpty) {'label': 'Próximas (${upcoming.length})', 'index': 3},
+      if (upcoming.isNotEmpty) {'label': 'Pendientes de empezar (${upcoming.length})', 'index': 3},
       {'label': 'Archivadas ($archived)', 'index': 2},
     ];
 
@@ -369,30 +369,36 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
     List<SubjectModel> subjects,
     List<AcademicEventModel> events,
   ) {
-    var filtered = subjects.where((s) {
-      if (_subjectFilter == 2) {
-        return s.isArchived;
-      }
-      if (_subjectFilter == 3) {
-        return s.isUpcoming && !s.isArchived && !s.isPassed;
-      }
-      if (s.isArchived || s.isPassed) return false;
-      if (_subjectFilter == 1) {
-        return s.isActive && events.any((e) => e.subjectId == s.id && !e.isCompleted);
-      }
-      // Filtro 0 (Activas): asignaturas en curso activo
-      return s.isActive;
-    }).toList();
+    final activeList = subjects.where((s) => s.isActive).toList();
+    final upcomingList = subjects.where((s) => s.isUpcoming && !s.isArchived && !s.isPassed).toList();
 
-    if (_searchQuery.isNotEmpty) {
-      filtered = filtered.where((s) {
-        final query = _searchQuery.toLowerCase();
-        return s.name.toLowerCase().contains(query) ||
-            s.code.toLowerCase().contains(query);
-      }).toList();
+    List<SubjectModel> filteredActive = activeList;
+    List<SubjectModel> filteredUpcoming = upcomingList;
+    List<SubjectModel> singleFiltered = [];
+
+    if (_subjectFilter == 1) {
+      singleFiltered = activeList.where((s) => events.any((e) => e.subjectId == s.id && !e.isCompleted)).toList();
+    } else if (_subjectFilter == 2) {
+      singleFiltered = subjects.where((s) => s.isArchived).toList();
+    } else if (_subjectFilter == 3) {
+      singleFiltered = upcomingList;
     }
 
-    if (filtered.isEmpty) {
+    if (_searchQuery.isNotEmpty) {
+      final query = _searchQuery.toLowerCase();
+      filteredActive = filteredActive.where((s) =>
+          s.name.toLowerCase().contains(query) || s.code.toLowerCase().contains(query)).toList();
+      filteredUpcoming = filteredUpcoming.where((s) =>
+          s.name.toLowerCase().contains(query) || s.code.toLowerCase().contains(query)).toList();
+      singleFiltered = singleFiltered.where((s) =>
+          s.name.toLowerCase().contains(query) || s.code.toLowerCase().contains(query)).toList();
+    }
+
+    final hasContent = _subjectFilter == 0
+        ? (filteredActive.isNotEmpty || filteredUpcoming.isNotEmpty)
+        : singleFiltered.isNotEmpty;
+
+    if (!hasContent) {
       if (subjects.isEmpty) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -451,7 +457,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
         );
       }
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Center(
           child: Text(
             'No hay asignaturas en este filtro',
@@ -462,207 +468,44 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          itemCount: filtered.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 14),
-          itemBuilder: (context, index) {
-            final subject = filtered[index];
-            final subColor = subject.displayColor(colors.isDark);
-            final relatedEvents = events.where((e) => e.subjectId == subject.id && !e.isCompleted).toList();
-            final nextExam = relatedEvents.where((e) => e.type == EventType.exam).firstOrNull;
-            final pendingDeliveries = relatedEvents.where((e) => e.type != EventType.exam).length;
+        if (_subjectFilter == 0) ...[
+          // Lista de asignaturas en curso activo
+          if (filteredActive.isNotEmpty)
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemCount: filteredActive.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 14),
+              itemBuilder: (context, index) => _buildSubjectCard(context, filteredActive[index], events),
+            ),
 
-            return InkWell(
-              onTap: () => context.push('/subject-detail?id=${subject.id}'),
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: colors.border),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        left: BorderSide(color: subColor, width: 6),
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: subColor.withValues(alpha: colors.isDark ? 0.22 : 0.12),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(subject.iconData, color: subColor, size: 22),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    subject.name,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      color: colors.textPrimary,
-                                    ),
-                                  ),
-                                  if (subject.code.isNotEmpty) ...[
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      subject.code,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: colors.textSecondary,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: colors.isDark
-                                    ? const Color(0xFF4F46E5).withValues(alpha: 0.22)
-                                    : const Color(0xFFEEF2FF),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.access_time_rounded,
-                                    size: 12,
-                                    color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    TimeUtils.formatDurationHoursMinutes(subject.totalStudySeconds),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Icon(
-                              subject.isUpcoming ? Icons.calendar_today_rounded : Icons.history_rounded,
-                              size: 14,
-                              color: colors.textMuted,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              subject.isUpcoming
-                                  ? 'Periodo: ${TimeUtils.formatEventDate(subject.startDate!)}${subject.endDate != null ? ' – ${TimeUtils.formatEventDate(subject.endDate!)}' : ''}'
-                                  : (subject.lastStudiedAt != null
-                                      ? 'Último estudio: ${TimeUtils.formatRelativeDate(subject.lastStudiedAt!)}'
-                                      : 'Sin sesiones aún'),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: colors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 6,
-                          children: [
-                            if (subject.isUpcoming)
-                              AppChip(
-                                label: 'Próximo curso · Inicia el ${TimeUtils.formatEventDate(subject.startDate!)}',
-                                icon: Icons.schedule_rounded,
-                                variant: AppChipVariant.info,
-                                iconSize: 13,
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                borderRadius: BorderRadius.circular(8),
-                                textStyle: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              )
-                            else ...[
-                              if (pendingDeliveries > 0)
-                                AppChip(
-                                  label: '$pendingDeliveries actividades pendientes',
-                                  icon: Icons.assignment_outlined,
-                                  variant: AppChipVariant.warning,
-                                  iconSize: 13,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  borderRadius: BorderRadius.circular(8),
-                                  textStyle: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              if (nextExam != null)
-                                AppChip(
-                                  label: 'Examen: ${TimeUtils.formatEventDate(nextExam.dueAt)}',
-                                  icon: Icons.calendar_today_rounded,
-                                  variant: AppChipVariant.info,
-                                  iconSize: 13,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  borderRadius: BorderRadius.circular(8),
-                                  textStyle: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              if (pendingDeliveries == 0 && nextExam == null)
-                                AppChip(
-                                  label: 'Todo al día',
-                                  icon: Icons.check_circle_outline_rounded,
-                                  variant: AppChipVariant.success,
-                                  iconSize: 13,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  borderRadius: BorderRadius.circular(8),
-                                  textStyle: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                            ],
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
+          // SECCIÓN DEDICADA: ASIGNATURAS PENDIENTES DE EMPEZAR
+          if (filteredUpcoming.isNotEmpty) ...[
+            _buildUpcomingSectionHeader(filteredUpcoming.length),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemCount: filteredUpcoming.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 14),
+              itemBuilder: (context, index) => _buildSubjectCard(context, filteredUpcoming[index], events),
+            ),
+          ],
+        ] else ...[
+          // Filtros específicos (Con entregas, Pendientes de empezar, Archivadas)
+          if (_subjectFilter == 3) _buildUpcomingSectionHeader(singleFiltered.length),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            itemCount: singleFiltered.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 14),
+            itemBuilder: (context, index) => _buildSubjectCard(context, singleFiltered[index], events),
+          ),
+        ],
 
         const SizedBox(height: 20),
 
@@ -831,6 +674,297 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildUpcomingSectionHeader(int count) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: colors.border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                color: colors.isDark
+                    ? const Color(0xFF4F46E5).withValues(alpha: 0.22)
+                    : const Color(0xFFEEF2FF),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.schedule_rounded,
+                size: 18,
+                color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'PENDIENTES DE EMPEZAR',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: colors.textPrimary,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: colors.surfaceVariant,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '$count',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Asignaturas que se activarán al llegar su fecha de inicio',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: colors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubjectCard(
+    BuildContext context,
+    SubjectModel subject,
+    List<AcademicEventModel> events,
+  ) {
+    final subColor = subject.displayColor(colors.isDark);
+    final relatedEvents = events.where((e) => e.subjectId == subject.id && !e.isCompleted).toList();
+    final nextExam = relatedEvents.where((e) => e.type == EventType.exam).firstOrNull;
+    final pendingDeliveries = relatedEvents.where((e) => e.type != EventType.exam).length;
+
+    return InkWell(
+      onTap: () => context.push('/subject-detail?id=${subject.id}'),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: colors.border),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                left: BorderSide(color: subColor, width: 6),
+              ),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: subColor.withValues(alpha: colors.isDark ? 0.22 : 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(subject.iconData, color: subColor, size: 22),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            subject.name,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: colors.textPrimary,
+                            ),
+                          ),
+                          if (subject.code.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              subject.code,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: colors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: colors.isDark
+                            ? const Color(0xFF4F46E5).withValues(alpha: 0.22)
+                            : const Color(0xFFEEF2FF),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            subject.isUpcoming ? Icons.schedule_rounded : Icons.access_time_rounded,
+                            size: 12,
+                            color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            subject.isUpcoming
+                                ? 'Próximo curso'
+                                : TimeUtils.formatDurationHoursMinutes(subject.totalStudySeconds),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Icon(
+                      subject.isUpcoming ? Icons.calendar_today_rounded : Icons.history_rounded,
+                      size: 14,
+                      color: colors.textMuted,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        subject.isUpcoming
+                            ? 'Periodo: ${TimeUtils.formatEventDate(subject.startDate!)}${subject.endDate != null ? ' – ${TimeUtils.formatEventDate(subject.endDate!)}' : ''}'
+                            : (subject.lastStudiedAt != null
+                                ? 'Último estudio: ${TimeUtils.formatRelativeDate(subject.lastStudiedAt!)}'
+                                : 'Sin sesiones aún'),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colors.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    if (subject.isUpcoming) ...[
+                      AppChip(
+                        label: 'Inicia el ${TimeUtils.formatEventDate(subject.startDate!)}',
+                        icon: Icons.play_circle_outline_rounded,
+                        variant: AppChipVariant.info,
+                        iconSize: 13,
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        borderRadius: BorderRadius.circular(8),
+                        textStyle: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      AppChip(
+                        label: subject.isAnnual ? 'Anual' : 'Semestral',
+                        variant: AppChipVariant.neutral,
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        borderRadius: BorderRadius.circular(8),
+                        textStyle: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ] else ...[
+                      if (pendingDeliveries > 0)
+                        AppChip(
+                          label: '$pendingDeliveries actividades pendientes',
+                          icon: Icons.assignment_outlined,
+                          variant: AppChipVariant.warning,
+                          iconSize: 13,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          borderRadius: BorderRadius.circular(8),
+                          textStyle: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      if (nextExam != null)
+                        AppChip(
+                          label: 'Examen: ${TimeUtils.formatEventDate(nextExam.dueAt)}',
+                          icon: Icons.calendar_today_rounded,
+                          variant: AppChipVariant.info,
+                          iconSize: 13,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          borderRadius: BorderRadius.circular(8),
+                          textStyle: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      if (pendingDeliveries == 0 && nextExam == null)
+                        AppChip(
+                          label: 'Todo al día',
+                          icon: Icons.check_circle_outline_rounded,
+                          variant: AppChipVariant.success,
+                          iconSize: 13,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          borderRadius: BorderRadius.circular(8),
+                          textStyle: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
