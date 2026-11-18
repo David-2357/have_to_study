@@ -308,7 +308,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Have to study es tu espacio de calma, concentración y organización académica. ¿Cómo te gustaría que te llamemos?',
+            'Have to Study te ayuda a organizar tu tiempo de estudio y mantener al día todas tus actividades. ¿Cómo te gustaría que te llamemos?',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,

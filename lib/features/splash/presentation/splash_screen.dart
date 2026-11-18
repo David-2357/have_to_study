@@ -173,7 +173,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 const SizedBox(height: 8),
                 // Subtitle
                 Text(
-                  'Tu espacio de calma y concentración',
+                  'Organiza tu tiempo de estudio y tus actividades',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
