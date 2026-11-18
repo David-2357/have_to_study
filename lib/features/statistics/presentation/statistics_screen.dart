@@ -7,6 +7,7 @@ import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/widgets/app_header.dart';
 import '../../../shared/widgets/app_chip.dart';
+import '../../../shared/widgets/stat_card.dart';
 import '../../../core/providers.dart';
 import '../../subjects/domain/subject_model.dart';
 
@@ -284,23 +285,23 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                   children: [
                     Row(
                       children: [
-                        _buildSummaryCard(
+                        StatCard(
+                          isExpanded: true,
                           title: 'TIEMPO TOTAL',
-                          val: TimeUtils.formatDurationHoursMinutes(totalSeconds),
-                          sub: timeSubText,
+                          value: TimeUtils.formatDurationHoursMinutes(totalSeconds),
+                          subtitle: timeSubText,
                           icon: Icons.access_time_rounded,
-                          iconBg: const Color(0xFFFDE8E8),
                           iconColor: AppColors.primary,
-                          subIcon: timeSubIcon,
-                          subColor: timeSubColor,
+                          subtitleIcon: timeSubIcon,
+                          subtitleColor: timeSubColor,
                         ),
                         const SizedBox(width: 12),
-                        _buildSummaryCard(
+                        StatCard(
+                          isExpanded: true,
                           title: 'CICLOS COMPLETOS',
-                          val: '$totalCycles',
-                          sub: cyclesSubText,
+                          value: '$totalCycles',
+                          subtitle: cyclesSubText,
                           icon: Icons.check_circle_outline_rounded,
-                          iconBg: const Color(0xFFE6FFFA),
                           iconColor: AppColors.teal,
                         ),
                       ],
@@ -308,25 +309,25 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        _buildSummaryCard(
+                        StatCard(
+                          isExpanded: true,
                           title: 'PROMEDIO DIARIO',
-                          val: TimeUtils.formatDurationHoursMinutes(dailyAvgSeconds),
-                          sub: 'Meta: ${settings.dailyGoalHours}h 00m diaria',
+                          value: TimeUtils.formatDurationHoursMinutes(dailyAvgSeconds),
+                          subtitle: 'Meta: ${settings.dailyGoalHours}h 00m diaria',
                           icon: Icons.nightlight_round,
-                          iconBg: const Color(0xFFEEF2FF),
                           iconColor: const Color(0xFF4F46E5),
                         ),
                         const SizedBox(width: 12),
-                        _buildSummaryCard(
+                        StatCard(
+                          isExpanded: true,
                           title: 'EFICIENCIA',
-                          val: '$efficiencyPercent%',
-                          sub: totalCycles > 0
+                          value: '$efficiencyPercent%',
+                          subtitle: totalCycles > 0
                               ? '$completedDaysCount de $daysElapsedInPeriod días en meta'
                               : 'Sin sesiones aún',
                           icon: Icons.bolt_rounded,
-                          iconBg: const Color(0xFFFAF5FF),
                           iconColor: const Color(0xFF9333EA),
-                          subColor: efficiencyPercent > 0 ? AppColors.teal : colors.textSecondary,
+                          subtitleColor: efficiencyPercent > 0 ? AppColors.teal : colors.textSecondary,
                         ),
                       ],
                     ),
@@ -744,95 +745,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
     );
   }
 
-  Widget _buildSummaryCard({
-    required String title,
-    required String val,
-    required String sub,
-    required IconData icon,
-    required Color iconBg,
-    required Color iconColor,
-    IconData? subIcon,
-    Color? subColor,
-  }) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: colors.border),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    color: colors.textSecondary,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                Builder(builder: (context) {
-                  final effectiveIconColor = colors.isDark
-                      ? (iconColor == AppColors.primary
-                          ? const Color(0xFFF87171)
-                          : (iconColor == const Color(0xFF9333EA)
-                              ? const Color(0xFFD8B4FE)
-                              : (iconColor == const Color(0xFF4F46E5)
-                                  ? const Color(0xFF818CF8)
-                                  : (iconColor == AppColors.teal ? const Color(0xFF5EEAD4) : iconColor))))
-                      : iconColor;
-                  return Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: colors.isDark ? effectiveIconColor.withValues(alpha: 0.22) : iconBg,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(icon, color: effectiveIconColor, size: 14),
-                  );
-                }),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              val,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w900,
-                color: colors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                if (subIcon != null) ...[
-                  Icon(subIcon, size: 12, color: subColor ?? colors.textSecondary),
-                  const SizedBox(width: 4),
-                ],
-                Expanded(
-                  child: Text(
-                    sub,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: subColor ?? colors.textSecondary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   BarChartGroupData _makeBarGroup(int x, double y, bool isHighlighted) {
     return BarChartGroupData(

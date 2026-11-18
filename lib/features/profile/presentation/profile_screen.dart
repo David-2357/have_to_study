@@ -6,6 +6,7 @@ import '../../../core/theme/app_color_theme.dart';
 import '../../../core/providers.dart';
 import '../../../shared/widgets/student_avatar.dart';
 import '../../../shared/widgets/app_chip.dart';
+import '../../../shared/widgets/stat_card.dart';
 import '../domain/profile_model.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -201,50 +202,46 @@ class ProfileScreen extends ConsumerWidget {
               // 2x2 Grid de Desempeño
               Row(
                 children: [
-                  _buildStatCard(
-                    colors: colors,
+                  StatCard(
+                    isExpanded: true,
                     title: 'TIEMPO TOTAL',
-                    val: '${(totalSeconds ~/ 3600)}h ${(totalSeconds % 3600) ~/ 60}m',
-                    sub: '✓ Enfoque concentrado',
+                    value: '${(totalSeconds ~/ 3600)}h ${(totalSeconds % 3600) ~/ 60}m',
+                    subtitle: '✓ Enfoque concentrado',
                     icon: Icons.access_time_rounded,
-                    iconBg: colors.isDark ? AppColors.primary.withValues(alpha: 0.22) : const Color(0xFFFDE8E8),
-                    iconColor: colors.isDark ? const Color(0xFFF87171) : AppColors.primary,
-                    subColor: colors.isDark ? const Color(0xFF5EEAD4) : AppColors.teal,
+                    iconColor: AppColors.primary,
+                    subtitleColor: colors.isDark ? const Color(0xFF5EEAD4) : AppColors.teal,
                   ),
                   const SizedBox(width: 12),
-                  _buildStatCard(
-                    colors: colors,
+                  StatCard(
+                    isExpanded: true,
                     title: 'CICLOS FOCUS',
-                    val: '${sessions.length}',
-                    sub: 'Sesiones realizadas',
+                    value: '${sessions.length}',
+                    subtitle: 'Sesiones realizadas',
                     icon: Icons.check_circle_outline_rounded,
-                    iconBg: colors.isDark ? AppColors.teal.withValues(alpha: 0.22) : const Color(0xFFE6FFFA),
-                    iconColor: colors.isDark ? const Color(0xFF5EEAD4) : AppColors.teal,
+                    iconColor: AppColors.teal,
                   ),
                 ],
               ),
               const SizedBox(height: 12),
               Row(
                 children: [
-                  _buildStatCard(
-                    colors: colors,
+                  StatCard(
+                    isExpanded: true,
                     title: 'EVALUACIONES',
-                    val: '$completedEvents / $totalEvents',
-                    sub: '${totalEvents > 0 ? ((completedEvents / totalEvents) * 100).round() : 0}% Completado',
+                    value: '$completedEvents / $totalEvents',
+                    subtitle: '${totalEvents > 0 ? ((completedEvents / totalEvents) * 100).round() : 0}% Completado',
                     icon: Icons.checklist_rounded,
-                    iconBg: colors.isDark ? const Color(0xFF4F46E5).withValues(alpha: 0.22) : const Color(0xFFEEF2FF),
-                    iconColor: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+                    iconColor: const Color(0xFF4F46E5),
                     hasBadge: true,
                   ),
                   const SizedBox(width: 12),
-                  _buildStatCard(
-                    colors: colors,
+                  StatCard(
+                    isExpanded: true,
                     title: 'CONSTANCIA',
-                    val: '$currentStreak ${currentStreak == 1 ? "día" : "días"}',
-                    sub: maxStreak > 0 ? 'Récord: $maxStreak ${maxStreak == 1 ? "día" : "días"}' : 'Sin racha activa',
+                    value: '$currentStreak ${currentStreak == 1 ? "día" : "días"}',
+                    subtitle: maxStreak > 0 ? 'Récord: $maxStreak ${maxStreak == 1 ? "día" : "días"}' : 'Sin racha activa',
                     icon: Icons.local_fire_department_rounded,
-                    iconBg: colors.isDark ? const Color(0xFFEA580C).withValues(alpha: 0.22) : const Color(0xFFFFF7ED),
-                    iconColor: colors.isDark ? const Color(0xFFFBBF24) : const Color(0xFFEA580C),
+                    iconColor: const Color(0xFFEA580C),
                   ),
                 ],
               ),
@@ -717,80 +714,6 @@ class ProfileScreen extends ConsumerWidget {
           },
         );
       },
-    );
-  }
-
-  Widget _buildStatCard({
-    required AppColorTheme colors,
-    required String title,
-    required String val,
-    required String sub,
-    required IconData icon,
-    required Color iconBg,
-    required Color iconColor,
-    Color? subColor,
-    bool hasBadge = false,
-  }) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: colors.border),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
-                    color: colors.textSecondary,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
-                  child: Icon(icon, color: iconColor, size: 14),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              val,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w900,
-                color: colors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            if (hasBadge)
-              AppChip(
-                label: sub,
-                variant: AppChipVariant.info,
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                borderRadius: BorderRadius.circular(6),
-                textStyle: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              )
-            else
-              Text(
-                sub,
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: subColor ?? colors.textSecondary),
-                maxLines: 1,
-              ),
-          ],
-        ),
-      ),
     );
   }
 }

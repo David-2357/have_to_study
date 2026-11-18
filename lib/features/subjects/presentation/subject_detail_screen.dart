@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/widgets/app_chip.dart';
+import '../../../shared/widgets/stat_card.dart';
 import '../../../core/providers.dart';
 import '../../academic_events/domain/academic_event_model.dart';
 import '../../academic_events/presentation/create_event_sheet.dart';
@@ -294,30 +295,41 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
               // Fila de 3 Tarjetas de Métricas
               Row(
                 children: [
-                  _buildStatCard(
+                  StatCard(
+                    isExpanded: true,
+                    padding: const EdgeInsets.all(12),
+                    borderRadius: 16,
+                    valueFontSize: 15,
                     title: 'DEDICADO',
-                    val: TimeUtils.formatDurationHoursMinutes(subject.totalStudySeconds),
-                    sub: weekStudySeconds > 0
+                    value: TimeUtils.formatDurationHoursMinutes(subject.totalStudySeconds),
+                    subtitle: weekStudySeconds > 0
                         ? '+${TimeUtils.formatDurationHoursMinutes(weekStudySeconds)} esta sem.'
                         : '0m esta semana',
                     icon: Icons.access_time_rounded,
                     iconColor: AppColors.info,
                   ),
                   const SizedBox(width: 10),
-                  _buildStatCard(
+                  StatCard(
+                    isExpanded: true,
+                    padding: const EdgeInsets.all(12),
+                    borderRadius: 16,
+                    valueFontSize: 15,
                     title: 'POMODOROS',
-                    val: '${subject.completedPomodoros} pomos',
-                    sub: pomoSub,
+                    value: '${subject.completedPomodoros} pomos',
+                    subtitle: pomoSub,
                     icon: Icons.hourglass_empty_rounded,
                     iconColor: AppColors.primary,
-                    showProgress: showPomoProgress,
-                    progress: pomoProgress,
+                    progress: showPomoProgress ? pomoProgress : null,
                   ),
                   const SizedBox(width: 10),
-                  _buildStatCard(
+                  StatCard(
+                    isExpanded: true,
+                    padding: const EdgeInsets.all(12),
+                    borderRadius: 16,
+                    valueFontSize: 15,
                     title: 'ACTIVIDADES',
-                    val: '${pendingEvents.length}',
-                    sub: 'pendientes',
+                    value: '${pendingEvents.length}',
+                    subtitle: 'pendientes',
                     icon: Icons.assignment_outlined,
                     iconColor: const Color(0xFF8B5CF6),
                   ),
@@ -564,65 +576,6 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                 _buildHistoryList(subjectSessions),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatCard({
-    required String title,
-    required String val,
-    required String sub,
-    required IconData icon,
-    required Color iconColor,
-    bool showProgress = false,
-    double progress = 0.0,
-  }) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: colors.border),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(title, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: colors.textSecondary)),
-                Icon(
-                  icon,
-                  size: 14,
-                  color: colors.isDark
-                      ? (iconColor == AppColors.primary
-                          ? const Color(0xFFF87171)
-                          : (iconColor == AppColors.info
-                              ? const Color(0xFF60A5FA)
-                              : const Color(0xFFC4B5FD)))
-                      : iconColor,
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(val, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: colors.textPrimary)),
-            if (showProgress) ...[
-              const SizedBox(height: 4),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(2),
-                child: LinearProgressIndicator(
-                  value: progress,
-                  backgroundColor: colors.isDark ? colors.surfaceVariant : const Color(0xFFE2E8F0),
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-                  minHeight: 4,
-                ),
-              ),
-            ],
-            const SizedBox(height: 4),
-            Text(sub, style: TextStyle(fontSize: 9, color: colors.textSecondary), maxLines: 1),
-          ],
         ),
       ),
     );

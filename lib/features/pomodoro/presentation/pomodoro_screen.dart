@@ -6,6 +6,7 @@ import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/widgets/app_header.dart';
 import '../../../shared/widgets/app_chip.dart';
+import '../../../shared/widgets/stat_card.dart';
 import '../../../core/providers.dart';
 import '../domain/pomodoro_models.dart';
 import '../../subjects/domain/subject_model.dart';
@@ -847,139 +848,44 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
           const SizedBox(height: 12),
           Row(
             children: [
-              // Tarjeta Racha de hoy
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: colors.surface,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: colors.border),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              StatCard(
+                isExpanded: true,
+                title: 'RACHA DE HOY',
+                value: '$todayBlocks bloques',
+                valueWidget: RichText(
+                  text: TextSpan(
+                    text: '$todayBlocks ',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: colors.textPrimary,
+                    ),
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'RACHA DE HOY',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: colors.textSecondary,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: colors.isDark ? AppColors.primary.withValues(alpha: 0.22) : AppColors.primaryLight,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.local_fire_department_rounded,
-                              color: colors.isDark ? const Color(0xFFF87171) : AppColors.primary,
-                              size: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      RichText(
-                        text: TextSpan(
-                          text: '$todayBlocks ',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                            color: colors.textPrimary,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: 'bloques',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: colors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Objetivo diario en $goalPercent%',
+                      TextSpan(
+                        text: 'bloques',
                         style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: colors.isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
                   ),
                 ),
+                icon: Icons.local_fire_department_rounded,
+                iconColor: AppColors.primary,
+                subtitle: 'Objetivo diario en $goalPercent%',
+                subtitleColor: colors.isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
               ),
               const SizedBox(width: 14),
-
-              // Tarjeta Tiempo Acumulado
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: colors.surface,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: colors.border),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'TIEMPO TOTAL',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: colors.textSecondary,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: colors.isDark ? AppColors.info.withValues(alpha: 0.22) : const Color(0xFFEBF5FB),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.access_time_rounded,
-                              color: colors.isDark ? const Color(0xFF60A5FA) : AppColors.info,
-                              size: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        TimeUtils.formatDurationHoursMinutes(todaySeconds),
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Dedicados hoy',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF0D9488),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              StatCard(
+                isExpanded: true,
+                title: 'TIEMPO TOTAL',
+                value: TimeUtils.formatDurationHoursMinutes(todaySeconds),
+                icon: Icons.access_time_rounded,
+                iconColor: AppColors.info,
+                subtitle: 'Dedicados hoy',
+                subtitleColor: colors.isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
               ),
             ],
           ),
