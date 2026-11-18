@@ -10,7 +10,11 @@ import '../../domain/pomodoro_models.dart';
 
 void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
   final colors = context.colors;
-  final subjects = ref.read(subjectsProvider);
+  final subjects = ref.read(subjectsProvider).where((s) => !s.isArchived).toList()
+    ..sort((a, b) {
+      if (a.isActive != b.isActive) return a.isActive ? -1 : 1;
+      return a.name.compareTo(b.name);
+    });
   final events = ref.read(academicEventsProvider);
   final pomodoro = ref.read(pomodoroProvider);
   final activeSubjectId = pomodoro.activeSubjectId;
@@ -173,9 +177,11 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                                 style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: colors.textPrimary),
                               ),
                               subtitle: Text(
-                                relatedEvents.isNotEmpty
-                                    ? '${relatedEvents.length} actividades pendientes'
-                                    : 'Sin actividades pendientes',
+                                subject.isUpcoming
+                                    ? 'Próximo curso · Inicia el ${TimeUtils.formatEventDate(subject.startDate!)}'
+                                    : (relatedEvents.isNotEmpty
+                                        ? '${relatedEvents.length} actividades pendientes'
+                                        : 'Sin actividades pendientes'),
                                 style: TextStyle(fontSize: 12, color: colors.textSecondary),
                               ),
                               children: [

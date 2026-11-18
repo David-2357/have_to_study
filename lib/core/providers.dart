@@ -90,6 +90,7 @@ class SubjectsNotifier extends StateNotifier<List<SubjectModel>> {
     required String iconKey,
     required int colorValue,
     bool isAnnual = false,
+    DateTime? startDate,
     DateTime? endDate,
   }) async {
     final newSubject = SubjectModel(
@@ -101,6 +102,7 @@ class SubjectsNotifier extends StateNotifier<List<SubjectModel>> {
       colorValue: colorValue,
       isArchived: false,
       isAnnual: isAnnual,
+      startDate: startDate,
       endDate: endDate,
       totalStudySeconds: 0,
       completedPomodoros: 0,

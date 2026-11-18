@@ -23,8 +23,13 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
   int _selectedColor = 0xFFB74134;
   int _weeklySessions = 8;
   bool _isAnnual = false; // false: Semestral, true: Anual
+  late DateTime _startDate;
   late DateTime _endDate;
   bool _isEditing = false;
+
+  static DateTime _calculateDefaultStartDate({required bool isAnnual}) {
+    return TimeUtils.calculateDefaultSubjectStartDate(isAnnual: isAnnual);
+  }
 
   static DateTime _calculateDefaultEndDate({required bool isAnnual}) {
     return TimeUtils.calculateDefaultSubjectEndDate(isAnnual: isAnnual);
@@ -97,9 +102,11 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
       _selectedIcon = subject.iconKey;
       _selectedColor = subject.colorValue;
       _isAnnual = subject.isAnnual;
+      _startDate = subject.startDate ?? _calculateDefaultStartDate(isAnnual: subject.isAnnual);
       _endDate = subject.endDate ?? _calculateDefaultEndDate(isAnnual: subject.isAnnual);
     } else {
       _isAnnual = false;
+      _startDate = _calculateDefaultStartDate(isAnnual: false);
       _endDate = _calculateDefaultEndDate(isAnnual: false);
     }
   }
@@ -505,6 +512,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                               onTap: () {
                                 setState(() {
                                   _isAnnual = false;
+                                  _startDate = _calculateDefaultStartDate(isAnnual: false);
                                   _endDate = _calculateDefaultEndDate(isAnnual: false);
                                 });
                               },
@@ -540,6 +548,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                               onTap: () {
                                 setState(() {
                                   _isAnnual = true;
+                                  _startDate = _calculateDefaultStartDate(isAnnual: true);
                                   _endDate = _calculateDefaultEndDate(isAnnual: true);
                                 });
                               },
@@ -576,6 +585,67 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
 
                     const SizedBox(height: 16),
 
+                    // FECHA DE INICIO
+                    Text(
+                      'FECHA DE INICIO',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
+                    ),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: _startDate,
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime(2040),
+                        );
+                        if (picked != null) {
+                          setState(() {
+                            _startDate = picked;
+                            if (_endDate.isBefore(_startDate)) {
+                              _endDate = _isAnnual
+                                  ? DateTime(_startDate.year + 1, 6, 30)
+                                  : DateTime(_startDate.year, _startDate.month + 5, 28);
+                            }
+                          });
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: colors.surfaceVariant,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: colors.border),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.play_circle_outline_rounded, size: 20, color: AppColors.primary),
+                                const SizedBox(width: 10),
+                                Text(
+                                  '${_startDate.day} de ${_getMonthName(_startDate.month)} de ${_startDate.year}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: colors.textPrimary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Text(
+                              'Cambiar',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primary),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 14),
+
                     // FECHA DE FINALIZACIÓN
                     Text(
                       'FECHA DE FINALIZACIÓN',
@@ -591,7 +661,12 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                           lastDate: DateTime(2040),
                         );
                         if (picked != null) {
-                          setState(() => _endDate = picked);
+                          setState(() {
+                            _endDate = picked;
+                            if (_startDate.isAfter(_endDate)) {
+                              _startDate = _endDate.subtract(const Duration(days: 120));
+                            }
+                          });
                         }
                       },
                       borderRadius: BorderRadius.circular(14),
@@ -691,6 +766,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                               iconKey: _selectedIcon,
                               colorValue: _selectedColor,
                               isAnnual: _isAnnual,
+                              startDate: _startDate,
                               endDate: _endDate,
                             ),
                           );
@@ -701,6 +777,7 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                             iconKey: _selectedIcon,
                             colorValue: _selectedColor,
                             isAnnual: _isAnnual,
+                            startDate: _startDate,
                             endDate: _endDate,
                           );
                     }

@@ -72,7 +72,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                         const SizedBox(height: 2),
                         Text(
                           _selectedTab == 0
-                              ? '${subjects.where((s) => !s.isArchived && !s.isPassed).length} materias activas'
+                              ? '${subjects.where((s) => s.isActive).length} materias activas'
                               : '${pendingEvents.length} actividades próximas esta semana',
                           style: TextStyle(
                             fontSize: 13,
@@ -277,13 +277,15 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
   }
 
   Widget _buildSubjectFilterChips(List<SubjectModel> subjects, List<AcademicEventModel> events) {
-    final active = subjects.where((s) => !s.isArchived && !s.isPassed).toList();
+    final active = subjects.where((s) => s.isActive).toList();
+    final upcoming = subjects.where((s) => s.isUpcoming && !s.isArchived && !s.isPassed).toList();
     final withEvents = active.where((s) => events.any((e) => e.subjectId == s.id && !e.isCompleted)).length;
     final archived = subjects.where((s) => s.isArchived).length;
 
     final chips = [
-      {'label': 'Todas (${active.length})', 'index': 0},
+      {'label': 'Activas (${active.length})', 'index': 0},
       {'label': 'Con entregas ($withEvents)', 'index': 1},
+      if (upcoming.isNotEmpty) {'label': 'Próximas (${upcoming.length})', 'index': 3},
       {'label': 'Archivadas ($archived)', 'index': 2},
     ];
 
@@ -371,11 +373,15 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
       if (_subjectFilter == 2) {
         return s.isArchived;
       }
+      if (_subjectFilter == 3) {
+        return s.isUpcoming && !s.isArchived && !s.isPassed;
+      }
       if (s.isArchived || s.isPassed) return false;
       if (_subjectFilter == 1) {
-        return events.any((e) => e.subjectId == s.id && !e.isCompleted);
+        return s.isActive && events.any((e) => e.subjectId == s.id && !e.isCompleted);
       }
-      return true;
+      // Filtro 0 (Activas): asignaturas en curso activo
+      return s.isActive;
     }).toList();
 
     if (_searchQuery.isNotEmpty) {
@@ -569,12 +575,18 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            Icon(Icons.history_rounded, size: 14, color: colors.textMuted),
+                            Icon(
+                              subject.isUpcoming ? Icons.calendar_today_rounded : Icons.history_rounded,
+                              size: 14,
+                              color: colors.textMuted,
+                            ),
                             const SizedBox(width: 4),
                             Text(
-                              subject.lastStudiedAt != null
-                                  ? 'Último estudio: ${TimeUtils.formatRelativeDate(subject.lastStudiedAt!)}'
-                                  : 'Sin sesiones aún',
+                              subject.isUpcoming
+                                  ? 'Periodo: ${TimeUtils.formatEventDate(subject.startDate!)}${subject.endDate != null ? ' – ${TimeUtils.formatEventDate(subject.endDate!)}' : ''}'
+                                  : (subject.lastStudiedAt != null
+                                      ? 'Último estudio: ${TimeUtils.formatRelativeDate(subject.lastStudiedAt!)}'
+                                      : 'Sin sesiones aún'),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: colors.textSecondary,
@@ -587,23 +599,10 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                           spacing: 8,
                           runSpacing: 6,
                           children: [
-                            if (pendingDeliveries > 0)
+                            if (subject.isUpcoming)
                               AppChip(
-                                label: '$pendingDeliveries actividades pendientes',
-                                icon: Icons.assignment_outlined,
-                                variant: AppChipVariant.warning,
-                                iconSize: 13,
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                borderRadius: BorderRadius.circular(8),
-                                textStyle: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            if (nextExam != null)
-                              AppChip(
-                                label: 'Examen: ${TimeUtils.formatEventDate(nextExam.dueAt)}',
-                                icon: Icons.calendar_today_rounded,
+                                label: 'Próximo curso · Inicia el ${TimeUtils.formatEventDate(subject.startDate!)}',
+                                icon: Icons.schedule_rounded,
                                 variant: AppChipVariant.info,
                                 iconSize: 13,
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -612,20 +611,48 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
                                 ),
-                              ),
-                            if (pendingDeliveries == 0 && nextExam == null)
-                              AppChip(
-                                label: 'Todo al día',
-                                icon: Icons.check_circle_outline_rounded,
-                                variant: AppChipVariant.success,
-                                iconSize: 13,
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                borderRadius: BorderRadius.circular(8),
-                                textStyle: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
+                              )
+                            else ...[
+                              if (pendingDeliveries > 0)
+                                AppChip(
+                                  label: '$pendingDeliveries actividades pendientes',
+                                  icon: Icons.assignment_outlined,
+                                  variant: AppChipVariant.warning,
+                                  iconSize: 13,
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  borderRadius: BorderRadius.circular(8),
+                                  textStyle: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
+                              if (nextExam != null)
+                                AppChip(
+                                  label: 'Examen: ${TimeUtils.formatEventDate(nextExam.dueAt)}',
+                                  icon: Icons.calendar_today_rounded,
+                                  variant: AppChipVariant.info,
+                                  iconSize: 13,
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  borderRadius: BorderRadius.circular(8),
+                                  textStyle: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              if (pendingDeliveries == 0 && nextExam == null)
+                                AppChip(
+                                  label: 'Todo al día',
+                                  icon: Icons.check_circle_outline_rounded,
+                                  variant: AppChipVariant.success,
+                                  iconSize: 13,
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  borderRadius: BorderRadius.circular(8),
+                                  textStyle: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                            ],
                           ],
                         ),
                       ],

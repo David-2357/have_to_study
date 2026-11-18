@@ -237,20 +237,49 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              subject.endDate != null
-                                  ? 'Finaliza: ${TimeUtils.formatEventDate(subject.endDate!)}'
-                                  : (subject.lastStudiedAt != null
-                                      ? 'Último: ${TimeUtils.formatRelativeDate(subject.lastStudiedAt!)}'
-                                      : 'Sin sesiones aún'),
+                              subject.startDate != null && subject.endDate != null
+                                  ? '${TimeUtils.formatEventDate(subject.startDate!)} – ${TimeUtils.formatEventDate(subject.endDate!)}'
+                                  : (subject.endDate != null
+                                      ? 'Finaliza: ${TimeUtils.formatEventDate(subject.endDate!)}'
+                                      : (subject.startDate != null
+                                          ? 'Inicia: ${TimeUtils.formatEventDate(subject.startDate!)}'
+                                          : (subject.lastStudiedAt != null
+                                              ? 'Último: ${TimeUtils.formatRelativeDate(subject.lastStudiedAt!)}'
+                                              : 'Sin sesiones aún'))),
                               style: TextStyle(fontSize: 12, color: colors.textSecondary),
                             ),
                             Builder(builder: (context) {
-                              final statusBg = subject.isPassed
-                                  ? (colors.isDark ? const Color(0xFF22C55E).withValues(alpha: 0.22) : const Color(0xFFDCFCE7))
-                                  : (subject.isArchived ? colors.surfaceVariant : (colors.isDark ? const Color(0xFF22C55E).withValues(alpha: 0.22) : const Color(0xFFE6F4EA)));
-                              final statusFg = subject.isPassed
-                                  ? (colors.isDark ? const Color(0xFF86EFAC) : const Color(0xFF15803D))
-                                  : (subject.isArchived ? colors.textSecondary : (colors.isDark ? const Color(0xFF86EFAC) : const Color(0xFF137333)));
+                              final String statusText;
+                              final IconData statusIcon;
+                              final Color statusBg;
+                              final Color statusFg;
+
+                              if (subject.isPassed) {
+                                statusText = 'Aprobada';
+                                statusIcon = Icons.verified_rounded;
+                                statusBg = colors.isDark ? const Color(0xFF22C55E).withValues(alpha: 0.22) : const Color(0xFFDCFCE7);
+                                statusFg = colors.isDark ? const Color(0xFF86EFAC) : const Color(0xFF15803D);
+                              } else if (subject.isArchived) {
+                                statusText = 'Archivada';
+                                statusIcon = Icons.archive_outlined;
+                                statusBg = colors.surfaceVariant;
+                                statusFg = colors.textSecondary;
+                              } else if (subject.isUpcoming) {
+                                statusText = 'Próximo periodo';
+                                statusIcon = Icons.schedule_rounded;
+                                statusBg = colors.isDark ? const Color(0xFF4F46E5).withValues(alpha: 0.22) : const Color(0xFFEEF2FF);
+                                statusFg = colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5);
+                              } else if (subject.isExpired) {
+                                statusText = 'Periodo finalizado';
+                                statusIcon = Icons.warning_amber_rounded;
+                                statusBg = colors.isDark ? const Color(0xFFD97706).withValues(alpha: 0.22) : const Color(0xFFFEF3C7);
+                                statusFg = colors.isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309);
+                              } else {
+                                statusText = 'En curso activo';
+                                statusIcon = Icons.check_circle_outline_rounded;
+                                statusBg = colors.isDark ? const Color(0xFF22C55E).withValues(alpha: 0.22) : const Color(0xFFE6F4EA);
+                                statusFg = colors.isDark ? const Color(0xFF86EFAC) : const Color(0xFF137333);
+                              }
 
                               return Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -261,17 +290,13 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                                 child: Row(
                                   children: [
                                     Icon(
-                                      subject.isPassed
-                                          ? Icons.verified_rounded
-                                          : (subject.isArchived ? Icons.archive_outlined : Icons.check_circle_outline_rounded),
+                                      statusIcon,
                                       size: 12,
                                       color: statusFg,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      subject.isPassed
-                                          ? 'Aprobada'
-                                          : (subject.isArchived ? 'Archivada' : 'En curso activo'),
+                                      statusText,
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,

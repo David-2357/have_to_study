@@ -32,6 +32,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
   // Decisiones por asignatura: { subjectId: SubjectClosureDecision }
   final Map<String, SubjectClosureDecision> _decisions = {};
   // Fechas de prórroga para las que continúan: { subjectId: DateTime }
+  final Map<String, DateTime> _nextStartDates = {};
   final Map<String, DateTime> _nextEndDates = {};
   bool _initialized = false;
 
@@ -40,28 +41,37 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
     for (final s in targetSubjects) {
       // Por defecto para expiradas: sugiere aprobada o continuar
       _decisions[s.id] = SubjectClosureDecision.passed;
-      _nextEndDates[s.id] = TimeUtils.calculateNextSubjectCycleDate(
+      final nextDates = TimeUtils.calculateNextSubjectCycleDates(
         isAnnual: s.isAnnual,
+        previousStartDate: s.startDate,
         previousEndDate: s.endDate,
       );
+      _nextStartDates[s.id] = nextDates.nextStartDate;
+      _nextEndDates[s.id] = nextDates.nextEndDate;
     }
     _initialized = true;
   }
 
-  Future<void> _selectNewEndDate(BuildContext context, String subjectId, bool isAnnual) async {
-    final current = _nextEndDates[subjectId] ?? DateTime.now();
-    final picked = await showDatePicker(
+  Future<void> _selectNewDates(BuildContext context, SubjectModel subject) async {
+    final currentStart = _nextStartDates[subject.id] ?? DateTime.now();
+    final currentEnd = _nextEndDates[subject.id] ?? DateTime.now().add(const Duration(days: 120));
+
+    final initialStart = currentStart.isBefore(DateTime.now()) ? DateTime.now() : currentStart;
+    final initialEnd = currentEnd.isAfter(initialStart) ? currentEnd : initialStart.add(const Duration(days: 120));
+
+    final pickedRange = await showDateRangePicker(
       context: context,
-      initialDate: current,
-      firstDate: DateTime.now(),
+      initialDateRange: DateTimeRange(start: initialStart, end: initialEnd),
+      firstDate: DateTime(2020),
       lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
-      helpText: 'NUEVA FECHA DE FINALIZACIÓN',
+      helpText: 'PERIODO DEL PRÓXIMO CURSO',
       confirmText: 'ESTABLECER',
       cancelText: 'CANCELAR',
     );
-    if (picked != null) {
+    if (pickedRange != null) {
       setState(() {
-        _nextEndDates[subjectId] = picked;
+        _nextStartDates[subject.id] = pickedRange.start;
+        _nextEndDates[subject.id] = pickedRange.end;
       });
     }
   }
@@ -78,13 +88,16 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
 
       switch (decision) {
         case SubjectClosureDecision.continues:
-          final nextDate = _nextEndDates[s.id] ??
-              TimeUtils.calculateNextSubjectCycleDate(
-                isAnnual: s.isAnnual,
-                previousEndDate: s.endDate,
-              );
+          final nextDates = TimeUtils.calculateNextSubjectCycleDates(
+            isAnnual: s.isAnnual,
+            previousStartDate: s.startDate,
+            previousEndDate: s.endDate,
+          );
+          final nextStart = _nextStartDates[s.id] ?? nextDates.nextStartDate;
+          final nextEnd = _nextEndDates[s.id] ?? nextDates.nextEndDate;
           updatedList.add(s.copyWith(
-            endDate: nextDate,
+            startDate: nextStart,
+            endDate: nextEnd,
             isPassed: false,
             isArchived: false,
           ));
@@ -275,11 +288,13 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
 
   Widget _buildSubjectClosureCard(BuildContext context, SubjectModel subject, DateTime now) {
     final decision = _decisions[subject.id] ?? SubjectClosureDecision.passed;
-    final nextEndDate = _nextEndDates[subject.id] ??
-        TimeUtils.calculateNextSubjectCycleDate(
-          isAnnual: subject.isAnnual,
-          previousEndDate: subject.endDate,
-        );
+    final fallbackDates = TimeUtils.calculateNextSubjectCycleDates(
+      isAnnual: subject.isAnnual,
+      previousStartDate: subject.startDate,
+      previousEndDate: subject.endDate,
+    );
+    final nextStartDate = _nextStartDates[subject.id] ?? fallbackDates.nextStartDate;
+    final nextEndDate = _nextEndDates[subject.id] ?? fallbackDates.nextEndDate;
 
     final isExpired = subject.endDate != null && now.isAfter(subject.endDate!);
     final isDark = colors.isDark;
@@ -413,11 +428,11 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
             ],
           ),
 
-          // Si la decisión es que sigue, mostrar selector de la nueva fecha de finalización
+          // Si la decisión es que sigue, mostrar selector del periodo del próximo curso
           if (decision == SubjectClosureDecision.continues) ...[
             const SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
                 color: isDark ? AppColors.primary.withValues(alpha: 0.15) : const Color(0xFFEEF2FF),
                 borderRadius: BorderRadius.circular(10),
@@ -425,41 +440,74 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                   color: isDark ? AppColors.primary.withValues(alpha: 0.35) : const Color(0xFFC7D2FE),
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        Icons.calendar_today_rounded,
-                        size: 14,
-                        color: isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today_rounded,
+                              size: 14,
+                              color: isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA),
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Próximo curso: ${DateFormat('d MMM yyyy', 'es').format(nextStartDate)} – ${DateFormat('d MMM yyyy', 'es').format(nextEndDate)}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? const Color(0xFFE0E7FF) : const Color(0xFF312E81),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Próximo fin: ${DateFormat('d MMMM yyyy', 'es').format(nextEndDate)}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? const Color(0xFFE0E7FF) : const Color(0xFF312E81),
+                      const SizedBox(width: 8),
+                      InkWell(
+                        onTap: () => _selectNewDates(context, subject),
+                        borderRadius: BorderRadius.circular(6),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          child: Text(
+                            'Cambiar',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: isDark ? const Color(0xFF818CF8) : AppColors.primary,
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  InkWell(
-                    onTap: () => _selectNewEndDate(context, subject.id, subject.isAnnual),
-                    borderRadius: BorderRadius.circular(6),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      child: Text(
-                        'Cambiar',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          color: isDark ? const Color(0xFF818CF8) : AppColors.primary,
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.hourglass_empty_rounded,
+                        size: 12,
+                        color: isDark ? const Color(0xFFC7D2FE).withValues(alpha: 0.8) : const Color(0xFF4338CA),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          'Permanecerá inactiva hasta el ${DateFormat('d \'de\' MMMM \'de\' yyyy', 'es').format(nextStartDate)}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: isDark ? const Color(0xFFC7D2FE).withValues(alpha: 0.85) : const Color(0xFF4338CA),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

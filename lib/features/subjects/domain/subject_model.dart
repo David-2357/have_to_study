@@ -10,6 +10,7 @@ class SubjectModel {
   final bool isArchived;
   final bool isPassed;
   final bool isAnnual;
+  final DateTime? startDate;
   final DateTime? endDate;
   final int totalStudySeconds;
   final DateTime? lastStudiedAt;
@@ -25,11 +26,17 @@ class SubjectModel {
     this.isArchived = false,
     this.isPassed = false,
     this.isAnnual = false,
+    this.startDate,
     this.endDate,
     this.totalStudySeconds = 0,
     this.lastStudiedAt,
     this.completedPomodoros = 0,
   });
+
+  bool get isUpcoming => startDate != null && DateTime.now().isBefore(startDate!);
+  bool get isExpired => endDate != null && DateTime.now().isAfter(endDate!);
+  bool get isInCurrentPeriod => !isUpcoming && !isExpired;
+  bool get isActive => !isArchived && !isPassed && isInCurrentPeriod;
 
   Color get color => Color(colorValue);
 
@@ -127,16 +134,18 @@ class SubjectModel {
     required bool isAnnual,
     required DateTime? endDate,
     required bool isPassed,
+    DateTime? startDate,
   }) {
     final type = isAnnual ? 'annual' : 'semester';
-    final dateStr = endDate?.toIso8601String() ?? '';
+    final endStr = endDate?.toIso8601String() ?? '';
     final passedStr = isPassed ? 'PASSED' : '';
-    return '$type|$dateStr|$passedStr';
+    final startStr = startDate?.toIso8601String() ?? '';
+    return '$type|$endStr|$passedStr|$startStr';
   }
 
-  static ({bool isAnnual, DateTime? endDate, bool isPassed}) parsePeriodString(String raw) {
+  static ({bool isAnnual, DateTime? endDate, bool isPassed, DateTime? startDate}) parsePeriodString(String raw) {
     if (raw.isEmpty) {
-      return (isAnnual: false, endDate: null, isPassed: false);
+      return (isAnnual: false, endDate: null, isPassed: false, startDate: null);
     }
     final isPassed = raw.contains('PASSED');
     final isAnnual = raw.startsWith('annual');
@@ -145,7 +154,11 @@ class SubjectModel {
     if (parts.length >= 2 && parts[1].isNotEmpty) {
       endDate = DateTime.tryParse(parts[1]);
     }
-    return (isAnnual: isAnnual, endDate: endDate, isPassed: isPassed);
+    DateTime? startDate;
+    if (parts.length >= 4 && parts[3].isNotEmpty) {
+      startDate = DateTime.tryParse(parts[3]);
+    }
+    return (isAnnual: isAnnual, endDate: endDate, isPassed: isPassed, startDate: startDate);
   }
 
   SubjectModel copyWith({
@@ -158,6 +171,7 @@ class SubjectModel {
     bool? isArchived,
     bool? isPassed,
     bool? isAnnual,
+    DateTime? startDate,
     DateTime? endDate,
     int? totalStudySeconds,
     DateTime? lastStudiedAt,
@@ -165,6 +179,7 @@ class SubjectModel {
   }) {
     final nextPassed = isPassed ?? this.isPassed;
     final nextAnnual = isAnnual ?? this.isAnnual;
+    final nextStartDate = startDate ?? this.startDate;
     final nextEndDate = endDate ?? this.endDate;
     return SubjectModel(
       id: id ?? this.id,
@@ -174,12 +189,14 @@ class SubjectModel {
         isAnnual: nextAnnual,
         endDate: nextEndDate,
         isPassed: nextPassed,
+        startDate: nextStartDate,
       ),
       iconKey: iconKey ?? this.iconKey,
       colorValue: colorValue ?? this.colorValue,
       isArchived: isArchived ?? this.isArchived,
       isPassed: nextPassed,
       isAnnual: nextAnnual,
+      startDate: nextStartDate,
       endDate: nextEndDate,
       totalStudySeconds: totalStudySeconds ?? this.totalStudySeconds,
       lastStudiedAt: lastStudiedAt ?? this.lastStudiedAt,
@@ -197,6 +214,7 @@ class SubjectModel {
     'isArchived': isArchived,
     'isPassed': isPassed,
     'isAnnual': isAnnual,
+    'startDate': startDate?.toIso8601String(),
     'endDate': endDate?.toIso8601String(),
     'totalStudySeconds': totalStudySeconds,
     'lastStudiedAt': lastStudiedAt?.toIso8601String(),
@@ -216,6 +234,9 @@ class SubjectModel {
       isArchived: json['isArchived'] as bool? ?? false,
       isPassed: json['isPassed'] as bool? ?? parsed.isPassed,
       isAnnual: json['isAnnual'] as bool? ?? parsed.isAnnual,
+      startDate: json['startDate'] != null
+          ? DateTime.tryParse(json['startDate'] as String)
+          : parsed.startDate,
       endDate: json['endDate'] != null
           ? DateTime.tryParse(json['endDate'] as String)
           : parsed.endDate,

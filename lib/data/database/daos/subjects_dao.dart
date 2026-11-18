@@ -19,6 +19,7 @@ class SubjectsDao {
       isArchived: row.isArchived,
       isPassed: parsed.isPassed,
       isAnnual: parsed.isAnnual,
+      startDate: parsed.startDate,
       endDate: parsed.endDate,
       totalStudySeconds: row.totalStudySeconds,
       lastStudiedAt: row.lastStudiedAt,
@@ -43,6 +44,7 @@ class SubjectsDao {
   Future<void> insertSubject(SubjectModel subject) async {
     final periodStr = SubjectModel.formatPeriodString(
       isAnnual: subject.isAnnual,
+      startDate: subject.startDate,
       endDate: subject.endDate,
       isPassed: subject.isPassed,
     );
@@ -65,6 +67,7 @@ class SubjectsDao {
   Future<void> updateSubject(SubjectModel subject) async {
     final periodStr = SubjectModel.formatPeriodString(
       isAnnual: subject.isAnnual,
+      startDate: subject.startDate,
       endDate: subject.endDate,
       isPassed: subject.isPassed,
     );

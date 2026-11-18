@@ -69,7 +69,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
     _selectedType = event?.type ?? EventType.exam;
     _selectedSubjectId = event?.subjectId ??
         widget.preselectedSubjectId ??
-        (subjects.isNotEmpty ? subjects.first.id : '');
+        (subjects.where((s) => s.isActive).firstOrNull?.id ?? (subjects.isNotEmpty ? subjects.first.id : ''));
 
     _titleController = TextEditingController(
       text: event?.title ?? '',
@@ -101,7 +101,11 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final subjects = ref.watch(subjectsProvider).where((s) => !s.isArchived).toList();
+    final subjects = ref.watch(subjectsProvider).where((s) => !s.isArchived).toList()
+      ..sort((a, b) {
+        if (a.isActive != b.isActive) return a.isActive ? -1 : 1;
+        return a.name.compareTo(b.name);
+      });
     final topPadding = MediaQuery.of(context).padding.top;
     final availableHeight = MediaQuery.of(context).size.height - topPadding;
 

@@ -51,6 +51,24 @@ class TimeUtils {
     return formatter.format(date);
   }
 
+  static DateTime calculateDefaultSubjectStartDate({
+    required bool isAnnual,
+    DateTime? fromDate,
+  }) {
+    final base = fromDate ?? DateTime.now();
+    if (isAnnual) {
+      final startYear = (base.month >= 7) ? base.year : base.year - 1;
+      return DateTime(startYear, 9, 1);
+    } else {
+      if (base.month >= 9 || base.month == 1) {
+        final startYear = (base.month == 1) ? base.year - 1 : base.year;
+        return DateTime(startYear, 9, 1);
+      } else {
+        return DateTime(base.year, 2, 1);
+      }
+    }
+  }
+
   static DateTime calculateDefaultSubjectEndDate({
     required bool isAnnual,
     DateTime? fromDate,
@@ -72,21 +90,47 @@ class TimeUtils {
     }
   }
 
-  static DateTime calculateNextSubjectCycleDate({
+  static ({DateTime nextStartDate, DateTime nextEndDate}) calculateNextSubjectCycleDates({
     required bool isAnnual,
+    DateTime? previousStartDate,
     DateTime? previousEndDate,
   }) {
+    if (previousStartDate != null && previousEndDate != null) {
+      final nextStart = DateTime(previousStartDate.year + 1, previousStartDate.month, previousStartDate.day);
+      final nextEnd = DateTime(previousEndDate.year + 1, previousEndDate.month, previousEndDate.day);
+      return (nextStartDate: nextStart, nextEndDate: nextEnd);
+    }
+
     final base = (previousEndDate != null && previousEndDate.isAfter(DateTime.now()))
         ? previousEndDate
         : DateTime.now();
     if (isAnnual) {
-      return DateTime(base.year + 1, 6, 30);
+      return (
+        nextStartDate: DateTime(base.year, 9, 1),
+        nextEndDate: DateTime(base.year + 1, 6, 30),
+      );
     } else {
       if (base.month <= 3) {
-        return DateTime(base.year, 6, 30);
+        return (
+          nextStartDate: DateTime(base.year, 9, 1),
+          nextEndDate: DateTime(base.year + 1, 1, 31),
+        );
       } else {
-        return DateTime(base.year + 1, 1, 31);
+        return (
+          nextStartDate: DateTime(base.year + 1, 2, 1),
+          nextEndDate: DateTime(base.year + 1, 6, 30),
+        );
       }
     }
+  }
+
+  static DateTime calculateNextSubjectCycleDate({
+    required bool isAnnual,
+    DateTime? previousEndDate,
+  }) {
+    return calculateNextSubjectCycleDates(
+      isAnnual: isAnnual,
+      previousEndDate: previousEndDate,
+    ).nextEndDate;
   }
 }
