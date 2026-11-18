@@ -24,7 +24,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
   int get _selectedTab => ref.watch(studiesActiveTabProvider);
   String _searchQuery = '';
   int _subjectFilter = 0; // 0: Todas, 1: Con entregas, 2: Archivadas
-  int _eventFilter = 0; // 0: Todos, 1: Exámenes, 2: Entregas, 3: Talleres
+  int _eventFilter = 0; // 0: Todos, 1: Exámenes, 2: Entregas, 3: Deberes
   bool _isInactiveExpanded = false;
   bool _isCompletedExpanded = false;
 
@@ -237,7 +237,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                   decoration: InputDecoration(
                     hintText: _selectedTab == 0
                         ? 'Buscar por nombre o código...'
-                        : 'Buscar examen, proyecto o taller...',
+                        : 'Buscar examen, proyecto o deberes...',
                     prefixIcon: Icon(Icons.search_rounded, color: colors.textMuted, size: 20),
                     fillColor: colors.surface,
                     filled: true,
@@ -328,7 +328,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
       {'label': 'Todos (${pending.length})', 'index': 0},
       {'label': 'Exámenes ($exams)', 'index': 1},
       {'label': 'Entregas ($assignments)', 'index': 2},
-      {'label': 'Talleres ($activities)', 'index': 3},
+      {'label': 'Deberes ($activities)', 'index': 3},
     ];
 
     return SingleChildScrollView(

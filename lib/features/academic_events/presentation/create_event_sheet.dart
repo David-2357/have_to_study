@@ -168,11 +168,11 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             const SizedBox(height: 8),
             Row(
               children: [
-                _buildTypeCard(EventType.exam, 'Examen\nParcial/Final', Icons.edit_calendar_rounded),
+                _buildTypeCard(EventType.exam, 'Examen', Icons.edit_calendar_rounded),
                 const SizedBox(width: 8),
                 _buildTypeCard(EventType.assignment, 'Entrega\nProyecto', Icons.folder_zip_rounded),
                 const SizedBox(width: 8),
-                _buildTypeCard(EventType.academicActivity, 'Taller\no Quiz', Icons.checklist_rounded),
+                _buildTypeCard(EventType.academicActivity, 'Deberes', Icons.checklist_rounded),
               ],
             ),
 
@@ -247,7 +247,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             const SizedBox(height: 6),
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(hintText: 'Ej. Parcial de Matemáticas'),
+              decoration: const InputDecoration(hintText: 'Ej. Examen de Matemáticas'),
             ),
 
             const SizedBox(height: 14),

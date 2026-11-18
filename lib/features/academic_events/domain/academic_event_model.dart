@@ -9,22 +9,22 @@ enum EventType {
   String get displayName {
     switch (this) {
       case EventType.exam:
-        return 'Examen Parcial/Final';
+        return 'Examen';
       case EventType.assignment:
         return 'Entrega Proyecto';
       case EventType.academicActivity:
-        return 'Taller o Quiz';
+        return 'Deberes';
     }
   }
 
   String get shortTag {
     switch (this) {
       case EventType.exam:
-        return 'EXAMEN PARCIAL';
+        return 'EXAMEN';
       case EventType.assignment:
         return 'ENTREGA PROYECTO';
       case EventType.academicActivity:
-        return 'TALLER PRÁCTICO';
+        return 'DEBERES';
     }
   }
 
