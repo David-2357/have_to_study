@@ -188,14 +188,17 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
               style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: colors.textSecondary),
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                _buildTypeCard(EventType.exam, 'Examen', Icons.edit_calendar_rounded),
-                const SizedBox(width: 8),
-                _buildTypeCard(EventType.assignment, 'Entrega\nProyecto', Icons.folder_zip_rounded),
-                const SizedBox(width: 8),
-                _buildTypeCard(EventType.academicActivity, 'Deberes', Icons.checklist_rounded),
-              ],
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildTypeCard(EventType.exam, 'Examen', Icons.edit_calendar_rounded),
+                  const SizedBox(width: 8),
+                  _buildTypeCard(EventType.assignment, 'Entrega\nProyecto', Icons.folder_zip_rounded),
+                  const SizedBox(width: 8),
+                  _buildTypeCard(EventType.academicActivity, 'Deberes', Icons.checklist_rounded),
+                ],
+              ),
             ),
 
             const SizedBox(height: 16),
@@ -729,7 +732,7 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
       child: GestureDetector(
         onTap: () => setState(() => _selectedType = type),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(16),
@@ -739,17 +742,23 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
             ),
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, color: fgColor, size: 22),
               const SizedBox(height: 6),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                  color: isSelected ? fgColor : colors.textPrimary,
-                  height: 1.1,
+              SizedBox(
+                height: 28,
+                child: Center(
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                      color: isSelected ? fgColor : colors.textPrimary,
+                      height: 1.15,
+                    ),
+                  ),
                 ),
               ),
             ],
