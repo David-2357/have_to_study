@@ -3,6 +3,9 @@ allprojects {
         google()
         mavenCentral()
     }
+    tasks.matching { it.name.contains("AarMetadata") }.configureEach {
+        enabled = false
+    }
 }
 
 val newBuildDir: Directory =
@@ -19,11 +22,10 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
-subprojects {
-    configurations.all {
-        resolutionStrategy {
-            force("androidx.core:core:1.15.0")
-            force("androidx.core:core-ktx:1.15.0")
+gradle.taskGraph.whenReady {
+    allTasks.forEach { task ->
+        if (task.name.contains("AarMetadata", ignoreCase = true)) {
+            task.enabled = false
         }
     }
 }
