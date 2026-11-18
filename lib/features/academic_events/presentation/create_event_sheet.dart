@@ -80,11 +80,13 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final subjects = ref.watch(subjectsProvider).where((s) => !s.isArchived).toList();
+    final topPadding = MediaQuery.of(context).padding.top;
+    final availableHeight = MediaQuery.of(context).size.height - topPadding;
 
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: EdgeInsets.only(
         top: 12,
@@ -93,9 +95,10 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
+        maxHeight: availableHeight * 0.82,
       ),
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -105,7 +108,9 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
                 width: 44,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD1D5DB),
+                  color: colors.isDark
+                      ? const Color(0xFF475569)
+                      : const Color(0xFFD1D5DB),
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),

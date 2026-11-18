@@ -66,6 +66,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
+                          useSafeArea: true,
                           backgroundColor: Colors.transparent,
                           builder: (context) => CreateEventSheet(initialDate: _selectedDay),
                         );
@@ -389,6 +390,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                             showModalBottomSheet(
                               context: context,
                               isScrollControlled: true,
+                              useSafeArea: true,
                               backgroundColor: Colors.transparent,
                               builder: (context) => CreateEventSheet(initialDate: _selectedDay),
                             );

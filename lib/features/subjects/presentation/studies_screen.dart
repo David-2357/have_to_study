@@ -89,6 +89,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
+                            useSafeArea: true,
                             backgroundColor: Colors.transparent,
                             builder: (context) => const CreateEventSheet(),
                           );

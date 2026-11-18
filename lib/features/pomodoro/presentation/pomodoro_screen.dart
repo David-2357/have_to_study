@@ -1021,6 +1021,7 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (context) => const CreateEventSheet(),
     );

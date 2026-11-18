@@ -329,6 +329,7 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
+                          useSafeArea: true,
                           backgroundColor: Colors.transparent,
                           builder: (context) => CreateEventSheet(eventToEdit: event),
                         );
