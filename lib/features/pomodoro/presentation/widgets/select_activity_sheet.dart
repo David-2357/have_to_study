@@ -30,9 +30,11 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
         maxChildSize: 0.92,
         expand: false,
         builder: (context, scrollController) {
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-            child: Column(
+          return SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
@@ -303,8 +305,9 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                   ),
               ],
             ),
-          );
-        },
+          ),
+        );
+      },
       );
     },
   );
