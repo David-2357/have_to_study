@@ -54,8 +54,34 @@ final profileDaoProvider = Provider<ProfileDao>((ref) {
 // ==========================================
 class SubjectsNotifier extends StateNotifier<List<SubjectModel>> {
   final SubjectsDao _dao;
+  final Ref? _ref;
 
-  SubjectsNotifier(this._dao, List<SubjectModel> initial) : super(initial);
+  SubjectsNotifier(this._dao, List<SubjectModel> initial, [this._ref]) : super(initial) {
+    Future.microtask(() => rescheduleAllUnattendedSubjectNotifications());
+  }
+
+  void _syncNotificationForSubject(SubjectModel subject, [PomodoroSettingsModel? currentSettings]) {
+    if (_ref == null) return;
+    final settings = currentSettings ?? _ref!.read(settingsProvider);
+
+    if (!settings.notifyUnattendedSubjects || subject.isArchived || subject.isPassed) {
+      NotificationService().cancelSubjectNotification(subject.id);
+      return;
+    }
+
+    NotificationService().scheduleUnattendedSubjectNotification(
+      subject: subject,
+      thresholdDays: settings.unattendedDaysThreshold,
+    );
+  }
+
+  void rescheduleAllUnattendedSubjectNotifications() {
+    if (_ref == null) return;
+    final settings = _ref!.read(settingsProvider);
+    for (final subject in state) {
+      _syncNotificationForSubject(subject, settings);
+    }
+  }
 
   Future<void> createSubject({
     required String name,
@@ -81,11 +107,13 @@ class SubjectsNotifier extends StateNotifier<List<SubjectModel>> {
     );
     state = [...state, newSubject];
     await _dao.insertSubject(newSubject);
+    _syncNotificationForSubject(newSubject);
   }
 
   Future<void> updateSubject(SubjectModel updated) async {
     state = state.map((s) => s.id == updated.id ? updated : s).toList();
     await _dao.updateSubject(updated);
+    _syncNotificationForSubject(updated);
   }
 
   Future<void> updateSubjects(List<SubjectModel> updatedList) async {
@@ -93,52 +121,72 @@ class SubjectsNotifier extends StateNotifier<List<SubjectModel>> {
     state = state.map((s) => map[s.id] ?? s).toList();
     for (final s in updatedList) {
       await _dao.updateSubject(s);
+      _syncNotificationForSubject(s);
     }
   }
 
   Future<void> toggleArchive(String id) async {
+    SubjectModel? updatedSubject;
     state = state.map((s) {
       if (s.id == id) {
-        return s.copyWith(isArchived: !s.isArchived);
+        final updated = s.copyWith(isArchived: !s.isArchived);
+        updatedSubject = updated;
+        return updated;
       }
       return s;
     }).toList();
     await _dao.toggleArchive(id);
+    if (updatedSubject != null) {
+      _syncNotificationForSubject(updatedSubject!);
+    }
   }
 
   Future<void> togglePassed(String id) async {
+    SubjectModel? updatedSubject;
     state = state.map((s) {
       if (s.id == id) {
-        return s.copyWith(isPassed: !s.isPassed);
+        final updated = s.copyWith(isPassed: !s.isPassed);
+        updatedSubject = updated;
+        return updated;
       }
       return s;
     }).toList();
     await _dao.togglePassed(id);
+    if (updatedSubject != null) {
+      _syncNotificationForSubject(updatedSubject!);
+    }
   }
 
   Future<void> addStudyTime(String subjectId, int seconds, [int pomodorosToAdd = 0]) async {
+    SubjectModel? updatedSubject;
     state = state.map((s) {
       if (s.id == subjectId) {
-        return s.copyWith(
+        final updated = s.copyWith(
           totalStudySeconds: s.totalStudySeconds + seconds,
           completedPomodoros: s.completedPomodoros + pomodorosToAdd,
           lastStudiedAt: DateTime.now(),
         );
+        updatedSubject = updated;
+        return updated;
       }
       return s;
     }).toList();
     await _dao.addStudyTime(subjectId, seconds, pomodorosToAdd);
+    if (updatedSubject != null) {
+      _syncNotificationForSubject(updatedSubject!);
+    }
   }
 
   Future<void> reload() async {
     state = await _dao.getAllSubjects();
+    rescheduleAllUnattendedSubjectNotifications();
   }
 }
 
 final subjectsProvider =
     StateNotifierProvider<SubjectsNotifier, List<SubjectModel>>((ref) {
   final dao = ref.watch(subjectsDaoProvider);
-  return SubjectsNotifier(dao, []);
+  return SubjectsNotifier(dao, [], ref);
 });
 
 // ==========================================
@@ -769,6 +817,9 @@ class SettingsNotifier extends StateNotifier<PomodoroSettingsModel> {
   Future<void> updateSettings(PomodoroSettingsModel updated) async {
     final noticeDaysChanged =
         state.priorityEventNoticeDays != updated.priorityEventNoticeDays;
+    final unattendedSettingsChanged =
+        state.notifyUnattendedSubjects != updated.notifyUnattendedSubjects ||
+        state.unattendedDaysThreshold != updated.unattendedDaysThreshold;
     state = updated;
     await _dao.saveSettings(updated);
     _ref?.read(pomodoroProvider.notifier).syncSettings(updated);
@@ -777,6 +828,11 @@ class SettingsNotifier extends StateNotifier<PomodoroSettingsModel> {
           ?.read(academicEventsProvider.notifier)
           .rescheduleAllPriorityNotifications();
     }
+    if (unattendedSettingsChanged) {
+      _ref
+          ?.read(subjectsProvider.notifier)
+          .rescheduleAllUnattendedSubjectNotifications();
+    }
   }
 
   Future<void> resetToDefaults() async {
@@ -784,6 +840,12 @@ class SettingsNotifier extends StateNotifier<PomodoroSettingsModel> {
     state = defaults;
     await _dao.saveSettings(defaults);
     _ref?.read(pomodoroProvider.notifier).syncSettings(defaults);
+    _ref
+        ?.read(academicEventsProvider.notifier)
+        .rescheduleAllPriorityNotifications();
+    _ref
+        ?.read(subjectsProvider.notifier)
+        .rescheduleAllUnattendedSubjectNotifications();
   }
 
   Future<void> reload() async {

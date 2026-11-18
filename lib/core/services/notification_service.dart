@@ -6,6 +6,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import '../../features/pomodoro/domain/pomodoro_models.dart';
 import '../../features/academic_events/domain/academic_event_model.dart';
+import '../../features/subjects/domain/subject_model.dart';
 import '../../../shared/utils/time_utils.dart';
 
 class NotificationService {
@@ -26,6 +27,11 @@ class NotificationService {
   static const String priorityEventsChannelName = 'Actividades Prioritarias';
   static const String priorityEventsChannelDesc =
       'Alertas con antelación para actividades prioritarias';
+
+  static const String unattendedSubjectsChannelId = 'unattended_subjects_channel';
+  static const String unattendedSubjectsChannelName = 'Asignaturas Desatendidas';
+  static const String unattendedSubjectsChannelDesc =
+      'Alertas para asignaturas activas que llevan días sin sesiones de estudio';
 
   bool _isInitialized = false;
 
@@ -90,8 +96,19 @@ class NotificationService {
         showBadge: true,
       );
 
+      const unattendedChannel = AndroidNotificationChannel(
+        unattendedSubjectsChannelId,
+        unattendedSubjectsChannelName,
+        description: unattendedSubjectsChannelDesc,
+        importance: Importance.high,
+        playSound: true,
+        enableVibration: true,
+        showBadge: true,
+      );
+
       await androidImplementation?.createNotificationChannel(channel);
       await androidImplementation?.createNotificationChannel(priorityChannel);
+      await androidImplementation?.createNotificationChannel(unattendedChannel);
     }
 
     _isInitialized = true;
@@ -376,6 +393,111 @@ class NotificationService {
       await _notificationsPlugin.cancel(id: notifId);
     } catch (e) {
       debugPrint('[NotificationService] Error al cancelar notificación de evento: $e');
+    }
+  }
+
+  int _subjectNotificationId(String subjectId) {
+    return 2000000 + (subjectId.hashCode.abs() % 1000000);
+  }
+
+  /// Programar recordatorio de asignatura desatendida (notificación del dispositivo en segundo plano)
+  Future<void> scheduleUnattendedSubjectNotification({
+    required SubjectModel subject,
+    required int thresholdDays,
+  }) async {
+    if (subject.isArchived || subject.isPassed) {
+      await cancelSubjectNotification(subject.id);
+      return;
+    }
+
+    final notifId = _subjectNotificationId(subject.id);
+    await cancelSubjectNotification(subject.id);
+
+    final now = DateTime.now();
+    final DateTime baseDate = subject.lastStudiedAt ?? now;
+    final targetDate = baseDate.add(Duration(days: thresholdDays));
+
+    // Programar para las 18:00 (6:00 PM) del día en que se cumple el límite
+    DateTime scheduledDate = DateTime(
+      targetDate.year,
+      targetDate.month,
+      targetDate.day,
+      18,
+      0,
+    );
+
+    // Si la fecha u hora calculada ya pasó:
+    if (scheduledDate.isBefore(now)) {
+      final daysSince = now.difference(baseDate).inDays;
+      if (daysSince >= thresholdDays) {
+        // La asignatura ya lleva los días configurados desatendida.
+        // Si aún es horario diurno razonable (< 21:00), avisar en breve (15 segundos).
+        // Si ya es tarde, programar para mañana a las 11:00 AM.
+        if (now.hour >= 9 && now.hour < 21) {
+          scheduledDate = now.add(const Duration(seconds: 15));
+        } else {
+          final tomorrow = now.add(const Duration(days: 1));
+          scheduledDate = DateTime(tomorrow.year, tomorrow.month, tomorrow.day, 11, 0);
+        }
+      } else {
+        return;
+      }
+    }
+
+    final tzScheduledTime = tz.TZDateTime.from(scheduledDate, tz.local);
+
+    final String dayWord = thresholdDays == 1 ? '1 día' : '$thresholdDays días';
+    final String title = '📚 ¡No descuides ${subject.name}!';
+    final String body = subject.lastStudiedAt == null
+        ? 'Aún no has registrado sesiones en ${subject.name}. ¡Dedícale un pomodoro hoy!'
+        : 'Llevas más de $dayWord sin estudiar ${subject.name}. ¡Mantén el ritmo con una sesión!';
+
+    const androidDetails = AndroidNotificationDetails(
+      unattendedSubjectsChannelId,
+      unattendedSubjectsChannelName,
+      channelDescription: unattendedSubjectsChannelDesc,
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: true,
+      enableVibration: true,
+      category: AndroidNotificationCategory.reminder,
+      visibility: NotificationVisibility.public,
+    );
+
+    const darwinDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      interruptionLevel: InterruptionLevel.timeSensitive,
+    );
+
+    const notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: darwinDetails,
+    );
+
+    try {
+      await _notificationsPlugin.zonedSchedule(
+        id: notifId,
+        title: title,
+        body: body,
+        scheduledDate: tzScheduledTime,
+        notificationDetails: notificationDetails,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+      debugPrint('[NotificationService] Notificación de asignatura desatendida programada para ${subject.name}: $tzScheduledTime (ID: $notifId)');
+    } catch (e) {
+      debugPrint('[NotificationService] Error al programar notificación de asignatura desatendida: $e');
+    }
+  }
+
+  /// Cancelar recordatorio de asignatura desatendida
+  Future<void> cancelSubjectNotification(String subjectId) async {
+    try {
+      final notifId = _subjectNotificationId(subjectId);
+      await _notificationsPlugin.cancel(id: notifId);
+    } catch (e) {
+      debugPrint('[NotificationService] Error al cancelar notificación de asignatura: $e');
     }
   }
 }
