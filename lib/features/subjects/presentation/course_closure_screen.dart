@@ -201,22 +201,42 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
   }
 
   Widget _buildHeaderBanner(int count) {
+    final isDark = colors.isDark;
+
+    final Color bannerBg;
+    final Color bannerBorder;
+    final Color iconColor;
+    final Color titleColor;
+    final Color subtitleColor;
+
+    if (widget.onlyExpired) {
+      bannerBg = isDark ? const Color(0xFF78350F).withValues(alpha: 0.25) : const Color(0xFFFFFBEB);
+      bannerBorder = isDark ? const Color(0xFFD97706).withValues(alpha: 0.45) : const Color(0xFFFDE68A);
+      iconColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
+      titleColor = isDark ? const Color(0xFFFDE68A) : const Color(0xFF92400E);
+      subtitleColor = isDark ? const Color(0xFFFCD34D).withValues(alpha: 0.85) : const Color(0xFFB45309);
+    } else {
+      bannerBg = isDark ? AppColors.primary.withValues(alpha: 0.15) : const Color(0xFFEEF2FF);
+      bannerBorder = isDark ? AppColors.primary.withValues(alpha: 0.35) : const Color(0xFFC7D2FE);
+      iconColor = isDark ? const Color(0xFF818CF8) : AppColors.primary;
+      titleColor = isDark ? const Color(0xFFE0E7FF) : const Color(0xFF1E1B4B);
+      subtitleColor = isDark ? const Color(0xFFC7D2FE).withValues(alpha: 0.85) : const Color(0xFF4338CA);
+    }
+
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: widget.onlyExpired ? const Color(0xFFFFFBEB) : const Color(0xFFEEF2FF),
+        color: bannerBg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: widget.onlyExpired ? const Color(0xFFFDE68A) : const Color(0xFFC7D2FE),
-        ),
+        border: Border.all(color: bannerBorder),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
             widget.onlyExpired ? Icons.schedule_rounded : Icons.school_rounded,
-            color: widget.onlyExpired ? const Color(0xFFD97706) : AppColors.primary,
+            color: iconColor,
             size: 24,
           ),
           const SizedBox(width: 12),
@@ -231,7 +251,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
-                    color: widget.onlyExpired ? const Color(0xFF92400E) : const Color(0xFF1E1B4B),
+                    color: titleColor,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -241,7 +261,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                       : 'Marca las asignaturas que continúas cursando, las que has aprobado y las que finalizan.',
                   style: TextStyle(
                     fontSize: 12,
-                    color: widget.onlyExpired ? const Color(0xFFB45309) : const Color(0xFF4338CA),
+                    color: subtitleColor,
                     height: 1.3,
                   ),
                 ),
@@ -262,6 +282,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
         );
 
     final isExpired = subject.endDate != null && now.isAfter(subject.endDate!);
+    final isDark = colors.isDark;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -269,7 +290,9 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
         color: colors.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isExpired ? const Color(0xFFFCD34D) : colors.border,
+          color: isExpired
+              ? (isDark ? const Color(0xFFB45309) : const Color(0xFFFCD34D))
+              : colors.border,
           width: isExpired ? 1.5 : 1,
         ),
         boxShadow: [
@@ -328,7 +351,9 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                           Icon(
                             isExpired ? Icons.warning_amber_rounded : Icons.event_rounded,
                             size: 13,
-                            color: isExpired ? const Color(0xFFD97706) : colors.textSecondary,
+                            color: isExpired
+                                ? (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706))
+                                : colors.textSecondary,
                           ),
                           const SizedBox(width: 3),
                           Text(
@@ -338,7 +363,9 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: isExpired ? FontWeight.bold : FontWeight.normal,
-                              color: isExpired ? const Color(0xFFD97706) : colors.textSecondary,
+                              color: isExpired
+                                  ? (isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706))
+                                  : colors.textSecondary,
                             ),
                           ),
                         ],
@@ -358,7 +385,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                 title: 'Aprobada',
                 icon: Icons.verified_rounded,
                 selected: decision == SubjectClosureDecision.passed,
-                activeColor: const Color(0xFF0F766E),
+                activeColor: isDark ? const Color(0xFF0D9488) : const Color(0xFF0F766E),
                 onTap: () {
                   setState(() => _decisions[subject.id] = SubjectClosureDecision.passed);
                 },
@@ -378,7 +405,7 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                 title: 'No sigue',
                 icon: Icons.archive_outlined,
                 selected: decision == SubjectClosureDecision.archived,
-                activeColor: Colors.grey.shade700,
+                activeColor: isDark ? const Color(0xFF475569) : Colors.grey.shade700,
                 onTap: () {
                   setState(() => _decisions[subject.id] = SubjectClosureDecision.archived);
                 },
@@ -392,23 +419,29 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFFEEF2FF),
+                color: isDark ? AppColors.primary.withValues(alpha: 0.15) : const Color(0xFFEEF2FF),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFFC7D2FE)),
+                border: Border.all(
+                  color: isDark ? AppColors.primary.withValues(alpha: 0.35) : const Color(0xFFC7D2FE),
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today_rounded, size: 14, color: Color(0xFF4338CA)),
+                      Icon(
+                        Icons.calendar_today_rounded,
+                        size: 14,
+                        color: isDark ? const Color(0xFF818CF8) : const Color(0xFF4338CA),
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         'Próximo fin: ${DateFormat('d MMMM yyyy', 'es').format(nextEndDate)}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF312E81),
+                          color: isDark ? const Color(0xFFE0E7FF) : const Color(0xFF312E81),
                         ),
                       ),
                     ],
@@ -416,14 +449,14 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                   InkWell(
                     onTap: () => _selectNewEndDate(context, subject.id, subject.isAnnual),
                     borderRadius: BorderRadius.circular(6),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       child: Text(
                         'Cambiar',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
+                          color: isDark ? const Color(0xFF818CF8) : AppColors.primary,
                         ),
                       ),
                     ),
@@ -531,9 +564,9 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: const Color(0xFFF0FDF4),
+                color: colors.isDark ? const Color(0xFF064E3B).withValues(alpha: 0.35) : const Color(0xFFF0FDF4),
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFBBF7D0)),
+                border: Border.all(color: colors.isDark ? const Color(0xFF059669).withValues(alpha: 0.5) : const Color(0xFFBBF7D0)),
               ),
               child: const Icon(
                 Icons.check_circle_outline_rounded,
