@@ -104,6 +104,7 @@ The application uses a hybrid theme architecture:
 - **Prefix / Suffix Icons:** `colors.textMuted`
 
 ### 6. Badges, Tags & Status Indicators
+- **Centralized Component:** Always use `AppChip` (`lib/shared/widgets/app_chip.dart`) for chips, badges, tags, and status indicators.
 - **Adaptive tint pattern:**
   - Light mode: use `<Color>Light` (e.g. `AppColors.warningLight`).
   - Dark mode: use `<Color>.withValues(alpha: 0.22)` over dark surface.

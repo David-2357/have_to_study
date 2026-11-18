@@ -6,6 +6,7 @@ import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../core/providers.dart';
 import '../../../shared/widgets/student_avatar.dart';
+import '../../../shared/widgets/app_chip.dart';
 import '../domain/pomodoro_models.dart';
 import '../../subjects/domain/subject_model.dart';
 import '../../academic_events/domain/academic_event_model.dart';
@@ -745,19 +746,14 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                               Row(
                                 children: [
                                   if (currentSubject?.code.isNotEmpty ?? false) ...[
-                                    Container(
+                                    AppChip(
+                                      label: currentSubject!.code,
+                                      variant: AppChipVariant.info,
                                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFEEF2FF),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        currentSubject!.code,
-                                        style: const TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF4F46E5),
-                                        ),
+                                      borderRadius: BorderRadius.circular(6),
+                                      textStyle: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     const SizedBox(width: 6),
@@ -824,19 +820,16 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
+                          AppChip(
+                            label: currentEvent.type.displayName,
+                            variant: AppChipVariant.custom,
+                            customBackgroundColor: currentEvent.type.backgroundColor,
+                            customForegroundColor: currentEvent.type.color,
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: currentEvent.type.backgroundColor,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              currentEvent.type.displayName,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: currentEvent.type.color,
-                              ),
+                            borderRadius: BorderRadius.circular(6),
+                            textStyle: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           Row(

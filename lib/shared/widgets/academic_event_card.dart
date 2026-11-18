@@ -8,6 +8,7 @@ import '../../core/providers.dart';
 import '../../features/academic_events/domain/academic_event_model.dart';
 import '../../features/subjects/domain/subject_model.dart';
 import '../../features/academic_events/presentation/create_event_sheet.dart';
+import 'app_chip.dart';
 
 class AcademicEventCard extends ConsumerStatefulWidget {
   final AcademicEventModel event;
@@ -113,49 +114,39 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                           ),
                         ),
                       ),
-                      Container(
+                      AppChip(
+                        label: event.type.shortTag,
+                        variant: AppChipVariant.custom,
+                        customBackgroundColor: event.type.backgroundColor,
+                        customForegroundColor: event.type.color,
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: event.type.backgroundColor,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          event.type.shortTag,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: event.type.color,
-                          ),
-                        ),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       const SizedBox(width: 8),
-                      Container(
+                      AppChip(
+                        label: TimeUtils.formatRelativeDate(event.dueAt),
+                        icon: Icons.access_time_filled_rounded,
+                        variant: AppChipVariant.warning,
+                        iconSize: 11,
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: colors.isDark
-                              ? const Color(0xFFD97706).withValues(alpha: 0.22)
-                              : const Color(0xFFFEF3C7),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.access_time_filled_rounded,
-                              size: 11,
-                              color: colors.isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              TimeUtils.formatRelativeDate(event.dueAt),
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: colors.isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
-                              ),
-                            ),
-                          ],
-                        ),
+                        borderRadius: BorderRadius.circular(6),
                       ),
+                      if (event.isPriority) ...[
+                        const SizedBox(width: 8),
+                        AppChip(
+                          label: 'PRIORITARIO',
+                          icon: Icons.star_rounded,
+                          variant: AppChipVariant.warning,
+                          iconSize: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          borderRadius: BorderRadius.circular(6),
+                          textStyle: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                   IconButton(
@@ -238,26 +229,16 @@ class _AcademicEventCardState extends ConsumerState<AcademicEventCard> {
                       ),
                     ],
                   ),
-                  Container(
+                  AppChip(
+                    label: '${event.completedPomodoros} / ${event.targetPomodoros} Pomos',
+                    icon: Icons.timer_outlined,
+                    variant: AppChipVariant.neutral,
+                    iconSize: 12,
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: colors.surfaceVariant,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.timer_outlined, size: 12, color: colors.textSecondary),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${event.completedPomodoros} / ${event.targetPomodoros} Pomos',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: colors.textSecondary,
-                          ),
-                        ),
-                      ],
+                    borderRadius: BorderRadius.circular(8),
+                    textStyle: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],

@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/widgets/app_header.dart';
+import '../../../shared/widgets/app_chip.dart';
 import '../../../core/providers.dart';
 import '../domain/pomodoro_models.dart';
 import '../../subjects/domain/subject_model.dart';
@@ -263,37 +264,23 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                               Row(
                                 children: [
                                   if (currentSubject?.code.isNotEmpty ?? false)
-                                    Container(
+                                    AppChip(
+                                      label: currentSubject!.code,
+                                      variant: AppChipVariant.info,
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFEEF2FF),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        currentSubject!.code,
-                                        style: const TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF4F46E5),
-                                        ),
-                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                      textStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
                                     ),
                                   if (currentEvent != null) ...[
                                     const SizedBox(width: 6),
-                                    Container(
+                                    AppChip(
+                                      label: currentEvent.type.shortTag,
+                                      variant: AppChipVariant.custom,
+                                      customBackgroundColor: currentEvent.type.backgroundColor,
+                                      customForegroundColor: currentEvent.type.color,
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: currentEvent.type.backgroundColor,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        currentEvent.type.shortTag,
-                                        style: TextStyle(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
-                                          color: currentEvent.type.color,
-                                        ),
-                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                      textStyle: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
                                     ),
                                   ],
                                 ],
@@ -478,19 +465,14 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                   ),
                   if (pendingEvents.isNotEmpty) ...[
                     const SizedBox(width: 8),
-                    Container(
+                    AppChip(
+                      label: '${pendingEvents.length}',
+                      variant: AppChipVariant.primary,
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        '${pendingEvents.length}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
-                        ),
+                      borderRadius: BorderRadius.circular(10),
+                      textStyle: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ],
@@ -720,38 +702,30 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
                 // Fila de Badges: Tipo y Asignatura
                 Row(
                   children: [
-                    Container(
+                    AppChip(
+                      label: event.type.shortTag,
+                      variant: AppChipVariant.custom,
+                      customBackgroundColor: event.type.backgroundColor,
+                      customForegroundColor: event.type.color,
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: event.type.backgroundColor,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        event.type.shortTag,
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                          color: event.type.color,
-                        ),
+                      borderRadius: BorderRadius.circular(6),
+                      textStyle: const TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     if (subject != null) ...[
                       const SizedBox(width: 6),
-                      Container(
+                      AppChip(
+                        label: subject.name,
+                        variant: AppChipVariant.custom,
+                        customBackgroundColor: subject.displayColor(colors.isDark).withValues(alpha: colors.isDark ? 0.22 : 0.12),
+                        customForegroundColor: subject.displayColor(colors.isDark),
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: subject.displayColor(colors.isDark).withValues(alpha: colors.isDark ? 0.22 : 0.12),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          subject.name,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: subject.displayColor(colors.isDark),
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        borderRadius: BorderRadius.circular(6),
+                        textStyle: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],

@@ -79,6 +79,7 @@ Reusable components, widgets, and utilities shared across multiple features. Fea
   - `time_utils.dart`: Reusable time formatting, countdown calculations, and date display helpers.
 - `widgets/`:
   - `academic_event_card.dart`: Reusable expandable card for academic deadlines, exams, and deliverables used across Calendar and Studies.
+  - `app_chip.dart`: Centralized semantic chip/tag/pill component supporting icons, labels, custom content, and theme variants.
   - `app_header.dart`: Common header displaying screen title, logo, settings shortcut, and user avatar.
   - `student_avatar.dart`: Reusable avatar widget rendering custom presets, user images, or initials.
 

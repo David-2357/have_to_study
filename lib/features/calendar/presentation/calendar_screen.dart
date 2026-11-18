@@ -8,6 +8,7 @@ import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/widgets/app_header.dart';
 import '../../../shared/widgets/student_avatar.dart';
+import '../../../shared/widgets/app_chip.dart';
 import '../../../core/providers.dart';
 import '../../academic_events/domain/academic_event_model.dart';
 import '../../subjects/domain/subject_model.dart';
@@ -336,21 +337,16 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         ),
                       ],
                     ),
-                    Container(
+                    AppChip(
+                      label: dayEvents.where((e) => !e.isCompleted).isNotEmpty
+                          ? '${dayEvents.where((e) => !e.isCompleted).length} pendientes'
+                          : '${dayEvents.length} completadas',
+                      variant: AppChipVariant.primary,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        dayEvents.where((e) => !e.isCompleted).isNotEmpty
-                            ? '${dayEvents.where((e) => !e.isCompleted).length} pendientes'
-                            : '${dayEvents.length} completadas',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
+                      borderRadius: BorderRadius.circular(12),
+                      textStyle: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],

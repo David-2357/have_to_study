@@ -10,6 +10,7 @@ import '../../../core/theme/app_color_theme.dart';
 import '../../../core/providers.dart';
 import '../../../core/services/backup_service.dart';
 import '../../../core/services/audio_feedback_service.dart';
+import '../../../shared/widgets/app_chip.dart';
 import '../domain/settings_models.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -294,20 +295,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             ),
                           ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2DD4BF),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'OFFLINE',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              color: Color(0xFF134E4A),
-                              letterSpacing: 0.5,
-                            ),
+                        const AppChip(
+                          label: 'OFFLINE',
+                          variant: AppChipVariant.teal,
+                          customBackgroundColor: Color(0xFF2DD4BF),
+                          customForegroundColor: Color(0xFF134E4A),
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          textStyle: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.5,
                           ),
                         ),
                       ],
@@ -495,28 +493,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           'Alarma de finalización',
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: colors.textPrimary),
                         ),
-                        InkWell(
+                        AppChip(
+                          label: 'Probar sonido',
+                          icon: Icons.play_circle_fill_rounded,
+                          variant: AppChipVariant.primary,
+                          iconSize: 16,
                           onTap: () {
                             AudioFeedbackService().playTone(settings.completionSound);
                           },
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryLight,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.play_circle_fill_rounded, color: AppColors.primary, size: 16),
-                                SizedBox(width: 4),
-                                Text(
-                                  'Probar sonido',
-                                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.primary),
-                                ),
-                              ],
-                            ),
+                          textStyle: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
@@ -605,6 +594,74 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         }).toList(),
                       ),
                     ],
+                    const Divider(height: 28),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Aviso de pendientes prioritarios',
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: colors.textPrimary),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Días de antelación para notificar tareas prioritarias',
+                                style: TextStyle(fontSize: 11, color: colors.textSecondary),
+                              ),
+                            ],
+                          ),
+                        ),
+                        _buildStepper(
+                          value: '${settings.priorityEventNoticeDays} d',
+                          onDecrement: () {
+                            if (settings.priorityEventNoticeDays > 1) {
+                              notifier.updateSettings(settings.copyWith(
+                                priorityEventNoticeDays: settings.priorityEventNoticeDays - 1,
+                              ));
+                            }
+                          },
+                          onIncrement: () {
+                            if (settings.priorityEventNoticeDays < 14) {
+                              notifier.updateSettings(settings.copyWith(
+                                priorityEventNoticeDays: settings.priorityEventNoticeDays + 1,
+                              ));
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [1, 2, 3, 5, 7].map((days) {
+                        final isSelected = settings.priorityEventNoticeDays == days;
+                        return Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 3),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                notifier.updateSettings(settings.copyWith(priorityEventNoticeDays: days));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isSelected
+                                    ? AppColors.primary
+                                    : (colors.isDark ? colors.surfaceVariant : const Color(0xFFEEF2FF)),
+                                foregroundColor: isSelected
+                                    ? Colors.white
+                                    : (colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5)),
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                textStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                              ),
+                              child: Text('$days ${days == 1 ? "día" : "días"}', textAlign: TextAlign.center),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ],
                 ),
               ),

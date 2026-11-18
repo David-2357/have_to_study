@@ -146,8 +146,41 @@ final subjectsProvider =
 // ==========================================
 class AcademicEventsNotifier extends StateNotifier<List<AcademicEventModel>> {
   final AcademicEventsDao _dao;
+  final Ref? _ref;
 
-  AcademicEventsNotifier(this._dao, List<AcademicEventModel> initial) : super(initial);
+  AcademicEventsNotifier(this._dao, List<AcademicEventModel> initial, [this._ref])
+      : super(initial) {
+    // Sincronizar notificaciones de pendientes prioritarios
+    Future.microtask(() => rescheduleAllPriorityNotifications());
+  }
+
+  void _syncNotificationForEvent(AcademicEventModel event) {
+    if (_ref == null) return;
+    if (!event.isPriority || event.isCompleted) {
+      NotificationService().cancelEventNotification(event.id);
+      return;
+    }
+
+    final subjects = _ref!.read(subjectsProvider);
+    final subject = subjects.firstWhere(
+      (s) => s.id == event.subjectId,
+      orElse: () => SubjectModel(id: '', name: 'General', colorValue: 0),
+    );
+    final settings = _ref!.read(settingsProvider);
+
+    NotificationService().schedulePriorityEventNotification(
+      event: event,
+      subjectName: subject.name,
+      noticeDays: settings.priorityEventNoticeDays,
+    );
+  }
+
+  void rescheduleAllPriorityNotifications() {
+    if (_ref == null) return;
+    for (final event in state) {
+      _syncNotificationForEvent(event);
+    }
+  }
 
   Future<void> createEvent({
     required String subjectId,
@@ -175,21 +208,35 @@ class AcademicEventsNotifier extends StateNotifier<List<AcademicEventModel>> {
     );
     state = [...state, newEvent];
     await _dao.insertEvent(newEvent);
+    _syncNotificationForEvent(newEvent);
   }
 
   Future<void> updateEvent(AcademicEventModel updated) async {
     state = state.map((e) => e.id == updated.id ? updated : e).toList();
     await _dao.updateEvent(updated);
+    _syncNotificationForEvent(updated);
   }
 
   Future<void> toggleComplete(String id) async {
+    AcademicEventModel? toggled;
     state = state.map((e) {
       if (e.id == id) {
-        return e.copyWith(isCompleted: !e.isCompleted);
+        final updated = e.copyWith(isCompleted: !e.isCompleted);
+        toggled = updated;
+        return updated;
       }
       return e;
     }).toList();
     await _dao.toggleComplete(id);
+    if (toggled != null) {
+      _syncNotificationForEvent(toggled!);
+    }
+  }
+
+  Future<void> deleteEvent(String id) async {
+    state = state.where((e) => e.id != id).toList();
+    await _dao.deleteEvent(id);
+    NotificationService().cancelEventNotification(id);
   }
 
   Future<void> incrementEventPomodoro(String eventId, [int amount = 1]) async {
@@ -206,14 +253,18 @@ class AcademicEventsNotifier extends StateNotifier<List<AcademicEventModel>> {
 
   Future<void> reload() async {
     state = await _dao.getAllEvents();
+    rescheduleAllPriorityNotifications();
   }
 }
 
 final academicEventsProvider =
     StateNotifierProvider<AcademicEventsNotifier, List<AcademicEventModel>>((ref) {
   final dao = ref.watch(academicEventsDaoProvider);
-  return AcademicEventsNotifier(dao, []);
+  return AcademicEventsNotifier(dao, [], ref);
 });
+
+// Provider para controlar la pestaña activa en Estudios (0: Asignaturas, 1: Pendientes)
+final studiesActiveTabProvider = StateProvider<int>((ref) => 0);
 
 // ==========================================
 // POMODORO NOTIFIER CON RECUPERACIÓN DETERMINISTA Y NOTIFICACIONES
@@ -689,9 +740,16 @@ class SettingsNotifier extends StateNotifier<PomodoroSettingsModel> {
       : super(initial);
 
   Future<void> updateSettings(PomodoroSettingsModel updated) async {
+    final noticeDaysChanged =
+        state.priorityEventNoticeDays != updated.priorityEventNoticeDays;
     state = updated;
     await _dao.saveSettings(updated);
     _ref?.read(pomodoroProvider.notifier).syncSettings(updated);
+    if (noticeDaysChanged) {
+      _ref
+          ?.read(academicEventsProvider.notifier)
+          .rescheduleAllPriorityNotifications();
+    }
   }
 
   Future<void> resetToDefaults() async {

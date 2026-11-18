@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/widgets/app_header.dart';
+import '../../../shared/widgets/app_chip.dart';
 import '../../../core/providers.dart';
 import '../../subjects/domain/subject_model.dart';
 
@@ -268,19 +269,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                               ),
                             ],
                           ),
-                          Container(
+                          AppChip(
+                            label: 'Cumplido $completedDaysCount/7',
+                            variant: AppChipVariant.teal,
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFCCFBF1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              'Cumplido $completedDaysCount/7',
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF0F766E),
-                              ),
+                            borderRadius: BorderRadius.circular(10),
+                            textStyle: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
@@ -564,19 +560,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  Container(
+                                  AppChip(
+                                    label: goldenZoneLabel,
+                                    variant: AppChipVariant.success,
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: colors.isDark ? const Color(0xFF166534) : const Color(0xFFDCFCE7),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      goldenZoneLabel,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: colors.isDark ? const Color(0xFF86EFAC) : const Color(0xFF15803D),
-                                      ),
+                                    borderRadius: BorderRadius.circular(8),
+                                    textStyle: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],

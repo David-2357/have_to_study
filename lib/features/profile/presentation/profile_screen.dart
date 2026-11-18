@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_color_theme.dart';
 import '../../../core/providers.dart';
 import '../../../shared/widgets/student_avatar.dart';
+import '../../../shared/widgets/app_chip.dart';
 import '../domain/profile_model.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -103,19 +104,14 @@ class ProfileScreen extends ConsumerWidget {
                             const SizedBox(height: 6),
                             Row(
                               children: [
-                                Container(
+                                AppChip(
+                                  label: profile.semester.toUpperCase(),
+                                  variant: AppChipVariant.primary,
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryLight,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    profile.semester.toUpperCase(),
-                                    style: const TextStyle(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w800,
-                                      color: AppColors.primary,
-                                    ),
+                                  borderRadius: BorderRadius.circular(6),
+                                  textStyle: const TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w800,
                                   ),
                                 ),
                               ],
@@ -237,7 +233,10 @@ class ProfileScreen extends ConsumerWidget {
                     ],
                   ),
                   TextButton.icon(
-                    onPressed: () => context.go('/studies'),
+                    onPressed: () {
+                      ref.read(studiesActiveTabProvider.notifier).state = 0;
+                      context.go('/studies');
+                    },
                     icon: const Text('Gestionar', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primary)),
                     label: const Icon(Icons.arrow_forward_rounded, size: 14, color: AppColors.primary),
                   ),
@@ -732,15 +731,14 @@ class ProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 4),
             if (hasBadge)
-              Container(
+              AppChip(
+                label: sub,
+                variant: AppChipVariant.info,
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEF2FF),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  sub,
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF4F46E5)),
+                borderRadius: BorderRadius.circular(6),
+                textStyle: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
                 ),
               )
             else

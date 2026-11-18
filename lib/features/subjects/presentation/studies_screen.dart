@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
 import '../../../shared/widgets/app_header.dart';
+import '../../../shared/widgets/app_chip.dart';
 import '../../../core/providers.dart';
 import '../domain/subject_model.dart';
 import '../../academic_events/domain/academic_event_model.dart';
@@ -20,7 +21,7 @@ class StudiesScreen extends ConsumerStatefulWidget {
 
 class _StudiesScreenState extends ConsumerState<StudiesScreen> {
   AppColorTheme get colors => context.colors;
-  int _selectedTab = 0; // 0: Asignaturas, 1: Pendientes
+  int get _selectedTab => ref.watch(studiesActiveTabProvider);
   String _searchQuery = '';
   int _subjectFilter = 0; // 0: Todas, 1: Con entregas, 2: Archivadas
   int _eventFilter = 0; // 0: Todos, 1: Exámenes, 2: Entregas, 3: Talleres
@@ -130,7 +131,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                     children: [
                       Expanded(
                         child: GestureDetector(
-                          onTap: () => setState(() => _selectedTab = 0),
+                          onTap: () => ref.read(studiesActiveTabProvider.notifier).state = 0,
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -171,7 +172,7 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                       ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () => setState(() => _selectedTab = 1),
+                          onTap: () => ref.read(studiesActiveTabProvider.notifier).state = 1,
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -206,21 +207,14 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 6),
-                                Container(
+                                AppChip(
+                                  label: '${pendingEvents.length}',
+                                  variant: _selectedTab == 1 ? AppChipVariant.primary : AppChipVariant.neutral,
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: _selectedTab == 1
-                                        ? (colors.isDark ? AppColors.primary.withValues(alpha: 0.25) : AppColors.primaryLight)
-                                        : (colors.isDark ? colors.surface : const Color(0xFFDCE2EE)),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    '${pendingEvents.length}',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: _selectedTab == 1 ? AppColors.primary : colors.textSecondary,
-                                    ),
+                                  borderRadius: BorderRadius.circular(10),
+                                  textStyle: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
@@ -594,90 +588,42 @@ class _StudiesScreenState extends ConsumerState<StudiesScreen> {
                           runSpacing: 6,
                           children: [
                             if (pendingDeliveries > 0)
-                              Container(
+                              AppChip(
+                                label: '$pendingDeliveries entregas pendientes',
+                                icon: Icons.assignment_outlined,
+                                variant: AppChipVariant.warning,
+                                iconSize: 13,
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: colors.isDark
-                                      ? AppColors.warning.withValues(alpha: 0.22)
-                                      : AppColors.warningLight,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.assignment_outlined,
-                                      size: 13,
-                                      color: colors.isDark ? const Color(0xFFFDBA74) : AppColors.warning,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '$pendingDeliveries entregas pendientes',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: colors.isDark ? const Color(0xFFFDBA74) : AppColors.warning,
-                                      ),
-                                    ),
-                                  ],
+                                borderRadius: BorderRadius.circular(8),
+                                textStyle: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             if (nextExam != null)
-                              Container(
+                              AppChip(
+                                label: 'Examen: ${TimeUtils.formatEventDate(nextExam.dueAt)}',
+                                icon: Icons.calendar_today_rounded,
+                                variant: AppChipVariant.info,
+                                iconSize: 13,
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: colors.isDark
-                                      ? const Color(0xFF4F46E5).withValues(alpha: 0.22)
-                                      : const Color(0xFFEEF2FF),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.calendar_today_rounded,
-                                      size: 13,
-                                      color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'Examen: ${TimeUtils.formatEventDate(nextExam.dueAt)}',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: colors.isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
-                                      ),
-                                    ),
-                                  ],
+                                borderRadius: BorderRadius.circular(8),
+                                textStyle: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             if (pendingDeliveries == 0 && nextExam == null)
-                              Container(
+                              AppChip(
+                                label: 'Todo al día',
+                                icon: Icons.check_circle_outline_rounded,
+                                variant: AppChipVariant.success,
+                                iconSize: 13,
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: colors.isDark
-                                      ? AppColors.success.withValues(alpha: 0.22)
-                                      : AppColors.successLight,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.check_circle_outline_rounded,
-                                      size: 13,
-                                      color: colors.isDark ? const Color(0xFF86EFAC) : AppColors.success,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'Todo al día',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: colors.isDark ? const Color(0xFF86EFAC) : AppColors.success,
-                                      ),
-                                    ),
-                                  ],
+                                borderRadius: BorderRadius.circular(8),
+                                textStyle: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                           ],

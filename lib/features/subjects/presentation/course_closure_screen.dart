@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_color_theme.dart';
 import '../../../core/providers.dart';
 import '../../../shared/utils/time_utils.dart';
+import '../../../shared/widgets/app_chip.dart';
 import '../domain/subject_model.dart';
 
 enum SubjectClosureDecision {
@@ -312,19 +313,14 @@ class _CourseClosureScreenState extends ConsumerState<CourseClosureScreen> {
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        Container(
+                        AppChip(
+                          label: subject.isAnnual ? 'Anual' : 'Semestral',
+                          variant: AppChipVariant.neutral,
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: colors.surfaceVariant,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            subject.isAnnual ? 'Anual' : 'Semestral',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: colors.textSecondary,
-                            ),
+                          borderRadius: BorderRadius.circular(6),
+                          textStyle: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         if (subject.endDate != null) ...[

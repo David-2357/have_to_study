@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_color_theme.dart';
 import '../../../shared/utils/time_utils.dart';
+import '../../../shared/widgets/app_chip.dart';
 import '../../../core/providers.dart';
 import '../../academic_events/domain/academic_event_model.dart';
 import '../../academic_events/presentation/create_event_sheet.dart';
@@ -376,22 +377,13 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                         children: [
                           Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryLight,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: const Row(
-                                  children: [
-                                    Icon(Icons.flag_rounded, size: 12, color: AppColors.primary),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'PRÓXIMO HITO CLAVE',
-                                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.primary),
-                                    ),
-                                  ],
-                                ),
+                              const AppChip(
+                                label: 'PRÓXIMO HITO CLAVE',
+                                icon: Icons.flag_rounded,
+                                variant: AppChipVariant.primary,
+                                iconSize: 12,
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                borderRadius: BorderRadius.all(Radius.circular(6)),
                               ),
                               const SizedBox(width: 6),
                               if (nextExam.academicWeight > 0)
@@ -401,16 +393,13 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
                                 ),
                             ],
                           ),
-                          Container(
+                          AppChip(
+                            label: TimeUtils.formatRelativeDate(nextExam.dueAt),
+                            variant: AppChipVariant.primary,
+                            customBackgroundColor: AppColors.primary,
+                            customForegroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              TimeUtils.formatRelativeDate(nextExam.dueAt),
-                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
-                            ),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ],
                       ),
@@ -659,29 +648,42 @@ class _SubjectDetailScreenState extends ConsumerState<SubjectDetailScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: event.type.backgroundColor,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      event.type.shortTag,
-                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: event.type.color),
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppChip(
+                        label: event.type.shortTag,
+                        variant: AppChipVariant.custom,
+                        customBackgroundColor: event.type.backgroundColor,
+                        customForegroundColor: event.type.color,
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      if (event.isPriority) ...[
+                        const SizedBox(width: 6),
+                        AppChip(
+                          label: 'PRIORITARIO',
+                          icon: Icons.star_rounded,
+                          variant: AppChipVariant.warning,
+                          iconSize: 11,
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          borderRadius: BorderRadius.circular(6),
+                          textStyle: const TextStyle(
+                            fontSize: 8.5,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                   Row(
                     children: [
-                      Container(
+                      AppChip(
+                        label: TimeUtils.formatRelativeDate(event.dueAt),
+                        variant: AppChipVariant.warning,
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFEF3C7),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          TimeUtils.formatRelativeDate(event.dueAt),
-                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFFD97706)),
-                        ),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       const SizedBox(width: 6),
                       IconButton(

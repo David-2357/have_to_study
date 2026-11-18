@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_color_theme.dart';
 import '../../../../shared/utils/time_utils.dart';
+import '../../../../shared/widgets/app_chip.dart';
 import '../../../../core/providers.dart';
 import '../../domain/pomodoro_models.dart';
 
@@ -247,19 +248,16 @@ void showSelectActivitySheet(BuildContext context, WidgetRef ref) {
                                     final isThisEventActive = activeEventId == event.id;
                                     return ListTile(
                                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                                      leading: Container(
+                                      leading: AppChip(
+                                        label: event.type.displayName,
+                                        variant: AppChipVariant.custom,
+                                        customBackgroundColor: event.type.backgroundColor,
+                                        customForegroundColor: event.type.color,
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: event.type.backgroundColor,
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: Text(
-                                          event.type.displayName,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            color: event.type.color,
-                                          ),
+                                        borderRadius: BorderRadius.circular(8),
+                                        textStyle: const TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       title: Text(
