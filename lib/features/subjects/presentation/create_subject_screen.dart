@@ -659,8 +659,13 @@ class _CreateSubjectScreenState extends ConsumerState<CreateSubjectScreen> {
                 child: ElevatedButton.icon(
                   onPressed: () async {
                     if (_nameController.text.trim().isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Por favor ingresa el nombre de la asignatura')),
+                      final messenger = ScaffoldMessenger.of(context);
+                      messenger.clearSnackBars();
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text('Por favor ingresa el nombre de la asignatura'),
+                          duration: Duration(seconds: 2),
+                        ),
                       );
                       return;
                     }

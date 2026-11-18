@@ -582,8 +582,13 @@ class _CreateEventSheetState extends ConsumerState<CreateEventSheet> {
               child: ElevatedButton.icon(
                 onPressed: () async {
                   if (_titleController.text.trim().isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Por favor escribe un título')),
+                    final messenger = ScaffoldMessenger.of(context);
+                    messenger.clearSnackBars();
+                    messenger.showSnackBar(
+                      const SnackBar(
+                        content: Text('Por favor escribe un título'),
+                        duration: Duration(seconds: 2),
+                      ),
                     );
                     return;
                   }
